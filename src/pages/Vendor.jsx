@@ -31,6 +31,7 @@ export default function Vendor() {
                 onClick={() =>
                   openDrawer({
                     viewName: "create-vendor",
+                    drawerSize: "950",
                   })
                 }
               >

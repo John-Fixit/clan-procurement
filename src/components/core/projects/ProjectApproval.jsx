@@ -1,5 +1,7 @@
 import { Select, Avatar, Tag, Space } from "antd";
 import { useMemo } from "react";
+import Button from "../../shared/ui/Button";
+import { IoChevronBackOutline } from "react-icons/io5";
 
 // Mock data for approvers
 const mockApprovers = [
@@ -60,7 +62,7 @@ const mockApprovers = [
 ];
 
 const ProjectApproval = (props) => {
-  const { watch, setValue } = props;
+  const { watch, setValue, handlePrev, handleSubmit } = props;
 
   // Watch the approvers field from react-hook-form
   const selectedApprovers = watch("approvers") || [];
@@ -156,8 +158,6 @@ const ProjectApproval = (props) => {
     );
   };
 
-  console.log(renderOption);
-
   return (
     <div
       style={{
@@ -242,6 +242,19 @@ const ProjectApproval = (props) => {
             Clear all
           </button>
         )}
+      </div>
+      <div className="border-t border-gray-200 mt-10 py-6 flex justify-between">
+        <Button
+          radius="sm"
+          color="primary"
+          variant="bordered"
+          onPress={handlePrev}
+        >
+          <IoChevronBackOutline /> Previous
+        </Button>
+        <Button radius="sm" color="primary" onPress={handleSubmit}>
+          Submit
+        </Button>
       </div>
     </div>
   );

@@ -1,16 +1,25 @@
-import { Input, Select, SelectItem, Textarea } from "@heroui/react";
+import { Button, Input, Textarea } from "@heroui/react";
 import { Controller } from "react-hook-form";
-import { Select as AntSelect, DatePicker } from "antd";
+import { Select, DatePicker } from "antd";
 import dayjs from "dayjs";
+import { IoChevronForward } from "react-icons/io5";
 
 const ProjectInformation = (props) => {
-  const { control, watch } = props;
+  const { control, watch, handleNext } = props;
   const project_type = watch("project_type");
 
   return (
     <>
-      <div className="">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
+      <main className="">
+        <div className="mb-5">
+          <h2 className="font-outfit  text-2xl font-semibold text-primary">
+            Project Detail
+          </h2>
+          <p className="font-outfit text-gray-500 text-sm">
+            Fill in the details below to add a new project
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-6">
           <div>
             <label htmlFor="" className="font-outfit">
               Project Type
@@ -20,7 +29,7 @@ const ProjectInformation = (props) => {
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <>
-                  <AntSelect
+                  <Select
                     options={[
                       {
                         label: "Local Purchase Order",
@@ -32,7 +41,7 @@ const ProjectInformation = (props) => {
                     onChange={(value) => field.onChange(value)}
                     size="large"
                     className="w-full"
-                    placeholder="Select vendor"
+                    placeholder="Select project type"
                   />
 
                   {!!error?.message && (
@@ -74,7 +83,13 @@ const ProjectInformation = (props) => {
             )
           )}
         </div>
-      </div>
+
+        <div className="border-t border-gray-200 mt-10 py-6 flex justify-end">
+          <Button radius="sm" color="primary" onPress={handleNext}>
+            Continue <IoChevronForward />
+          </Button>
+        </div>
+      </main>
     </>
   );
 };
@@ -142,7 +157,7 @@ const JobOrderForm = ({ control }) => {
           control={control}
           render={({ field, fieldState: { error } }) => (
             <>
-              <AntSelect
+              <Select
                 options={[
                   { label: "Technical", value: "techinal" },
                   { label: "Soft skill", value: "soft skill" },
@@ -244,7 +259,7 @@ const JobOrderForm = ({ control }) => {
           control={control}
           render={({ field, fieldState: { error } }) => (
             <>
-              <AntSelect
+              <Select
                 options={[
                   { label: "Technical", value: "techinal" },
                   { label: "Soft skill", value: "soft skill" },
@@ -298,19 +313,216 @@ const PurchaseOrderForm = ({ control }) => {
     <>
       <div>
         <label htmlFor="" className="font-outfit mb-2">
-          Project Title
+          Recipient Department
         </label>
         <Controller
-          name="project_title"
+          name="recipient_department"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={[
+                  { label: "Technical", value: "techinal" },
+                  { label: "Soft skill", value: "soft skill" },
+                  { label: "Other", value: "other" },
+                ]}
+                labelInValue
+                {...field}
+                size="large"
+                className="w-full"
+                placeholder="Select departmend"
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Received note number
+        </label>
+        <Controller
+          name="received_note_no"
           control={control}
           render={({ field, fieldState: { error } }) => (
             <Input
+              type="number"
+              aria-label="sum_amount"
               variant="bordered"
-              placeholder="Enter your title"
-              className="rounded-sm w-full"
+              placeholder="Received note number"
+              className="rounded-sm"
               classNames={{
                 inputWrapper: "border shadow-none rounded-lg",
               }}
+              {...field}
+              errorMessage={error?.message}
+              isInvalid={!!error?.message}
+            />
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Received note Date
+        </label>
+        <Controller
+          name="received_note_date"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <DatePicker
+                className="w-full"
+                size="large"
+                {...field}
+                value={field.value ? dayjs(field.value) : null}
+                onChange={(date, dateString) => field.onChange(dateString)}
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Received by
+        </label>
+        <Controller
+          name="received_by"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={[
+                  { label: "Technical", value: "techinal" },
+                  { label: "Soft skill", value: "soft skill" },
+                  { label: "Other", value: "other" },
+                ]}
+                labelInValue
+                {...field}
+                size="large"
+                className="w-full"
+                placeholder="Select staff"
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Date Issued
+        </label>
+        <Controller
+          name="date_issued"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <DatePicker
+                className="w-full"
+                size="large"
+                {...field}
+                value={field.value ? dayjs(field.value) : null}
+                onChange={(date, dateString) => field.onChange(dateString)}
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Date Supplied
+        </label>
+        <Controller
+          name="date_supplied"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <DatePicker
+                className="w-full"
+                size="large"
+                {...field}
+                value={field.value ? dayjs(field.value) : null}
+                onChange={(date, dateString) => field.onChange(dateString)}
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Select Vendor
+        </label>
+        <Controller
+          name="vendor"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={[
+                  { label: "Technical", value: "techinal" },
+                  { label: "Soft skill", value: "soft skill" },
+                  { label: "Other", value: "other" },
+                ]}
+                labelInValue
+                {...field}
+                size="large"
+                className="w-full"
+                placeholder="Select vendor"
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Voucher statement
+        </label>
+        <Controller
+          name="voucher_statement"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Textarea
+              aria-label="voucher_number"
+              variant="bordered"
+              placeholder="voucher statment"
+              className="rounded-sm"
+              classNames={{
+                inputWrapper: "border shadow-none rounded-lg",
+              }}
+              minRows={1}
               {...field}
               errorMessage={error?.message}
               isInvalid={!!error?.message}

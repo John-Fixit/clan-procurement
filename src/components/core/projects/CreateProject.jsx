@@ -33,9 +33,14 @@ const CreateProject = () => {
     },
   });
 
-  const { watch } = hook_form_props;
+  const { watch, getValues } = hook_form_props;
 
   const project_type = watch("project_type");
+
+  const handleSubmit = () => {
+    const values = getValues();
+    console.log(values);
+  };
 
   const sideTabs = [
     {
@@ -71,6 +76,7 @@ const CreateProject = () => {
           {...hook_form_props}
           handleNext={handleNext}
           handlePrev={handlePrev}
+          handleSubmit={handleSubmit}
         />
       ),
     },

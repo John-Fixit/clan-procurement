@@ -1,12 +1,23 @@
-import { Input } from "antd";
+import { Button } from "@heroui/react";
+import { DatePicker, Input } from "antd";
+import dayjs from "dayjs";
 import React from "react";
 import { useFieldArray } from "react-hook-form";
-import { FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import { FiPackage } from "react-icons/fi";
+import { IoChevronBackOutline, IoChevronForwardSharp } from "react-icons/io5";
 import { LuTrash2 } from "react-icons/lu";
 
 const PurchaseOrderItems = (props) => {
-  const { control, register, setValue, watch, newItemRow } = props;
+  const {
+    control,
+    register,
+    setValue,
+    watch,
+    newItemRow,
+    handleNext,
+    handlePrev,
+  } = props;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -43,14 +54,16 @@ const PurchaseOrderItems = (props) => {
               <h4 className="text-sm font-semibold text-gray-700">
                 Item #{index + 1}
               </h4>
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition-colors"
-                title="Remove item"
-              >
-                <LuTrash2 size={18} />
-              </button>
+              {fields?.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition-colors"
+                  title="Remove item"
+                >
+                  <LuTrash2 size={18} />
+                </button>
+              )}
             </div>
 
             {/* Item Fields - Grid Layout */}
@@ -60,10 +73,14 @@ const PurchaseOrderItems = (props) => {
                 <label className="block text-sm text-gray-700 mb-1 font-outfit">
                   Date
                 </label>
-                <Input
-                  type="date"
+                <DatePicker
+                  className="w-full"
+                  // size="large"
                   {...register(`purchase_order_items.${index}.date`)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                  value={field.value ? dayjs(field.value) : null}
+                  onChange={(date, dateString) =>
+                    setValue(`purchase_order_items.${index}.date`, dateString)
+                  }
                 />
               </div>
 
@@ -72,14 +89,25 @@ const PurchaseOrderItems = (props) => {
                 <label className="block text-sm text-gray-700 mb-1 font-outfit">
                   Quantity
                 </label>
-                <Input
-                  type="number"
-                  {...register(`purchase_order_items.${index}.quantity`, {
-                    onChange: () => calculateTotal(index),
-                  })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
-                  placeholder="0"
-                />
+                <div className="flex gap-2 items-center">
+                  <Button isIconOnly size="sm" radius="sm" color="primary">
+                    <FaMinus size={18} />
+                  </Button>
+                  <Input
+                    type="number"
+                    {...register(`purchase_order_items.${index}.quantity`, {
+                      onChange: () => calculateTotal(index),
+                    })}
+                    className="px-3 py-2 border outline-none text-sm border-none"
+                    classNames={{
+                      root: "border-0",
+                    }}
+                    placeholder="0"
+                  />
+                  <Button isIconOnly size="sm" radius="sm" color="primary">
+                    <FaPlus size={18} />
+                  </Button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm text-gray-700 mb-1 font-outfit">
@@ -129,11 +157,25 @@ const PurchaseOrderItems = (props) => {
       <button
         type="button"
         onClick={addNewItem}
-        className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 cursor-pointer transition-colors font-medium text-sm"
+        className="flex items-center gap-2 px-2 py-1 bg-primary text-white rounded-lg hover:bg-primary/90 cursor-pointer transition-colors font-medium text-sm"
       >
         <FaPlus size={18} />
         Add Item
       </button>
+
+      <div className="border-t border-gray-200 mt-10 py-6 flex justify-between">
+        <Button
+          radius="sm"
+          color="primary"
+          variant="bordered"
+          onPress={handlePrev}
+        >
+          <IoChevronBackOutline /> Previous
+        </Button>
+        <Button radius="sm" color="primary" onPress={handleNext}>
+          Continue <IoChevronForwardSharp />
+        </Button>
+      </div>
     </div>
   );
 };

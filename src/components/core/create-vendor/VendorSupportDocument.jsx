@@ -1,14 +1,12 @@
 import { CiCalendar, CiFileOn } from "react-icons/ci";
 import { FaCheckCircle } from "react-icons/fa";
-import { FiFileText } from "react-icons/fi";
-import { IoMdClose } from "react-icons/io";
-import { IoAlertCircle } from "react-icons/io5";
+import { IoAlertCircle, IoChevronBackOutline } from "react-icons/io5";
 import { TbUpload } from "react-icons/tb";
 import { TfiTrash } from "react-icons/tfi";
 import Button from "../../shared/ui/Button";
 
 const VendorSupportDocument = (props) => {
-  const { handlePrev, setValue, watch } = props;
+  const { handlePrev, setValue, watch, handleSubmit } = props;
 
   const documents = watch("support_documents");
 
@@ -17,13 +15,8 @@ const VendorSupportDocument = (props) => {
     setValue("support_documents", val);
   };
 
-  //   useEffect(() => {
-  //     setValue("support_documents", documents);
-  //   }, []);
-
   const handleFileUpload = (docId, event) => {
     const file = event.target.files[0];
-    console.log(documents);
     if (file) {
       const newDoc = documents.map((doc) =>
         doc.id === docId
@@ -72,10 +65,6 @@ const VendorSupportDocument = (props) => {
   const completedCount = documents.filter((d) => d.uploaded).length;
   const totalCount = documents.length;
   const progress = (completedCount / totalCount) * 100;
-
-  const handleSubmit = () => {
-    console.log();
-  };
 
   return (
     <div className="min-h-screen bg-gray50">
@@ -272,14 +261,13 @@ const VendorSupportDocument = (props) => {
         <div className="border-t border-gray-200 mt-10 py-6 flex justify-between">
           <Button
             radius="sm"
-            size="lg"
             color="primary"
             variant="bordered"
             onPress={handlePrev}
           >
-            Previous
+            <IoChevronBackOutline /> Previous
           </Button>
-          <Button radius="sm" size="lg" color="primary" onPress={handleSubmit}>
+          <Button radius="sm" color="primary" onPress={handleSubmit}>
             Submit
           </Button>
         </div>

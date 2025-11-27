@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Upload, Button, Space, Card, Typography, message, Tag } from "antd";
+import { Upload, Space, Card, Typography, message, Tag } from "antd";
 import {
   InboxOutlined,
   FileOutlined,
@@ -8,17 +7,15 @@ import {
   FileExcelOutlined,
   FileImageOutlined,
   DeleteOutlined,
-  EyeOutlined,
-  UploadOutlined,
 } from "@ant-design/icons";
+import { Button } from "@heroui/react";
+import { IoChevronBackOutline, IoChevronForwardSharp } from "react-icons/io5";
 
 const { Dragger } = Upload;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const ProjectSupportDocument = (props) => {
-  const { watch, setValue } = props;
-  const [fileList, setFileList] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  const { watch, setValue, handleNext, handlePrev } = props;
 
   // Watch the documents field from react-hook-form
   const uploadedDocuments = watch("documents") || [];
@@ -52,7 +49,6 @@ const ProjectSupportDocument = (props) => {
   const uploadProps = {
     name: "file",
     multiple: true,
-    fileList: fileList,
     beforeUpload: (file) => {
       // Validate file size (10MB max)
       const isLt10M = file.size / 1024 / 1024 < 10;
@@ -69,16 +65,20 @@ const ProjectSupportDocument = (props) => {
         type: file.type,
         status: "done",
         originFileObj: file,
+        uploadDate: new Date().toISOString(),
+        url: URL.createObjectURL(file),
       };
 
-      setFileList([...fileList, newFile]);
+      setValue("documents", [...uploadedDocuments, newFile]);
 
       // Prevent automatic upload
       return false;
     },
     onRemove: (file) => {
-      const newFileList = fileList.filter((item) => item.uid !== file.uid);
-      setFileList(newFileList);
+      const newFileList = uploadedDocuments.filter(
+        (item) => item.uid !== file.uid
+      );
+      setValue("documents", newFileList);
     },
     onChange: (info) => {
       const { status } = info.file;
@@ -88,36 +88,6 @@ const ProjectSupportDocument = (props) => {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-  };
-
-  // Handle upload to form
-  const handleUpload = () => {
-    if (fileList.length === 0) {
-      message.warning("Please select files to upload");
-      return;
-    }
-
-    setUploading(true);
-
-    // Simulate upload process
-    setTimeout(() => {
-      const uploadedFiles = fileList.map((file) => ({
-        uid: file.uid,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        uploadDate: new Date().toISOString(),
-        url: URL.createObjectURL(file.originFileObj), // For preview
-      }));
-
-      // Update form value
-      setValue("documents", [...uploadedDocuments, ...uploadedFiles]);
-
-      // Clear file list
-      setFileList([]);
-      setUploading(false);
-      message.success("Files uploaded successfully!");
-    }, 1500);
   };
 
   // Remove uploaded document
@@ -135,62 +105,50 @@ const ProjectSupportDocument = (props) => {
         margin: "0 auto",
         padding: "24px",
       }}
+      className="space-y-3"
     >
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        {/* Header */}
-        <div>
-          <Title level={4} style={{ margin: 0 }}>
-            Support Documents
-          </Title>
-          <Text type="secondary">
-            Upload relevant documents, contracts, or files related to this
-            project
-          </Text>
-        </div>
-
+      <div>
+        <h2 className="font-outfit  text-2xl font-semibold text-primary">
+          Support Document
+        </h2>
+        <p className="font-outfit text-gray-500 text-sm">
+          Upload relevant documents, contracts, or files related to this project
+        </p>
+      </div>
+      <div>
         {/* Upload Area */}
-        <Card>
-          <Dragger {...uploadProps} style={{ padding: "20px" }}>
+        <Card className="space-y-4">
+          <Dragger
+            {...uploadProps}
+            defaultFileList={false}
+            style={{ padding: "20px" }}
+            showUploadList={false}
+          >
             <p className="ant-upload-drag-icon">
               <InboxOutlined style={{ fontSize: "48px", color: "#1890ff" }} />
             </p>
             <p
-              className="ant-upload-text"
+              className="ant-upload-text font-outfit"
               style={{ fontSize: "16px", fontWeight: 500 }}
             >
               Click or drag files to this area to upload
             </p>
-            <p className="ant-upload-hint" style={{ color: "#8c8c8c" }}>
-              Support for single or bulk upload. Maximum file size: 10MB.
-              <br />
+            <p
+              className="ant-upload-hint font-outfit"
+              style={{ color: "#8c8c8c" }}
+            >
               Accepted formats: PDF, DOC, DOCX, XLS, XLSX, PNG, JPG, etc.
             </p>
           </Dragger>
-
-          {fileList.length > 0 && (
-            <div style={{ marginTop: "20px" }}>
-              <Button
-                type="primary"
-                onClick={handleUpload}
-                loading={uploading}
-                icon={<UploadOutlined />}
-                size="large"
-                block
-              >
-                {uploading
-                  ? "Uploading..."
-                  : `Upload ${fileList.length} file(s)`}
-              </Button>
-            </div>
-          )}
         </Card>
-
+      </div>
+      <div>
         {/* Uploaded Documents List */}
         {uploadedDocuments.length > 0 && (
           <Card
             title={
               <Space>
-                <Text strong>Uploaded Documents</Text>
+                <p className="font-outfit text-gray-700">Uploaded Documents</p>
                 <Tag color="blue">{uploadedDocuments.length}</Tag>
               </Space>
             }
@@ -243,14 +201,9 @@ const ProjectSupportDocument = (props) => {
 
                     {/* Actions */}
                     <Space>
-                      {/* <Button
-                        type="text"
-                        icon={<EyeOutlined />}
-                        onClick={() => previewDocument(doc)}
-                        title="Preview"
-                      /> */}
                       <Button
-                        type="text"
+                        variant="light"
+                        size="sm"
                         danger
                         icon={<DeleteOutlined />}
                         onClick={() => removeDocument(doc.uid)}
@@ -263,7 +216,20 @@ const ProjectSupportDocument = (props) => {
             </Space>
           </Card>
         )}
-      </Space>
+      </div>
+      <div className="border-t border-gray-200 mt-10 py-6 flex justify-between">
+        <Button
+          radius="sm"
+          color="primary"
+          variant="bordered"
+          onPress={handlePrev}
+        >
+          <IoChevronBackOutline /> Previous
+        </Button>
+        <Button radius="sm" color="primary" onPress={handleNext}>
+          Continue <IoChevronForwardSharp />
+        </Button>
+      </div>
     </div>
   );
 };

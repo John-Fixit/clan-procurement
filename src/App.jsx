@@ -43,6 +43,8 @@ function App() {
           <Route path="report" element={<Report />} />
           <Route path="taxe" element={<Taxes />} />
           <Route path="setting" element={<Setting />} />
+          <Route path="setting/tax" element={<Setting />} />
+          <Route path="setting/document" element={<Setting />} />
         </Route>
         <Route path="*" element={<></>} />
       </Routes>

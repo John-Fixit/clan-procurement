@@ -56,9 +56,16 @@ const CreateVendor = () => {
     },
   });
 
+  const { getValues } = hook_form_props;
+
+  const handleSubmit = () => {
+    const values = getValues();
+    console.log(values);
+  };
+
   const sideTabs = [
     {
-      title: "Project Information",
+      title: "Vendor Information",
       content: (
         <VenderInformation {...hook_form_props} handleNext={handleNext} />
       ),
@@ -68,8 +75,8 @@ const CreateVendor = () => {
       content: (
         <VendorSupportDocument
           {...hook_form_props}
-          handleNext={handleNext}
           handlePrev={handlePrev}
+          handleSubmit={handleSubmit}
         />
       ),
     },
