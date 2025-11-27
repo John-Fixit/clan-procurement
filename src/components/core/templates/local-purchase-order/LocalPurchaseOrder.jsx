@@ -1,0 +1,237 @@
+import clsx from "clsx";
+import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
+
+const LocalPurchaseOrder = () => {
+  return (
+    <main>
+      <div className="p-6 bg-white min-w-[55rem] relative">
+        <div className="flex gap-x-6 w-full">
+          <div>
+            <img src={ncaaLogo} alt="NCAA Logo" width={120} height={120} />
+          </div>
+          <div className="flex flex-col items-center justify-center gap-y-0.5 mb-1 mt-4">
+            <h2 className="text-2xl tracking-wide font-semibold ">
+              NIGERIAN CIVIL AVIATION AUTHORITY
+            </h2>
+            <h3 className="font-medium text-xl">(AVIATION HOUSE)</h3>
+            <h4 className="text-sm">HEADQUARTERS</h4>
+            <h4 className="text-sm">P.M.B. 21029, 21018, IKEJA, LAGOS</h4>
+          </div>
+        </div>
+
+        <div className="mt-4 border-t-2 border-black pt-2">
+          <div className="flex justify-between items-baseline">
+            <h2 className="text-xl font-semibold">LOCAL PURCHASE ORDER</h2>
+            <div className="flex items-baseline gap-x-2">
+              <h3 className="text-lg font-semibold">N°</h3>
+              <div className="border-b-1.5 border-black min-w-32 px-2"></div>
+              <p className="text-xs italic">
+                Quote this number on all invoices,
+                <br />
+                correspondence and packages.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 border-t-1.5 border-black pt-4">
+          <div className="flex items-baseline gap-x-2 mb-4">
+            <h3 className="text-sm">To</h3>
+            <div className="border-b-1.5 border-black flex-1"></div>
+          </div>
+
+          <div className="grid grid-cols-[1fr_auto_1fr] gap-x-4 mb-4">
+            <div className="border-b-1.5 border-black"></div>
+            <div className="flex items-baseline gap-x-2">
+              <h3 className="text-sm">Date:</h3>
+              <div className="border-b-1.5 border-black w-48"></div>
+            </div>
+            <div></div>
+          </div>
+
+          <div className="flex items-start gap-x-2 mb-2">
+            <h3 className="text-sm">
+              Please supply/repair the following items
+            </h3>
+            <div className="flex-1 text-right text-xs">
+              The purchase is subject to the conditions on the reverse.
+            </div>
+          </div>
+
+          <div className="flex items-baseline gap-x-2 mb-6">
+            <h3 className="text-sm">DELIVERY DATE:</h3>
+            <div className="border-b-1.5 border-black flex-1"></div>
+          </div>
+        </div>
+
+        {/* table */}
+        <div className="overflow-x-auto border-2 border-b-0 border-black">
+          <table className="min-w-full divide-y-2 divide-black bg-white text-sm border-collapse text-left">
+            <thead className="ltr:text-left rtl:text-right">
+              <tr>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                  ITEM
+                  <br />
+                  NO.
+                </th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                  DATE
+                </th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                  QUANTITY
+                  <br />K
+                </th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center w-64">
+                  DESCRIPTION
+                </th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                  MODE
+                  <br />
+                  OF
+                  <br />
+                  CHARGE
+                </th>
+                <th
+                  colSpan={2}
+                  className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"
+                >
+                  UNIT PRICE
+                </th>
+                <th
+                  colSpan={2}
+                  className="py-2 px-2 font-medium text-gray-900 text-center"
+                >
+                  Total Cost
+                </th>
+              </tr>
+              {/* Sub-header row for Naira and Kobo */}
+              <tr>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                  ₦
+                </th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                  K
+                </th>
+                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                  ₦
+                </th>
+                <th className="py-2 px-2 font-medium text-gray-900 text-center">
+                  K
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y-2 divide-black">
+              {/* Empty rows for manual entry */}
+              {[...Array(15)].map((_, index) => (
+                <tr key={index}>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black text-center h-8"></td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                  <td className="py-3 px-2 font-light text-gray-900"></td>
+                </tr>
+              ))}
+              {/* Grand Total row */}
+              <tr>
+                <td
+                  colSpan={7}
+                  className={clsx(
+                    "pe-4 text-gray-700 border-r-2 border-b-4 border-double border-black text-end py-2"
+                  )}
+                >
+                  <h2 className="text-lg font-medium">Grand Total</h2>
+                </td>
+                <td
+                  className={clsx(
+                    "py-2.5 px-2 text-gray-700 border-r-1.5 border-b-4 border-double border-black text-center"
+                  )}
+                >
+                  ₦
+                </td>
+                <td
+                  className={clsx(
+                    "py-2.5 px-2 text-gray-700 border-b-4 border-double border-black text-center"
+                  )}
+                ></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-8 border-t-1.5 border-black pt-4">
+          <div className="text-xs italic mb-8">
+            <p>
+              I certify delivery within 24 - 48 Hrs as per moment child you
+              provided or let new AA 3.1
+            </p>
+          </div>
+
+          <div className="flex justify-end mb-12">
+            <div className="text-center">
+              <div className="border-b-1.5 border-black w-64 mb-1"></div>
+              <p className="text-xs italic">Authorised Signature</p>
+            </div>
+          </div>
+
+          <div className="border-t-1.5 border-black pt-4">
+            <div className="flex items-baseline gap-x-2 mb-8">
+              <h3 className="text-sm">Deliver to</h3>
+              <div className="border-b-1.5 border-black flex-1"></div>
+            </div>
+
+            <div className="text-xs italic mb-6">
+              <p>
+                I certify that the above mentioned goods have been received in
+                good order and condition and taken on charge under Stores
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-8 mb-8">
+              <div className="flex items-baseline gap-x-2">
+                <h3 className="text-sm whitespace-nowrap">Received Note No</h3>
+                <div className="border-b-1.5 border-black flex-1"></div>
+              </div>
+              <div className="flex items-baseline gap-x-2">
+                <h3 className="text-sm">Date</h3>
+                <div className="border-b-1.5 border-black flex-1"></div>
+              </div>
+            </div>
+
+            <div className="flex justify-end mb-8">
+              <div className="text-center">
+                <div className="border-b-1.5 border-black w-64 mb-1"></div>
+                <p className="text-xs italic">Storekeeper / Receiver</p>
+              </div>
+            </div>
+
+            <div className="flex items-baseline gap-x-2 mb-8">
+              <h3 className="text-sm">Date</h3>
+              <div className="border-b-1.5 border-black flex-1"></div>
+            </div>
+
+            <div className="text-xs">
+              <p>
+                <span className="font-medium">Distribution:</span> 1 Customer
+                &nbsp;&nbsp; Original to be attached to the Invoice for Payment
+                &nbsp;&nbsp; 2 Accounts &nbsp;&nbsp; 3 Stores &nbsp;&nbsp; 4
+                Purchasing Copy
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default LocalPurchaseOrder;
