@@ -1,16 +1,20 @@
 import { IoMdAdd } from "react-icons/io";
 import Button from "../components/shared/ui/Button";
 import ActionIcons from "../components/shared/ActionIcons";
-import { Checkbox, Modal, ModalContent, Switch } from "@heroui/react";
-import { useState } from "react";
-import { FiFileText } from "react-icons/fi";
+import { Checkbox, Modal, ModalContent } from "@heroui/react";
+import { useMemo, useState } from "react";
 import { BiX } from "react-icons/bi";
-import { Input } from "antd";
 import { catchErrFunc } from "../utils/catchErrFunc";
-import { useAddDocument, useAddTax } from "../service/api/setting";
+import {
+  useAddDocument,
+  useDeleteDocument,
+  useGetDocument,
+} from "../service/api/setting";
 import { successToast } from "../utils/toastPopUps";
+import { format } from "date-fns";
+import { Modal as AntModal } from "antd";
 
-const Setting = () => {
+const DocumentSetting = () => {
   const [showForm, setShowForm] = useState({ state: false, type: "" });
 
   const handleAddRecord = (type, data) => {
@@ -34,60 +38,6 @@ const Setting = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-4">
-            <div className="flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white">
-              <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
-                <h2 className="text-gray-900 dark:text-white text-lg font-semibold leading-tight tracking-[-0.015em]">
-                  Manage Tax
-                </h2>
-                <Button
-                  color="primary"
-                  radius="sm"
-                  size="sm"
-                  onPress={() => handleAddRecord("tax")}
-                >
-                  <IoMdAdd size={20} />
-                  Add New Tax Type
-                </Button>
-              </div>
-              <div className="flex overflow-hiddex">
-                <table className="flex-1">
-                  <thead className="border-b bg-gray-50 border-gray-200 dark:border-gray-800">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-gray-900 dark:text-white w-2/5 text-sm font-medium leading-normal">
-                        Tax Name
-                      </th>
-                      <th className="px-4 py-3 text-left text-gray-900 dark:text-white w-1/5 text-sm font-medium leading-normal">
-                        Rate (%)
-                      </th>
-
-                      <th className="px-4 py-3 text-left text-gray-500 dark:text-gray-400 w-1/5 text-sm font-medium leading-normal">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-gray-200 dark:border-gray-800">
-                      <td className="h-16 px-4 py-2 w-2/5 text-gray-900 dark:text-white text-sm font-normal leading-normal font-primary">
-                        Withholding Tax (WHT)
-                      </td>
-                      <td className="h-16 px-4 py-2 w-1/5 text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal font-primary">
-                        5.0
-                      </td>
-                      <td className="h-16 px-4 py-2 w-1/5 text-sm font-bold leading-normal tracking-[0.015em]">
-                        <div className="flex items-center gap-4">
-                          <ActionIcons
-                            variant={"EDIT"}
-                            action={() => handleAddRecord("tax")}
-                          />
-
-                          <ActionIcons variant={"DELETE"} />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
             <DocumentManager handleAddRecord={handleAddRecord} />
           </div>
         </div>
@@ -99,10 +49,6 @@ const Setting = () => {
         onClose={handleCloseRecordModal}
         isDismissable={false}
         isKeyboardDismissDisabled={true}
-        classNames={{
-          backdrop:
-            "bg-linear-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
-        }}
         placement="auto"
       >
         <ModalContent>
@@ -110,9 +56,6 @@ const Setting = () => {
             <>
               {showForm.type === "document" && (
                 <CreateDocument onClose={onClose} data={showForm?.data} />
-              )}
-              {showForm.type === "tax" && (
-                <CreateTax onClose={onClose} data={showForm?.data} />
               )}
             </>
           )}
@@ -122,98 +65,8 @@ const Setting = () => {
   );
 };
 
-export default Setting;
+export default DocumentSetting;
 
-const CreateTax = ({ onClose, data }) => {
-  const [formData, setFormData] = useState({
-    name: data?.name || "",
-    rate: data?.percentage || 0,
-  });
-
-  const disableBtn = formData?.name === "";
-
-  const { mutateAsync: mutateAddTax, isPending } = useAddTax();
-
-  const handleSubmit = async () => {
-    const { name, rate } = formData;
-    const json = {
-      tax_name: name,
-      percentage: rate,
-    };
-    try {
-      const res = await mutateAddTax(json);
-      successToast(res?.data?.message);
-      onClose();
-    } catch (err) {
-      catchErrFunc(err);
-    }
-  };
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl  max-w-lg w-full">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          {data ? "Update" : " Add New"} Tax
-        </h2>
-        <button
-          onClick={onClose}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
-        >
-          <BiX size={22} className="text-gray-500 dark:text-gray-400" />
-        </button>
-      </div>
-
-      <div className="p-6 space-y-5">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Tax Name *
-          </label>
-          <Input
-            type="text"
-            size="large"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="e.g., Operating License"
-            className="w-full px-4 py-2.5 bg-white "
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Tax Rate
-          </label>
-          <Input
-            type={"number"}
-            size="large"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, rate: e.target.value })}
-            placeholder=""
-            className="w-full px-4 py-2.5 bg-white"
-          />
-        </div>
-
-        <div className="flex gap-6 pt-4 justify-between">
-          <button
-            onClick={onClose}
-            className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg font-medium transition-colors cursor-pointer font-primary"
-          >
-            Cancel
-          </button>
-
-          <Button
-            radius="sm"
-            color="primary"
-            className="w-full font-outfit"
-            size="md"
-            onPress={handleSubmit}
-            isDisabled={disableBtn}
-            isLoading={isPending}
-          >
-            {data ? "Update" : "Add"} Tax
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-};
 const CreateDocument = ({ onClose, data }) => {
   const [formData, setFormData] = useState({
     name: data?.name || "",
@@ -230,10 +83,11 @@ const CreateDocument = ({ onClose, data }) => {
     const { name, renewable } = formData;
 
     const json = {
-      documnet_nam: name,
+      document_name: name,
       is_yearly_renewable: renewable,
-      date_created: "2025-01-02",
-      created_b: "admin",
+      date_created: format(new Date(), "yyyy-MM-dd"),
+      created_by: "admin",
+      docId: data?.ID,
     };
     try {
       console.log(json);
@@ -344,52 +198,74 @@ const CreateDocument = ({ onClose, data }) => {
 };
 
 const DocumentManager = ({ handleAddRecord }) => {
-  const [documents] = useState([
-    {
-      id: 1,
-      name: "Certificate of Incorporation",
-      description: "Company registration document",
-      required: true,
-      renewable: false,
-    },
-    {
-      id: 2,
-      name: "Tax Clearance Certificate",
-      description: "Proof of tax compliance",
-      required: true,
-      renewable: true,
-    },
-    {
-      id: 3,
-      name: "Business Premises Permit",
-      description: "Permit for operating location",
-      required: false,
-      renewable: true,
-    },
-  ]);
+  const { data: get_documents } = useGetDocument();
+
+  const documents = useMemo(
+    () =>
+      get_documents?.map((doc) => ({
+        id: doc.ID,
+        name: doc.DOCUMNET_NAME,
+        description: "",
+        required: false,
+        renewable: doc.IS_YEARLY_RENEWABLE,
+        ...doc,
+      })) || [],
+    [get_documents]
+  );
+
+  const [modal, contextHolder] = AntModal.useModal();
+
+  const config = {
+    title: "Confirm!",
+    content: (
+      <>
+        <p className="fot-primary">Are you sure to delete this Tax?</p>
+      </>
+    ),
+  };
+
+  const { mutateAsync: mutateDeleteTax } = useDeleteDocument();
+
+  const confirmDelete = async (docId) => {
+    const json = {
+      docId,
+    };
+    try {
+      const res = await mutateDeleteTax(json);
+      successToast(res?.data?.message);
+    } catch (err) {
+      catchErrFunc(err);
+    }
+  };
+
+  const handleDelete = (tax) => {
+    modal.confirm({ ...config, onOk: () => confirmDelete(tax.id) });
+  };
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900">
+      {contextHolder}
       <div className="max-w-6xl mx-auto">
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
           {/* Header */}
           <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center flex-wra gap-4 justify-between">
               <div>
                 <h2 className="text-gray-900 dark:text-white text-lg font-semibold leading-tight tracking-[-0.015em]">
                   Document Management
                 </h2>
               </div>
-
-              <Button
-                color="primary"
-                radius="sm"
-                size="sm"
-                onClick={() => handleAddRecord("document")}
-              >
-                <IoMdAdd size={20} />
-                Add Document
-              </Button>
+              <div>
+                <Button
+                  color="primary"
+                  radius="sm"
+                  size="sm"
+                  onClick={() => handleAddRecord("document")}
+                >
+                  <IoMdAdd size={20} />
+                  Add Document
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -410,7 +286,7 @@ const DocumentManager = ({ handleAddRecord }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {documents.map((doc) => (
+                {documents?.map((doc) => (
                   <tr
                     key={doc.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-900/30 transition-colors"
@@ -426,17 +302,20 @@ const DocumentManager = ({ handleAddRecord }) => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-center text-gray-600 dark:text-white font-primary text-[14px]">
-                        No
+                        {doc?.renewable ? "Yes" : "No"}
                       </div>
                     </td>
                     <td className="">
                       <div className="flex items-center  justify-center">
                         <ActionIcons
                           variant={"EDIT"}
-                          action={() => handleAddRecord("document")}
+                          action={() => handleAddRecord("document", doc)}
                         />
 
-                        <ActionIcons variant={"DELETE"} />
+                        <ActionIcons
+                          variant={"DELETE"}
+                          action={() => handleDelete(doc)}
+                        />
                       </div>
                     </td>
                   </tr>

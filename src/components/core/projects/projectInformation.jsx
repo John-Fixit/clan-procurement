@@ -106,6 +106,9 @@ const JobOrderForm = ({ control }) => {
         <Controller
           name="project_title"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <>
               <DatePicker
@@ -132,6 +135,9 @@ const JobOrderForm = ({ control }) => {
         <Controller
           name="work_location"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <Input
               aria-label="work-location"
@@ -153,8 +159,11 @@ const JobOrderForm = ({ control }) => {
           Department
         </label>
         <Controller
-          name="department"
+          name="recipient_department"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
@@ -185,6 +194,9 @@ const JobOrderForm = ({ control }) => {
         <Controller
           name="completion_date"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <>
               <DatePicker
@@ -211,6 +223,9 @@ const JobOrderForm = ({ control }) => {
         <Controller
           name="file_reference"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <Input
               aria-label="file_reference"
@@ -234,6 +249,9 @@ const JobOrderForm = ({ control }) => {
         <Controller
           name="tender_reference"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <Input
               aria-label="tender_reference"
@@ -257,6 +275,9 @@ const JobOrderForm = ({ control }) => {
         <Controller
           name="vendor"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
@@ -288,6 +309,9 @@ const JobOrderForm = ({ control }) => {
         <Controller
           name="sum_amount"
           control={control}
+          rules={{
+            required: "This field is required",
+          }}
           render={({ field, fieldState: { error } }) => (
             <Input
               type="number"
@@ -326,7 +350,6 @@ const PurchaseOrderForm = ({ control }) => {
                   { label: "Soft skill", value: "soft skill" },
                   { label: "Other", value: "other" },
                 ]}
-                labelInValue
                 {...field}
                 size="large"
                 className="w-full"

@@ -1,6 +1,5 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Signin from "./pages/Signin";
-import ProtectedRoute from "./components/protected-route";
 import HomeLayout from "./layout/home-layout/HomeLayout";
 import { useEffect } from "react";
 import Dashboard from "./pages/Dashboard";
@@ -10,6 +9,10 @@ import Projects from "./pages/Projects";
 import Taxes from "./pages/Taxes";
 import Report from "./pages/Report";
 import Setting from "./pages/Setting";
+import DocumentSetting from "./pages/DocumentSetting";
+import Approval from "./pages/Approval";
+import RolePermissionSetting from "./pages/RolePermissionSetting";
+import ProtectedRoute from "./components/protected-route";
 
 function App() {
   const RedirectToHome = () => {
@@ -40,11 +43,15 @@ function App() {
           <Route path="okrs" element={<OKRDashboard />} />
           <Route path="vendor" element={<Vendor />} />
           <Route path="project" element={<Projects />} />
+          <Route path="approval" element={<Approval />} />
           <Route path="report" element={<Report />} />
-          <Route path="taxe" element={<Taxes />} />
           <Route path="setting" element={<Setting />} />
-          <Route path="setting/tax" element={<Setting />} />
-          <Route path="setting/document" element={<Setting />} />
+          <Route path="setting/tax" element={<Taxes />} />
+          <Route path="setting/document" element={<DocumentSetting />} />
+          <Route
+            path="setting/permission"
+            element={<RolePermissionSetting />}
+          />
         </Route>
         <Route path="*" element={<></>} />
       </Routes>

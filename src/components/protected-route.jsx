@@ -1,8 +1,7 @@
 // src/components/ProtectedRoute.jsx
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const navigate = useNavigate();
   // Check if user is authenticated
   let isAuthenticated = false;
 
@@ -19,7 +18,7 @@ const ProtectedRoute = ({ children }) => {
 
   // If not authenticated, redirect to login
   if (!isAuthenticated) {
-    return navigate("/login");
+    return <Navigate to="/login" />;
   }
 
   // If authenticated, render the protected content

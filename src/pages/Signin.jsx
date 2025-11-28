@@ -158,8 +158,8 @@ const Signin = () => {
               variant="solid"
               color="primary"
               size="lg"
-              radius="md"
-              loading={isPending}
+              radius="sm"
+              isLoading={isPending}
             >
               Login
             </Button>

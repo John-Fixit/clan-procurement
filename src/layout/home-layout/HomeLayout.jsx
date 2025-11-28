@@ -1,30 +1,18 @@
 // src/layout/home-layout/HomeLayout.jsx
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Sidebar from "../../components/shared/sidebar/Sidebar";
+import { Avatar, Button } from "@heroui/react";
+import { FaBars, FaBell } from "react-icons/fa";
+import useSidebarStore from "../../hooks/use-sidebar-store";
+import { preProfileLink } from "../../utils/pre-profile-link";
 
 const HomeLayout = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { removeCurrentUser } = useCurrentUser();
+  const { userData } = useCurrentUser();
 
-  const handleLogout = () => {
-    removeCurrentUser();
-    navigate("/login");
-  };
+  const profileData = userData?.data;
 
-  // Main navigation items
-  const navItems = [
-    { path: "/home", label: "Home", icon: "🏠" },
-    { path: "/okrs", label: "OKRs", icon: "🎯" },
-    { path: "/meetings", label: "Meetings", icon: "👥" },
-    { path: "/tasks", label: "Tasks", icon: "☑️" },
-    { path: "/reviews", label: "Reviews", icon: "📝" },
-    { path: "/surveys", label: "Surveys", icon: "📊" },
-    { path: "/feedback", label: "Feedback", icon: "💬" },
-    { path: "/recognitions", label: "Recognitions", icon: "🏆" },
-    { path: "/notes", label: "Notes", icon: "📋" },
-  ];
+  const { toggleSidebar } = useSidebarStore();
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -35,36 +23,41 @@ const HomeLayout = () => {
         {/* Top Navigation Bar */}
         <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h2 className="text-2xl font-semibold text-gray-800">
+            {/* <h2 className="text-2xl font-semibold text-gray-800">
               {navItems.find((item) => item.path === location.pathname)
                 ?.label || ""}
-            </h2>
+            </h2> */}
+            <div className="cursor-pointer lg:hidden" onClick={toggleSidebar}>
+              <FaBars size={23} />
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="px-4 py-2 bg-linear-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">
+            {/* <button className="px-4 py-2 bg-linear-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">
               Upgrade now
+            </button> */}
+            <Button isIconOnly size="sm" variant="light">
+              <FaBell size={20} />
+            </Button>
+
+            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <span>❓</span>
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <span className="text-xl">🔔</span>
+              <span>👤</span>
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <span className="text-xl">❓</span>
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <span className="text-xl">👤</span>
-            </button>
-            <button
-              onClick={handleLogout}
-              className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold hover:bg-orange-600 transition-colors"
-            >
-              SO
-            </button>
+
+            <Avatar
+              className="w-10 h-10 cursor-pointer"
+              src={preProfileLink(
+                `${profileData?.FIRST_NAME} ${profileData?.LAST_NAME}`
+              )}
+            />
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto relative">
           <Outlet />
         </main>
       </div>

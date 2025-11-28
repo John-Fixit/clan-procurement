@@ -258,15 +258,17 @@ const VendorSupportDocument = (props) => {
             </div>
           ))}
         </div>
-        <div className="border-t border-gray-200 mt-10 py-6 flex justify-between">
-          <Button
-            radius="sm"
-            color="primary"
-            variant="bordered"
-            onPress={handlePrev}
-          >
-            <IoChevronBackOutline /> Previous
-          </Button>
+        <div className="border-t border-gray-200 mt-10 py-6 flex justify-between gap-6">
+          <div>
+            <Button
+              radius="sm"
+              color="primary"
+              variant="bordered"
+              onPress={handlePrev}
+            >
+              <IoChevronBackOutline /> Previous
+            </Button>
+          </div>
           <Button radius="sm" color="primary" onPress={handleSubmit}>
             Submit
           </Button>

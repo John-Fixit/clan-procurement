@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const API = axios.create(
-  { baseURL: `https://lamp3.ncaa.gov.ng/` } //for store
+  // { baseURL: `https://lamp3.ncaa.gov.ng/` } //for store
+  { baseURL: `https://procurement-vh3z.onrender.com/` } //for store
 );
 
 API.interceptors.request.use((req) => {
