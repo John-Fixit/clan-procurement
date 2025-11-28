@@ -75,9 +75,9 @@ const Signin = () => {
                 width={40}
                 className="cursor-pointer"
               />
-              <span className="font-bold leading-3 text-lg text-[#2c3679]">
+              {/* <span className="font-bold leading-3 text-lg text-[#2c3679]">
                 EDAP
-              </span>
+              </span> */}
             </div>
             <div>
               <h4 className="text-gray-700 text-xl font-medium">Login</h4>
