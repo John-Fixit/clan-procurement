@@ -1,17 +1,7 @@
-import {
-  Button,
-  //   Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  Tooltip,
-} from "@heroui/react";
 import useDrawerStore from "../../../hooks/useDrawerStore";
-import JobOrderTemplate from "../templates/job-order/jobOrderTemplate";
-import { IoMdClose } from "react-icons/io";
+import JobOrderTemplate from "../templates/job-order/JobOrderTemplate";
 import LocalPurchaseOrder from "../templates/local-purchase-order/LocalPurchaseOrder";
 import CreateProject from "../projects/CreateProject";
-import ObjectiveForm from "../../objectives/ObjectiveForm";
 import CreateVendor from "../create-vendor/CreateVendor";
 import { Drawer } from "antd";
 import AddStaff from "../role_permission/AddStaff";
