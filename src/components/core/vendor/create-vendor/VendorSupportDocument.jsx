@@ -3,29 +3,57 @@ import { FaCheckCircle } from "react-icons/fa";
 import { IoAlertCircle, IoChevronBackOutline } from "react-icons/io5";
 import { TbUpload } from "react-icons/tb";
 import { TfiTrash } from "react-icons/tfi";
-import Button from "../../shared/ui/Button";
+import Button from "../../../shared/ui/Button";
+import { uploadFileData } from "../../../../utils/uploadFile";
+import useCurrentUser from "../../../../hooks/useCurrentUser";
+import { useState } from "react";
+import StarLoader from "../../loaders/StarLoader";
 
 const VendorSupportDocument = (props) => {
   const { handlePrev, setValue, watch, handleSubmit, isSubmitting } = props;
 
   const documents = watch("support_documents");
 
-  console.log(documents);
-
   const setDocuments = (val) => {
-    console.log(val);
     setValue("support_documents", val);
   };
 
-  const handleFileUpload = (docId, event) => {
+  const { userData } = useCurrentUser();
+
+  const handleUploadFile = async (file) => {
+    try {
+      const res = await uploadFileData(file, userData?.token);
+      return res;
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
+  const [uploadingDocFile, setUploadingDocFile] = useState({
+    state: false,
+    docId: null,
+  });
+
+  const handleFileUpload = async (docId, event) => {
     const file = event.target.files[0];
     if (file) {
-      const newDoc = documents.map((doc) =>
-        doc.id === docId
-          ? { ...doc, file, uploaded: true, status: "uploaded" }
-          : doc
-      );
-      setDocuments(newDoc);
+      setUploadingDocFile({ state: true, docId });
+      const uploadedFile = await handleUploadFile(file);
+      setUploadingDocFile({ state: false });
+      if (uploadedFile?.file_url) {
+        const newDoc = documents.map((doc) =>
+          doc.id === docId
+            ? {
+                ...doc,
+                file,
+                url: uploadedFile?.file_url,
+                uploaded: true,
+                status: "uploaded",
+              }
+            : doc
+        );
+        setDocuments(newDoc);
+      }
     }
   };
 
@@ -67,6 +95,8 @@ const VendorSupportDocument = (props) => {
   const completedCount = documents?.filter((d) => d?.uploaded)?.length;
   const totalCount = documents?.length;
   const progress = (completedCount / totalCount) * 100;
+
+  console.log(documents);
 
   return (
     <div className="min-h-screen bg-gray50">
@@ -167,25 +197,40 @@ const VendorSupportDocument = (props) => {
                 {/* Upload Area */}
                 {!doc.uploaded ? (
                   <div className="border-2 border-dashed border-gray-300 rounded-lg px-8 py-3 text-center hover:border-blue-400 transition-colors">
-                    <input
-                      type="file"
-                      id={`file-${doc.id}`}
-                      className="hidden"
-                      onChange={(e) => handleFileUpload(doc.id, e)}
-                      accept=".pdf,.jpg,.jpeg,.png"
-                    />
-                    <label
-                      htmlFor={`file-${doc.id}`}
-                      className="cursor-pointer flex flex-col items-center"
-                    >
-                      <TbUpload className="w-10 h-10 text-gray-400 mb-3" />
-                      <span className="text-sm font-medium text-gray-700 mb-1 font-outfit">
-                        Click to upload or drag and drop
-                      </span>
-                      <span className="text-xs text-gray-500 font-outfit">
-                        PDF, JPG, PNG (Max 10MB)
-                      </span>
-                    </label>
+                    {uploadingDocFile?.state &&
+                    uploadingDocFile?.docId === doc.id ? (
+                      <>
+                        <label className="cursor-pointer flex flex-col items-center">
+                          <StarLoader />
+                          <span className="text-sm font-medium text-gray-500 mb-1 font-outfit">
+                            File uploading
+                          </span>
+                        </label>
+                      </>
+                    ) : (
+                      <>
+                        <input
+                          type="file"
+                          id={`file-${doc.id}`}
+                          className="hidden"
+                          onChange={(e) => handleFileUpload(doc.id, e)}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                        />
+
+                        <label
+                          htmlFor={`file-${doc.id}`}
+                          className="cursor-pointer flex flex-col items-center"
+                        >
+                          <TbUpload className="w-10 h-10 text-gray-400 mb-3" />
+                          <span className="text-sm font-medium text-gray-700 mb-1 font-outfit">
+                            Click to upload or drag and drop
+                          </span>
+                          <span className="text-xs text-gray-500 font-outfit">
+                            PDF, JPG, PNG (Max 10MB)
+                          </span>
+                        </label>
+                      </>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -204,13 +249,17 @@ const VendorSupportDocument = (props) => {
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <FaCheckCircle className="w-5 h-5 text-green-600" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">
+                            <FaCheckCircle className="w-5 h-5 text-green-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 wrap-anywhere">
                               {doc.file?.name}
                             </p>
                             <p className="text-xs text-gray-600">
-                              {(doc.file?.size / 1024).toFixed(2)} KB
+                              {doc.file?.size &&
+                                (doc.file?.size / 1024).toFixed(2)}{" "}
+                              {doc.file?.size && "KB"}
                             </p>
                           </div>
                         </div>

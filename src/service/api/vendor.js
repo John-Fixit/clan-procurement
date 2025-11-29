@@ -6,7 +6,8 @@ export const useCreateVendor = (vendorId) => {
   return useMutation({
     mutationFn: async (payload) => {
       return await API.post(
-        vendorId ? `/vendor/create` : `/vendor/update/${vendorId}`,
+        // vendorId ? `/vendor/update/${vendorId}` :
+        `/vendor/create`,
         payload
       );
     },
@@ -41,7 +42,8 @@ export const useGetVendorDetail = () => {
 export const useGetVendorByMutation = () => {
   return useMutation({
     mutationFn: async (vendorId) => {
-      return await API.get(`vendor/get-by-id/${vendorId}`);
+      const res = await API.get(`vendor/get-by-id/${vendorId}`);
+      return res?.data?.data?.data;
     },
   });
 };

@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import ReusableTabDrawerLayout from "../../shared/reusable-tab-drawer-layout";
+import { useEffect, useMemo, useState } from "react";
+import ReusableTabDrawerLayout from "../../../shared/reusable-tab-drawer-layout";
 import { useForm } from "react-hook-form";
 import VendorSupportDocument from "./VendorSupportDocument";
 import VenderInformation from "./VendorInformation";
-import { useGetDocument } from "../../../service/api/setting";
-import { catchErrFunc } from "../../../utils/catchErrFunc";
-import { useCreateVendor } from "../../../service/api/vendor";
-import { successToast } from "../../../utils/toastPopUps";
-import { uploadFileData } from "../../../utils/uploadFile";
-import useCurrentUser from "../../../hooks/useCurrentUser";
-import useDrawerStore from "../../../hooks/useDrawerStore";
+import { useGetDocument } from "../../../../service/api/setting";
+import { catchErrFunc } from "../../../../utils/catchErrFunc";
+import { useCreateVendor } from "../../../../service/api/vendor";
+import { errorToast, successToast } from "../../../../utils/toastPopUps";
+import { uploadFileData } from "../../../../utils/uploadFile";
+import useCurrentUser from "../../../../hooks/useCurrentUser";
+import useDrawerStore from "../../../../hooks/useDrawerStore";
 
 const CreateVendor = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -21,16 +21,18 @@ const CreateVendor = () => {
 
   const { data: get_documents } = useGetDocument();
 
-  const support_documents = get_documents?.map((doc) => ({
-    id: doc?.ID,
-    name: doc?.DOCUMNET_NAME,
-    description: "",
-    requiresRenewal: doc?.IS_YEARLY_RENEWABLE,
-    uploaded: false,
-    file: null,
-    status: "pending",
-    ...doc,
-  }));
+  const support_documents = useMemo(() => {
+    return get_documents?.map((doc) => ({
+      id: doc?.ID,
+      name: doc?.DOCUMNET_NAME,
+      description: "",
+      requiresRenewal: doc?.IS_YEARLY_RENEWABLE,
+      uploaded: false,
+      file: null,
+      status: "pending",
+      ...doc,
+    }));
+  }, [get_documents]);
 
   const handleNext = () => {
     setSelectedTab(selectedTab + 1);
@@ -44,20 +46,25 @@ const CreateVendor = () => {
     defaultValues: {
       name: vendorDetail?.FULLNAME,
       email: vendorDetail?.EMAIL,
-      phone: parseFloat(vendorDetail?.PHONE),
+      phone: vendorDetail?.PHONE,
       address: vendorDetail?.ADDRESS,
       business: vendorDetail?.BUSINESS,
       support_documents: vendorDetail?.support_documents || support_documents,
     },
   });
 
-  const { getValues, reset } = hook_form_props;
+  const {
+    getValues,
+    reset,
+    trigger,
+    formState: { errors: hookErrors },
+  } = hook_form_props;
 
   useEffect(() => {
     reset({
-      support_documents,
+      support_documents: vendorDetail?.support_documents || support_documents,
     });
-  }, [reset]);
+  }, [reset, support_documents, vendorDetail?.support_documents]);
 
   const { mutateAsync: mutateCreateVendor, isPending: isSubmitting } =
     useCreateVendor(vendorDetail?.VENDOR_ID);
@@ -79,8 +86,7 @@ const CreateVendor = () => {
         // Return document with uploaded file URL
         return {
           ...doc,
-          url:
-            uploadResult?.url || uploadResult?.file_url || uploadResult?.path,
+          url: uploadResult?.file_url,
           uploaded: true,
           status: "uploaded",
         };
@@ -97,6 +103,17 @@ const CreateVendor = () => {
   };
 
   const handleSubmit = async () => {
+    const isValid = await trigger();
+    if (!isValid) {
+      const fieldErrors = Object.keys(hookErrors)?.map(
+        (fld) => `${fld?.replaceAll("_", " ")} is required`
+      );
+
+      const combinedMessage = fieldErrors?.join("\n");
+      errorToast(combinedMessage);
+      return;
+    }
+
     const values = getValues();
 
     try {
@@ -116,7 +133,7 @@ const CreateVendor = () => {
           document_id: doc?.id,
           start_date: doc?.startDate || "",
           end_date: doc?.endDate || "",
-          document_url: [doc?.url],
+          document_url: doc?.url,
         }));
 
       // Prepare the JSON payload

@@ -2,9 +2,10 @@ import useDrawerStore from "../../../hooks/useDrawerStore";
 import JobOrderTemplate from "../templates/job-order/JobOrderTemplate";
 import LocalPurchaseOrder from "../templates/local-purchase-order/LocalPurchaseOrder";
 import CreateProject from "../projects/CreateProject";
-import CreateVendor from "../create-vendor/CreateVendor";
 import { Drawer } from "antd";
 import AddStaff from "../role_permission/AddStaff";
+import VendorDetail from "../vendor/VendorDetail";
+import CreateVendor from "../vendor/create-vendor/CreateVendor";
 
 const GeneralDrawer = () => {
   const { isOpen, closeDrawer, data } = useDrawerStore();
@@ -25,6 +26,7 @@ const GeneralDrawer = () => {
         {viewName === "create-project" && <CreateProject />}
         {viewName === "create-vendor" && <CreateVendor />}
         {viewName === "add-staff-role-permission" && <AddStaff />}
+        {viewName === "vendor-detail" && <VendorDetail />}
       </Drawer>
     </>
   );

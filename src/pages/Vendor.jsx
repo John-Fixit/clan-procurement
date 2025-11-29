@@ -11,111 +11,78 @@ import ActionIcons from "../components/shared/ActionIcons";
 import { useGetVendor, useGetVendorByMutation } from "../service/api/vendor";
 import { Avatar } from "@heroui/react";
 import { preProfileLink } from "../utils/pre-profile-link";
-import { useState } from "react";
-
-const mockVendors = [
-  {
-    VENDOR_ID: 8,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-  {
-    VENDOR_ID: 7,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-  {
-    VENDOR_ID: 6,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-  {
-    VENDOR_ID: 5,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-  {
-    VENDOR_ID: 4,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-  {
-    VENDOR_ID: 3,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-  {
-    VENDOR_ID: 2,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-  {
-    VENDOR_ID: 1,
-    FULLNAME: "John Doe",
-    EMAIL: "john.doe@example.com",
-    PHONE: "555-1234",
-    ADDRESS: "123 Test Street, Lagos",
-    BUSINESS: null,
-  },
-];
+import { useMemo, useState } from "react";
+import { useGetDocument } from "../service/api/setting";
 
 export default function Vendor() {
   const { openDrawer } = useDrawerStore();
 
   const { data: get_vendors } = useGetVendor();
 
+  const vendorsList = useMemo(() => get_vendors || [], [get_vendors]);
+
   const [selectedVendor, setSelectedVendor] = useState(null);
 
   const { mutateAsync: mutateGetVendorDetail, isPending: isPendingDetail } =
     useGetVendorByMutation();
 
+  const { data: get_documents } = useGetDocument();
+
+  const getDocById = (docId) => {
+    return get_documents?.find((doc) => doc?.DOCUMENT_ID === docId);
+  };
+
+  function mapDocuments(requiredDocs, vendorDocs) {
+    return requiredDocs.map((doc) => {
+      const uploaded = vendorDocs.find((v) => v.DOCUMENT_ID === doc.ID);
+
+      return {
+        id: doc.ID,
+        name: doc.DOCUMNET_NAME,
+        description: "",
+        requiresRenewal: doc.IS_YEARLY_RENEWABLE,
+        uploaded: !!uploaded,
+        file: uploaded
+          ? {
+              name: uploaded.DOCUMENT_URL,
+            }
+          : null,
+        status: uploaded ? "uploaded" : "pending",
+        startDate: uploaded?.START_DATE,
+        endDate: uploaded?.END_DATE,
+      };
+    });
+  }
+
   const handleGetVendorDetail = async (vendor, action) => {
     setSelectedVendor({ id: vendor?.VENDOR_ID, action });
 
-    // const vendorDetail = await mutateGetVendorDetail(vendor?.VENDOR_ID);
+    const vendorDetail = await mutateGetVendorDetail(vendor?.VENDOR_ID);
 
-    const ddt = {
-      VENDOR_ID: 14,
-      FULLNAME: "cream vendor",
-      EMAIL: "john.doe@example.com",
-      PHONE: "555-1234",
-      ADDRESS: "123 Test Street, Lagos",
-      BUSINESS: "vendor business",
-      DOCUMENT_ID: 8,
-      START_DATE: "2024-01-01",
-      END_DATE: "2024-12-31",
-      DOCUMENT_URL: "https://example.com/documents/d45678.pdf",
-    };
+    const support_documents = mapDocuments(
+      get_documents,
+      vendorDetail?.VENDOR_DOCUMENTS
+    );
+
     if (action === "EDIT") {
       openDrawer({
         viewName: "create-vendor",
-        vendorDetail: ddt,
+        vendorDetail: {
+          ...vendorDetail,
+          support_documents,
+        },
+        drawerSize: "950",
       });
     } else {
       openDrawer({
         viewName: "vendor-detail",
-        vendorDetail: ddt,
+        vendorDetail: {
+          ...vendorDetail,
+          VENDOR_DOCUMENTS: vendorDetail?.VENDOR_DOCUMENTS?.map((doc) => ({
+            ...doc,
+            DOCUMENT_NAME: getDocById(doc?.DOCUMENT_ID)?.DOCUMNET_NAME,
+          })),
+        },
       });
     }
   };
@@ -255,7 +222,7 @@ export default function Vendor() {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockVendors?.map((vendor, index) => (
+                  {vendorsList?.map((vendor, index) => (
                     <tr
                       key={index + "___vendor" + vendor?.ID}
                       className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
@@ -266,6 +233,9 @@ export default function Vendor() {
                             className="w-10 h-10 cursor-pointer"
                             src={preProfileLink(vendor?.FULLNAME)}
                           />
+                          <p className="text-sm font-outfit text-gray-500 whitespace-nowrap">
+                            {vendor?.FULLNAME}
+                          </p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
