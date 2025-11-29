@@ -13,7 +13,7 @@ export default function Dashboard() {
   const profileData = userData?.data;
   console.log(profileData);
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-8 space-y-6">
       {/* <NewObjectiveModal /> */}
       {/* Header */}
       <div className="mb-8">
@@ -37,9 +37,9 @@ export default function Dashboard() {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Spans 2 columns */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 h-full">
           {/* Top Banner Section */}
-          <div className="bg-white rounded-lg shadow-sm p-8 h-48">
+          <div className="bg-white rounded-lg border border-gray-200 p-8 h-48">
             <div className="space-y-3">
               <div className="h-3 bg-gray-200 rounded w-3/4"></div>
               <div className="h-3 bg-gray-200 rounded w-full"></div>
@@ -52,7 +52,7 @@ export default function Dashboard() {
           {/* Objectives and Tasks Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* My Active Objectives */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <LuTrendingUp className="w-5 h-5 text-pink-500" />
@@ -119,37 +119,37 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-                    <span className="text-gray-600">No status</span>
+                    <span className="text-gray-600 text-xs">No status</span>
                   </div>
-                  <span className="text-gray-500">0</span>
+                  <span className="text-gray-500 text-xs">0</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-gray-600">On track</span>
+                    <span className="text-gray-600 text-xs">On track</span>
                   </div>
-                  <span className="text-gray-500">1</span>
+                  <span className="text-gray-500 text-xs">1</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <span className="text-gray-600">At risk</span>
+                    <span className="text-gray-600 text-xs">At risk</span>
                   </div>
-                  <span className="text-gray-500">0</span>
+                  <span className="text-gray-500 text-xs">0</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                    <span className="text-gray-600">Off track</span>
+                    <span className="text-gray-600 text-xs">Off track</span>
                   </div>
-                  <span className="text-gray-500">0</span>
+                  <span className="text-gray-500 text-xs">0</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-gray-600"></div>
-                    <span className="text-gray-600">Closed</span>
+                    <span className="text-gray-600 text-xs">Closed</span>
                   </div>
-                  <span className="text-gray-500">0</span>
+                  <span className="text-gray-500 text-xs">0</span>
                 </div>
               </div>
 
@@ -159,7 +159,7 @@ export default function Dashboard() {
             </div>
 
             {/* My Tasks */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <FiCheckSquare className="w-5 h-5 text-pink-500" />
@@ -208,149 +208,11 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-
-          {/* Bottom Row - Reviews, Surveys, Feedback */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* My Latest Review */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <LuClipboardList className="w-5 h-5 text-pink-500" />
-                <h2 className="text-lg font-semibold text-gray-800">
-                  My latest review
-                </h2>
-              </div>
-
-              <div className="flex flex-col items-center justify-center py-8">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <LuClipboardList className="w-8 h-8 text-gray-300" />
-                </div>
-                <p className="text-gray-500 text-sm text-center mb-6">
-                  No recent reviews received.
-                </p>
-                <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  See how it works
-                </button>
-              </div>
-
-              <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-                View all →
-              </button>
-            </div>
-
-            {/* My Latest Survey */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <LuTrendingUp className="w-5 h-5 text-pink-500" />
-                <h2 className="text-lg font-semibold text-gray-800">
-                  My latest survey
-                </h2>
-              </div>
-
-              <div className="flex flex-col items-center justify-center py-8">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <LuTrendingUp className="w-8 h-8 text-gray-300" />
-                </div>
-                <p className="text-gray-500 text-sm text-center mb-6">
-                  No recent surveys assigned to you.
-                </p>
-                <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  See how it works
-                </button>
-              </div>
-
-              <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-                View all →
-              </button>
-            </div>
-
-            {/* My Latest Feedback */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <LuMessageSquare className="w-5 h-5 text-pink-500" />
-                <h2 className="text-lg font-semibold text-gray-800">
-                  My latest feedback
-                </h2>
-              </div>
-
-              <div className="flex flex-col items-center justify-center py-8">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <LuMessageSquare className="w-8 h-8 text-gray-300" />
-                </div>
-                <p className="text-gray-500 text-sm text-center mb-6">
-                  No recent feedback received.
-                </p>
-                <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  See how it works
-                </button>
-              </div>
-
-              <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-                View all →
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Right Column - Recognition */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="lg:col-span-1 h-full">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center gap-2 mb-6">
               <LuAward className="w-5 h-5 text-pink-500" />
               <h2 className="text-lg font-semibold text-gray-800">
@@ -393,6 +255,143 @@ export default function Dashboard() {
               View all →
             </button>
           </div>
+        </div>
+      </div>
+      {/* Bottom Row - Reviews, Surveys, Feedback */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* My Latest Review */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <LuClipboardList className="w-5 h-5 text-pink-500" />
+            <h2 className="text-lg font-semibold text-gray-800">
+              My latest review
+            </h2>
+          </div>
+
+          <div className="flex flex-col items-center justify-center py-8">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <LuClipboardList className="w-8 h-8 text-gray-300" />
+            </div>
+            <p className="text-gray-500 text-sm text-center mb-6">
+              No recent reviews received.
+            </p>
+            <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 flex items-center gap-2">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              See how it works
+            </button>
+          </div>
+
+          <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
+            View all →
+          </button>
+        </div>
+
+        {/* My Latest Survey */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <LuTrendingUp className="w-5 h-5 text-pink-500" />
+            <h2 className="text-lg font-semibold text-gray-800">
+              My latest survey
+            </h2>
+          </div>
+
+          <div className="flex flex-col items-center justify-center py-8">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <LuTrendingUp className="w-8 h-8 text-gray-300" />
+            </div>
+            <p className="text-gray-500 text-sm text-center mb-6">
+              No recent surveys assigned to you.
+            </p>
+            <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 flex items-center gap-2">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              See how it works
+            </button>
+          </div>
+
+          <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
+            View all →
+          </button>
+        </div>
+
+        {/* My Latest Feedback */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <LuMessageSquare className="w-5 h-5 text-pink-500" />
+            <h2 className="text-lg font-semibold text-gray-800">
+              My latest feedback
+            </h2>
+          </div>
+
+          <div className="flex flex-col items-center justify-center py-8">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <LuMessageSquare className="w-8 h-8 text-gray-300" />
+            </div>
+            <p className="text-gray-500 text-sm text-center mb-6">
+              No recent feedback received.
+            </p>
+            <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 flex items-center gap-2">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              See how it works
+            </button>
+          </div>
+
+          <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
+            View all →
+          </button>
         </div>
       </div>
     </div>

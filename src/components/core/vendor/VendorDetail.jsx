@@ -124,14 +124,18 @@ export default function VendorDetail() {
                         </h3>
 
                         <div className="flex items-center gap-4 text-sm">
-                          <div className="flex items-center gap-1 text-gray-600">
-                            <BsCalendar3 className="w-4 h-4" />
-                            <span>Start: {formatDate(doc.START_DATE)}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-gray-600">
-                            <BsCalendar3 className="w-4 h-4" />
-                            <span>End: {formatDate(doc.END_DATE)}</span>
-                          </div>
+                          {doc?.START_DATE && (
+                            <div className="flex items-center gap-1 text-gray-600">
+                              <BsCalendar3 className="w-4 h-4" />
+                              <span>Start: {formatDate(doc.START_DATE)}</span>
+                            </div>
+                          )}
+                          {doc.END_DATE && (
+                            <div className="flex items-center gap-1 text-gray-600">
+                              <BsCalendar3 className="w-4 h-4" />
+                              <span>End: {formatDate(doc.END_DATE)}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

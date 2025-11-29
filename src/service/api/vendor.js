@@ -5,11 +5,10 @@ export const useCreateVendor = (vendorId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload) => {
-      return await API.post(
-        // vendorId ? `/vendor/update/${vendorId}` :
-        `/vendor/create`,
-        payload
-      );
+      if (vendorId) {
+        return await API.put(`/vendor/update/${vendorId}`, payload);
+      }
+      return await API.post(`/vendor/create`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

@@ -28,10 +28,6 @@ export default function Vendor() {
 
   const { data: get_documents } = useGetDocument();
 
-  const getDocById = (docId) => {
-    return get_documents?.find((doc) => doc?.DOCUMENT_ID === docId);
-  };
-
   function mapDocuments(requiredDocs, vendorDocs) {
     return requiredDocs.map((doc) => {
       const uploaded = vendorDocs.find((v) => v.DOCUMENT_ID === doc.ID);
@@ -53,6 +49,23 @@ export default function Vendor() {
       };
     });
   }
+
+  const statistics = useMemo(() => {
+    const noDoc = vendorsList?.filter(
+      (vendor) => vendor?.STATUS === "no_document"
+    );
+    const notCompleteDoc = vendorsList?.filter(
+      (vendor) => vendor?.STATUS === "not_completed"
+    );
+    const completedDoc = vendorsList?.filter(
+      (vendor) => vendor?.STATUS === "completed"
+    );
+    return {
+      no_document: noDoc?.length,
+      not_completed: notCompleteDoc?.length,
+      completed: completedDoc?.length,
+    };
+  }, [vendorsList]);
 
   const handleGetVendorDetail = async (vendor, action) => {
     setSelectedVendor({ id: vendor?.VENDOR_ID, action });
@@ -80,7 +93,6 @@ export default function Vendor() {
           ...vendorDetail,
           VENDOR_DOCUMENTS: vendorDetail?.VENDOR_DOCUMENTS?.map((doc) => ({
             ...doc,
-            DOCUMENT_NAME: getDocById(doc?.DOCUMENT_ID)?.DOCUMNET_NAME,
           })),
         },
       });
@@ -125,17 +137,23 @@ export default function Vendor() {
             <div className="flex flex-wrap items-center gap-2">
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-red-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">0 No document</span>
+                <span className="hidden sm:inline">
+                  {statistics?.no_document} No document
+                </span>
                 <span className="sm:hidden">0 Off</span>
               </button>
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">0 Incomplete document</span>
+                <span className="hidden sm:inline">
+                  {statistics?.not_completed} Incomplete document
+                </span>
                 <span className="sm:hidden">0 Risk</span>
               </button>
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">1 Complete document</span>
+                <span className="hidden sm:inline">
+                  {statistics?.completed} Complete document
+                </span>
                 <span className="sm:hidden">1 On</span>
               </button>
             </div>

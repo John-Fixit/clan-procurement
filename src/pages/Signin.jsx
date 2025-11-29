@@ -1,18 +1,15 @@
-/* eslint-disable no-unused-vars */
-import { useState } from "react";
-import logo from "../assets/images/ncaa_logo.png";
-import { FaEyeSlash } from "react-icons/fa";
-import { FaEye } from "react-icons/fa";
+"use client";
+import { Input } from "@heroui/react";
 import { useForm } from "react-hook-form";
+import { FaFileAlt, FaLock } from "react-icons/fa";
+import { HiMiniDocumentCheck } from "react-icons/hi2";
+import { useLogin } from "../service/api/login";
 import { useNavigate } from "react-router-dom";
 import { errorToast } from "../utils/toastPopUps";
-import { useLogin } from "../service/api/login";
 import useCurrentUser from "../hooks/useCurrentUser";
 import Button from "../components/shared/ui/Button";
-const Signin = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loading, setloading] = useState(false);
 
+const Signin = () => {
   const { mutate, isPending } = useLogin();
 
   const { setCurrentUser } = useCurrentUser();
@@ -23,9 +20,9 @@ const Signin = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ defaultValues: { remember: false } });
 
-  const onSubmit = async (values) => {
+  const submit = async (values) => {
     const payload = {
       username: values?.username,
       password: values?.password,
@@ -45,128 +42,133 @@ const Signin = () => {
     });
   };
 
-  //password visible function
-  const handlePasswordVisibleChange = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
   return (
-    <>
-      <main
-        className={`relative w-full bg-gray-300 flex flex-col space-y-5 items-center justify-center h-screen px-3`}
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url(${logo})`,
-            backgroundPosition: "center",
-            backgroundSize: "100%",
-            backgroundRepeat: "repeat",
-            filter: "blur(10px)", // Blurs the background image
-          }}
-        ></div>
-
-        <section className="absolute form_section w-[90%] lg:w-[45vw] xl:w-[30vw] md:w-[55vw] rounded-md bg-white shadow-lg md:p-10 p-5">
-          <div className="form_header flex flex-col items-center gap-y-4 text-center pb-3">
-            <div className="flex items-center gap-x-1">
-              <img
-                src={logo}
-                alt="communeety logo"
-                width={40}
-                className="cursor-pointer"
-              />
-              {/* <span className="font-bold leading-3 text-lg text-[#2c3679]">
-                EDAP
-              </span> */}
-            </div>
-            <div>
-              <h4 className="text-gray-700 text-xl font-medium">Login</h4>
-              <p className="text-gray-400 font-medium text-xs mb-6">
-                Access to our dashboard
-              </p>
+    <div className="flex flex-col w-full min-h-screen md:grid md:h-screen md:min-h-0 md:grid-cols-12 md:overflow-hidden">
+      <div className="md:col-span-7">
+        <div className="pattern-4 flex h-full flex-col justify-between overflow-hidden rounded-r-md md:rounded-r-md bg-[#161f42] px-8 py-12 text-white md:px-16 md:py-20 rounded-tr-2xl rounded-br-2xl">
+          <div className="space-y-7">
+            <p className="font-extrabold text-white text-xl md:text-[2.7rem]">
+              INL-Procurement 1.0
+            </p>
+            <p className="text-xl leading-[1.2]! text-slate-50 md:text-[2.7rem] font-extrabold">
+              INTEGRATED PROCUREMENT SYSTEM
+            </p>
+            <p className="text-base tracking-wide">
+              A robust system designed to streamline case management, enhance
+              legal workflows, and ensure the security, confidentiality, and
+              availability of legal data.
+            </p>
+          </div>
+          <div className="border-1 border-slate-600 rounded-small flex justify-evenly p-6">
+            {[
+              { name: "Efficiency", icon: FaFileAlt },
+              { name: "Confidentiality", icon: FaLock },
+              { name: "Case Integrity", icon: HiMiniDocumentCheck },
+              { name: "Availability", icon: FaLock },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center flex-col gap-y-2 justify-center"
+              >
+                <item.icon />
+                <p>{item?.name}</p>
+              </div>
+            ))}
+          </div>
+          <div>
+            <p className="font-medium text-[0.9rem] tracking-wide">
+              Aviation House P.M.B. 21029 Ikeja Murtala Mohammed Airport Ikeja
+              Lagos
+            </p>
+            <p className="font-medium text-[0.9rem] tracking-wide">
+              +234-1-472-1521, +234-1-279-0421
+            </p>
+            <p className="font-medium text-[0.9rem] tracking-wide">
+              cpd.gov.ng
+            </p>
+            <p className="font-medium text-[0.9rem] tracking-wide">
+              www.ncaa.gov.ng
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col flex-1 overflow-y-auto text-xl md:col-span-5">
+        <div className="container my-auto">
+          <div className="container py-20">
+            <div className="w-full max-w-md mx-auto rounded-xl">
+              <div className="mb-10">
+                <h1 className="text-4xl font-semibold">Login</h1>
+                <p className="mt-3 text-xl">
+                  Enter your credentials below to sign in to your account
+                </p>
+              </div>
+              <form onSubmit={handleSubmit(submit)}>
+                <div className="space-y-4">
+                  <Input
+                    label="Email"
+                    variant="bordered"
+                    autoComplete="true"
+                    {...register("username", {
+                      required: "username address is required",
+                      // pattern: {
+                      //   value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$|^[a-zA-Z0-9_]+$/,
+                      //   message: 'email address is invalid',
+                      // },
+                    })}
+                    errorMessage={errors?.username?.message}
+                    classNames={{
+                      inputWrapper: "px-4",
+                    }}
+                    isDisabled={isPending}
+                  />
+                  <Input
+                    label="Password"
+                    variant="bordered"
+                    type="password"
+                    autoComplete="true"
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
+                    errorMessage={errors?.password?.message}
+                    classNames={{
+                      inputWrapper: "px-4",
+                    }}
+                    isDisabled={isPending}
+                  />
+                </div>
+                <div className="flex items-center justify-between mt-6">
+                  {/* <Controller
+                    name="remember"
+                    control={control}
+                    disabled={isPending}
+                    render={({ field }) => (
+                      <Checkbox
+                        isDisabled={field.disabled}
+                        checked={field.value}
+                        onChange={field.onChange}
+                        className="text-[0.95rem]"
+                      >
+                        Remember me
+                      </Checkbox>
+                    )}
+                  ></Controller> */}
+                </div>
+                <Button
+                  // color="primary"
+                  type="submit"
+                  radius="sm"
+                  size="lg"
+                  className="mt-10 text-base w-full bg-[#161f42] text-white"
+                  isLoading={isPending}
+                >
+                  Login
+                </Button>
+              </form>
             </div>
           </div>
-          <form
-            className="flex flex-col space-y-5"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className="email_address flex flex-col space-y-1">
-              <label
-                htmlFor="email"
-                className="font-medium text-gray-600 text-sm"
-              >
-                Email Address
-              </label>
-              <input
-                type="text"
-                id="email"
-                name="email"
-                {...register("username", { required: true })}
-                placeholder="Email address or ID"
-                className="mt-1 w-full border border-gray-300 bg-white py-3 lg:py-[0.6rem] px-3 focus:outline-none text-gray-800 rounded-lg text-[13px]"
-              />
-              {errors.email && (
-                <span className="text-red-500 text-xs">
-                  This field is required
-                </span>
-              )}
-            </div>
-            <div className="password flex flex-col space-y-1 ">
-              <div className="password_label flex justify-between">
-                <label
-                  htmlFor="Password"
-                  className="font-medium text-gray-600  text-sm"
-                >
-                  Password
-                </label>
-                <label
-                  htmlFor="Forgot_password"
-                  className="font-medium text-[#8e8e8e] text-xs cursor-pointer"
-                >
-                  Forgot Password?
-                </label>
-              </div>
-              <div className="relative">
-                <input
-                  type={passwordVisible ? "text" : "password"}
-                  id="Password"
-                  name="password"
-                  {...register("password", { required: true })}
-                  placeholder="password"
-                  className="mt-1 w-full border border-gray-300 bg-white py-3 lg:py-[0.6rem] px-3 focus:outline-none text-gray-800 rounded-lg text-[13px]"
-                />
-                <span
-                  className="absolute inset-y-0 end-0 grid w-10 place-content-center text-gray-600  cursor-pointer"
-                  onClick={handlePasswordVisibleChange}
-                >
-                  {passwordVisible ? (
-                    <FaEye size={"18px"} />
-                  ) : (
-                    <FaEyeSlash size={"18px"} />
-                  )}
-                </span>
-              </div>
-              {errors.password && (
-                <span className="text-red-500 text-xs">
-                  This field is required
-                </span>
-              )}
-            </div>
-
-            <Button
-              type="submit"
-              variant="solid"
-              color="primary"
-              size="lg"
-              radius="sm"
-              isLoading={isPending}
-            >
-              Login
-            </Button>
-          </form>
-        </section>
-      </main>
-    </>
+        </div>
+      </div>
+    </div>
   );
 };
 
