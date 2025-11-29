@@ -43,13 +43,13 @@ const VenderInformation = (props) => {
               control={control}
               name="business"
               rules={{
-                required: "Business is required",
+                required: "Vendor Business name is required",
               }}
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Input
                     radius="sm"
-                    label="Vendor's Business"
+                    label="Vendor's Business Name"
                     {...field}
                     errorMessage={error?.message}
                     isInvalid={!!error?.message}
@@ -64,9 +64,6 @@ const VenderInformation = (props) => {
             <Controller
               control={control}
               name="email"
-              rules={{
-                required: "Email is required",
-              }}
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Input
@@ -106,34 +103,6 @@ const VenderInformation = (props) => {
               )}
             />
 
-            <Controller
-              control={control}
-              name="tax"
-              rules={{
-                required: "tax is required",
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <>
-                  <Select
-                    options={[
-                      { label: "Technical", value: "techinal" },
-                      { label: "Soft skill", value: "soft skill" },
-                      { label: "Other", value: "other" },
-                    ]}
-                    radius="sm"
-                    {...field}
-                    className="w-full"
-                    label="Tax"
-                    errorMessage={error?.message}
-                    isInvalid={!!error?.message}
-                    variant="bordered"
-                    classNames={{
-                      trigger: "shadow-none border",
-                    }}
-                  />
-                </>
-              )}
-            />
             <Controller
               control={control}
               name="address"

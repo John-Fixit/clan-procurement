@@ -1,66 +1,143 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReusableTabDrawerLayout from "../../shared/reusable-tab-drawer-layout";
 import { useForm } from "react-hook-form";
 import VendorSupportDocument from "./VendorSupportDocument";
 import VenderInformation from "./VendorInformation";
-// import useDrawerStore from "../../../hooks/useDrawerStore";
-
-const support_documents = [
-  {
-    id: 1,
-    name: "CAC Certificate",
-    description: "Certificate of Incorporation",
-    requiresRenewal: true,
-    uploaded: false,
-    file: null,
-    startDate: "",
-    endDate: "",
-    status: "pending",
-  },
-  {
-    id: 2,
-    name: "Tax Clearance Certificate",
-    description: "Valid tax clearance from relevant authority",
-    requiresRenewal: true,
-    uploaded: false,
-    file: null,
-    startDate: "",
-    endDate: "",
-    status: "pending",
-  },
-  {
-    id: 3,
-    name: "Business License",
-    description: "Valid business operating license",
-    requiresRenewal: false,
-    uploaded: false,
-    file: null,
-    status: "pending",
-  },
-];
+import { useGetDocument } from "../../../service/api/setting";
+import { catchErrFunc } from "../../../utils/catchErrFunc";
+import { useCreateVendor } from "../../../service/api/vendor";
+import { successToast } from "../../../utils/toastPopUps";
+import { uploadFileData } from "../../../utils/uploadFile";
+import useCurrentUser from "../../../hooks/useCurrentUser";
+import useDrawerStore from "../../../hooks/useDrawerStore";
 
 const CreateVendor = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-  //   const { updateDrawerData } = useDrawerStore();
+  const [isUploading, setIsUploading] = useState(false);
+
+  const { closeDrawer, data } = useDrawerStore();
+
+  const vendorDetail = data?.vendorDetail;
+
+  const { data: get_documents } = useGetDocument();
+
+  const support_documents = get_documents?.map((doc) => ({
+    id: doc?.ID,
+    name: doc?.DOCUMNET_NAME,
+    description: "",
+    requiresRenewal: doc?.IS_YEARLY_RENEWABLE,
+    uploaded: false,
+    file: null,
+    status: "pending",
+    ...doc,
+  }));
 
   const handleNext = () => {
     setSelectedTab(selectedTab + 1);
   };
+
   const handlePrev = () => {
     setSelectedTab(selectedTab - 1);
   };
 
   const hook_form_props = useForm({
     defaultValues: {
-      support_documents,
+      name: vendorDetail?.FULLNAME,
+      email: vendorDetail?.EMAIL,
+      phone: parseFloat(vendorDetail?.PHONE),
+      address: vendorDetail?.ADDRESS,
+      business: vendorDetail?.BUSINESS,
+      support_documents: vendorDetail?.support_documents || support_documents,
     },
   });
 
-  const { getValues } = hook_form_props;
+  const { getValues, reset } = hook_form_props;
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    reset({
+      support_documents,
+    });
+  }, [reset]);
+
+  const { mutateAsync: mutateCreateVendor, isPending: isSubmitting } =
+    useCreateVendor(vendorDetail?.VENDOR_ID);
+
+  const { userData } = useCurrentUser();
+
+  // Function to upload all files that haven't been uploaded yet
+  const uploadPendingFiles = async (documents) => {
+    const uploadPromises = documents.map(async (doc) => {
+      // Skip if already has URL (already uploaded) or no file selected
+      if (doc.url || doc.webkitRelativePath || !doc.file) {
+        return doc;
+      }
+
+      try {
+        // Upload the file
+        const uploadResult = await uploadFileData(doc.file, userData?.token);
+
+        // Return document with uploaded file URL
+        return {
+          ...doc,
+          url:
+            uploadResult?.url || uploadResult?.file_url || uploadResult?.path,
+          uploaded: true,
+          status: "uploaded",
+        };
+        // eslint-disable-next-line no-unused-vars
+      } catch (error) {
+        return {
+          ...doc,
+          status: "failed",
+        };
+      }
+    });
+
+    return await Promise.all(uploadPromises);
+  };
+
+  const handleSubmit = async () => {
     const values = getValues();
-    console.log(values);
+
+    try {
+      setIsUploading(true);
+
+      // Upload all pending files first
+      const uploadedDocuments = await uploadPendingFiles(
+        values.support_documents || []
+      );
+
+      // console.log("Documents after upload:", uploadedDocuments);
+
+      // Map the uploaded documents to the attachments format
+      const attachments = uploadedDocuments
+        .filter((doc) => doc.uploaded && doc.url) // Only include successfully uploaded documents
+        .map((doc) => ({
+          document_id: doc?.id,
+          start_date: doc?.startDate || "",
+          end_date: doc?.endDate || "",
+          document_url: [doc?.url],
+        }));
+
+      // Prepare the JSON payload
+      const json = {
+        vendor_name: values?.name,
+        phone: values?.phone,
+        email: values?.email,
+        address: values?.address,
+        business: values?.business,
+        vendor_document: attachments,
+      };
+
+      // Submit to backend
+      const res = await mutateCreateVendor(json);
+      successToast(res?.data?.message);
+      closeDrawer();
+    } catch (err) {
+      catchErrFunc(err);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const sideTabs = [
@@ -77,10 +154,12 @@ const CreateVendor = () => {
           {...hook_form_props}
           handlePrev={handlePrev}
           handleSubmit={handleSubmit}
+          isSubmitting={isSubmitting || isUploading}
         />
       ),
     },
   ];
+
   return (
     <>
       <ReusableTabDrawerLayout

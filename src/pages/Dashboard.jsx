@@ -6,15 +6,20 @@ import {
   LuTrendingUp,
 } from "react-icons/lu";
 import { FiCheckSquare } from "react-icons/fi";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 export default function Dashboard() {
+  const { userData } = useCurrentUser();
+  const profileData = userData?.data;
+  console.log(profileData);
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       {/* <NewObjectiveModal /> */}
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Hello, Soji Okunuga 👋
+        <h1 className="text-3xl font-bold text-gray-800 mb-4 capitalize">
+          Hello, {profileData?.FIRST_NAME?.toLowerCase()}{" "}
+          {profileData?.LAST_NAME?.toLowerCase()} 👋
         </h1>
         <div className="flex gap-4 border-b border-gray-200">
           <button className="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-medium">

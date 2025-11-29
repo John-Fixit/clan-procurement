@@ -3,17 +3,122 @@ import {
   LuPlus,
   LuSettings,
   LuChevronDown,
-  LuList,
-  LuLayoutGrid,
-  LuShare2,
   LuUsers,
 } from "react-icons/lu";
-import { FiMoreHorizontal } from "react-icons/fi";
 import useDrawerStore from "../hooks/useDrawerStore";
 import Button from "../components/shared/ui/Button";
+import ActionIcons from "../components/shared/ActionIcons";
+import { useGetVendor, useGetVendorByMutation } from "../service/api/vendor";
+import { Avatar } from "@heroui/react";
+import { preProfileLink } from "../utils/pre-profile-link";
+import { useState } from "react";
+
+const mockVendors = [
+  {
+    VENDOR_ID: 8,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+  {
+    VENDOR_ID: 7,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+  {
+    VENDOR_ID: 6,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+  {
+    VENDOR_ID: 5,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+  {
+    VENDOR_ID: 4,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+  {
+    VENDOR_ID: 3,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+  {
+    VENDOR_ID: 2,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+  {
+    VENDOR_ID: 1,
+    FULLNAME: "John Doe",
+    EMAIL: "john.doe@example.com",
+    PHONE: "555-1234",
+    ADDRESS: "123 Test Street, Lagos",
+    BUSINESS: null,
+  },
+];
 
 export default function Vendor() {
   const { openDrawer } = useDrawerStore();
+
+  const { data: get_vendors } = useGetVendor();
+
+  const [selectedVendor, setSelectedVendor] = useState(null);
+
+  const { mutateAsync: mutateGetVendorDetail, isPending: isPendingDetail } =
+    useGetVendorByMutation();
+
+  const handleGetVendorDetail = async (vendor, action) => {
+    setSelectedVendor({ id: vendor?.VENDOR_ID, action });
+
+    // const vendorDetail = await mutateGetVendorDetail(vendor?.VENDOR_ID);
+
+    const ddt = {
+      VENDOR_ID: 14,
+      FULLNAME: "cream vendor",
+      EMAIL: "john.doe@example.com",
+      PHONE: "555-1234",
+      ADDRESS: "123 Test Street, Lagos",
+      BUSINESS: "vendor business",
+      DOCUMENT_ID: 8,
+      START_DATE: "2024-01-01",
+      END_DATE: "2024-12-31",
+      DOCUMENT_URL: "https://example.com/documents/d45678.pdf",
+    };
+    if (action === "EDIT") {
+      openDrawer({
+        viewName: "create-vendor",
+        vendorDetail: ddt,
+      });
+    } else {
+      openDrawer({
+        viewName: "vendor-detail",
+        vendorDetail: ddt,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,109 +152,36 @@ export default function Vendor() {
 
       {/* Main Content */}
       <div className="mx-auto px-9 py-6">
-        {/* Filters and Search Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <button className="flex items-center px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-              <span className="truncate max-w-[120px] sm:max-w-none">
-                Active obje...
-              </span>
-              <LuChevronDown className="ml-2 w-4 h-4 shrink-0" />
-            </button>
-            <button className="flex items-center px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-              <svg
-                className="w-4 h-4 mr-2 shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                />
-              </svg>
-              <span className="hidden xs:inline">Show filters</span>
-              <span className="xs:hidden">Filters</span>
-            </button>
-          </div>
-          <div className="relative w-full sm:w-auto">
-            <LuSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by owner or title"
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full sm:w-64 md:w-80"
-            />
-          </div>
-        </div>
-
         {/* Progress Overview */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-wrap items-center gap-2">
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
-                <span className="w-2 h-2 bg-gray-400 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">0 No status</span>
-                <span className="sm:hidden">0 None</span>
-              </button>
-              <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-red-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">0 Off track</span>
+                <span className="hidden sm:inline">0 No document</span>
                 <span className="sm:hidden">0 Off</span>
               </button>
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">0 At risk</span>
+                <span className="hidden sm:inline">0 Incomplete document</span>
                 <span className="sm:hidden">0 Risk</span>
               </button>
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">1 On track</span>
+                <span className="hidden sm:inline">1 Complete document</span>
                 <span className="sm:hidden">1 On</span>
-              </button>
-              <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
-                <span className="w-2 h-2 bg-gray-900 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">0 Closed</span>
-                <span className="sm:hidden">0 Close</span>
               </button>
             </div>
 
             {/* Action Buttons */}
             <div className="flex items-center justify-between sm:justify-end gap-2 border-t lg:border-t-0 pt-4 lg:pt-0 border-gray-300">
-              <div className="flex items-center gap-2">
-                <button className="text-xs sm:text-sm text-indigo-600 hover:text-indigo-700 font-medium whitespace-nowrap">
-                  Expand all
-                </button>
-                <button className="text-xs sm:text-sm text-indigo-600 hover:text-indigo-700 font-medium whitespace-nowrap">
-                  Collapse all
-                </button>
-              </div>
-              <div className="flex items-center gap-1 sm:gap-2">
-                <button
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-                  aria-label="List view"
-                >
-                  <LuList className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                <button
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-                  aria-label="Grid view"
-                >
-                  <LuLayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                <button
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-                  aria-label="Share"
-                >
-                  <LuShare2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                <button
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-                  aria-label="Users"
-                >
-                  <LuUsers className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
+              <div className="relative w-full sm:w-auto">
+                <LuSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search by owner or title"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full sm:w-64 md:w-80"
+                />
               </div>
             </div>
           </div>
@@ -213,15 +245,9 @@ export default function Vendor() {
                         Contact <LuChevronDown className="ml-1 w-3 h-3" />
                       </div>
                     </th>
+
                     <th className="px-6 py-3 text-left">
-                      <div className="flex items-center">
-                        Tax <LuChevronDown className="ml-1 w-3 h-3" />
-                      </div>
-                    </th>
-                    <th className="px-6 py-3 text-left">
-                      <div className="flex items-center">
-                        Date Added <LuChevronDown className="ml-1 w-3 h-3" />
-                      </div>
+                      <div className="flex items-center">Address</div>
                     </th>
                     <th className="px-6 py-3 text-left">
                       <div className="flex items-center">Action</div>
@@ -229,46 +255,55 @@ export default function Vendor() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center shrink-0">
-                          <LuUsers className="w-4 h-4 text-yellow-700" />
+                  {mockVendors?.map((vendor, index) => (
+                    <tr
+                      key={index + "___vendor" + vendor?.ID}
+                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-2">
+                          <Avatar
+                            className="w-10 h-10 cursor-pointer"
+                            src={preProfileLink(vendor?.FULLNAME)}
+                          />
                         </div>
-                        <div className="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0">
-                          SO
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <h3 className="text-sm font-outfit text-gray-500 whitespace-nowrap">
-                        abc@gmail.com
-                      </h3>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="font-outfit text-gray-500 text-sm">
-                        Fintech
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="font-outfit text-gray-500 text-sm">
-                        090928xxxxxxxx
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="font-outfit text-gray-500 text-sm"></span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-between space-x-2">
-                        <span className="text-sm text-gray-600 whitespace-nowrap">
-                          Dec 31, 2026
+                      </td>
+                      <td className="px-6 py-4">
+                        <h3 className="text-sm font-outfit text-gray-500 whitespace-nowrap">
+                          {vendor?.EMAIL}
+                        </h3>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-outfit text-gray-500 text-sm">
+                          {vendor?.BUSINESS}jljjnl
                         </span>
-                        <button className="text-gray-400 hover:text-gray-600 shrink-0">
-                          <FiMoreHorizontal className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-outfit text-gray-500 text-sm">
+                          {vendor?.PHONE}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-outfit text-gray-500 text-sm">
+                          {vendor?.ADDRESS}
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-1">
+                          <ActionIcons
+                            variant={"EDIT"}
+                            action={() => handleGetVendorDetail(vendor, "EDIT")}
+                          />
+
+                          <ActionIcons
+                            variant={"VIEW"}
+                            action={() => handleGetVendorDetail(vendor, "VIEW")}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

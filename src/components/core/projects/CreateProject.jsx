@@ -9,6 +9,8 @@ import { catchErrFunc } from "../../../utils/catchErrFunc";
 import { useCreateProject } from "../../../service/api/project";
 import { errorToast, successToast } from "../../../utils/toastPopUps";
 import useDrawerStore from "../../../hooks/useDrawerStore";
+import { uploadFileData } from "../../../utils/uploadFile";
+import useCurrentUser from "../../../hooks/useCurrentUser";
 
 const newItemRow = {
   date: "",
@@ -47,6 +49,8 @@ const CreateProject = () => {
 
   const { closeDrawer } = useDrawerStore();
 
+  const [isUploading, setIsUploading] = useState(false);
+
   const handleNext = () => {
     setSelectedTab(selectedTab + 1);
   };
@@ -74,6 +78,38 @@ const CreateProject = () => {
   const { mutateAsync: mutateAddProject, isPending: isSubmitting } =
     useCreateProject();
 
+  const { userData } = useCurrentUser();
+
+  const uploadPendingFiles = async (documents) => {
+    const uploadPromises = documents.map(async (doc) => {
+      // Skip if already has URL (already uploaded) or no file selected
+      if (doc.uploaded_url || !doc.originFileObj) {
+        return doc;
+      }
+
+      try {
+        // Upload the file
+        const uploadResult = await uploadFileData(
+          doc?.originFileObj,
+          userData?.token
+        );
+
+        // Return document with uploaded file URL
+        return {
+          uploaded_url: uploadResult?.file_url,
+        };
+        // eslint-disable-next-line no-unused-vars
+      } catch (error) {
+        return {
+          ...doc,
+          status: "failed",
+        };
+      }
+    });
+
+    return await Promise.all(uploadPromises);
+  };
+
   const handleSubmit = async () => {
     const isValid = await trigger();
     if (!isValid) {
@@ -86,22 +122,6 @@ const CreateProject = () => {
       return;
     }
     const values = getValues();
-    const json = {
-      order_type: values?.project_type,
-      order_no: values?.order_number,
-      vendor_id: values?.value,
-      date_supplied: values?.date_supplied,
-      department_supplied: values?.recipient_department,
-      date_awarded: values?.date_issued,
-      received_by: values?.received_by?.value,
-      received_date: values?.completion_date,
-      received_note_no: values?.received_note_no,
-      received_note_date: values?.received_note_date,
-      location_of_work: values?.work_location,
-      file_reference: values?.file_reference,
-      tender_reference: values?.tender_reference,
-      vendor_statement: values?.voucher_statement,
-    };
 
     const errors = validateRequiredField(values);
 
@@ -111,6 +131,33 @@ const CreateProject = () => {
       return;
     }
     try {
+      setIsUploading(true);
+      const uploadedDocuments = await uploadPendingFiles(
+        values.documents || []
+      );
+
+      console.log(values);
+      const json = {
+        order_type: values?.project_type,
+        order_no: values?.order_number,
+        vendor_id: values?.vendor?.value,
+        date_supplied: values?.date_supplied,
+        department_supplied: values?.recipient_department,
+        date_awarded: values?.date_issued,
+        received_by: values?.received_by?.value,
+        received_date: values?.completion_date,
+        received_note_no: values?.received_note_no,
+        received_note_date: values?.received_note_date,
+        location_of_work: values?.work_location,
+        file_reference: values?.file_reference,
+        tender_reference: values?.tender_reference,
+        vendor_statement: values?.voucher_statement,
+        support_document: uploadedDocuments
+          ?.map((supdoc) => supdoc.uploaded_url)
+          ?.filter(Boolean),
+      };
+
+      console.log(json);
       // validate required fields before proceeding
 
       const res = await mutateAddProject(json);
@@ -118,8 +165,9 @@ const CreateProject = () => {
       closeDrawer();
     } catch (err) {
       catchErrFunc(err);
+    } finally {
+      setIsUploading(false);
     }
-    console.log(values);
   };
 
   const sideTabs = [
@@ -157,7 +205,7 @@ const CreateProject = () => {
           handleNext={handleNext}
           handlePrev={handlePrev}
           handleSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
+          isSubmitting={isSubmitting || isUploading}
         />
       ),
     },

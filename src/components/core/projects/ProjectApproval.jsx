@@ -62,7 +62,7 @@ const mockApprovers = [
 ];
 
 const ProjectApproval = (props) => {
-  const { watch, setValue, handlePrev, handleSubmit } = props;
+  const { watch, setValue, handlePrev, handleSubmit, isSubmitting } = props;
 
   // Watch the approvers field from react-hook-form
   const selectedApprovers = watch("approvers") || [];
@@ -252,7 +252,12 @@ const ProjectApproval = (props) => {
         >
           <IoChevronBackOutline /> Previous
         </Button>
-        <Button radius="sm" color="primary" onPress={handleSubmit}>
+        <Button
+          radius="sm"
+          color="primary"
+          onPress={handleSubmit}
+          isLoading={isSubmitting}
+        >
           Submit
         </Button>
       </div>

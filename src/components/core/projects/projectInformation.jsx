@@ -1,13 +1,72 @@
-import { Button, Input, Textarea } from "@heroui/react";
+import { Button, Input, Textarea, User } from "@heroui/react";
 import { Controller } from "react-hook-form";
 import { Select, DatePicker } from "antd";
 import dayjs from "dayjs";
 import { IoChevronForward } from "react-icons/io5";
+import { useGetAllStaff, useGetDepartment } from "../../../service/api/general";
+import useCurrentUser from "../../../hooks/useCurrentUser";
+import { filePrefix } from "../../../utils/file-prefix";
+import { FaUser } from "react-icons/fa";
 
 const ProjectInformation = (props) => {
   const { control, watch, handleNext } = props;
   const project_type = watch("project_type");
 
+  const { userData } = useCurrentUser();
+  const { data: get_departments } = useGetDepartment({
+    company_id: userData?.data?.COMPANY_ID,
+  });
+  const { data: get_staff, isPending: isLoadingStaff } = useGetAllStaff(
+    userData?.data?.COMPANY_ID
+  );
+  const departments = get_departments?.map((department) => ({
+    value: department?.ID,
+    label: department?.NAME,
+    ...department,
+  }));
+  const staffList = get_staff?.map((item) => {
+    return {
+      ...item,
+      value: item?.STAFF_ID,
+      label: (
+        <User
+          avatarProps={{
+            icon: <FaUser size={20} className="" />,
+            radius: "full",
+            src: item?.FILE_NAME ? filePrefix + item?.FILE_NAME : "",
+            className:
+              "w-8 h-8 my-2 object-cover rounded-full border-default-200 border",
+          }}
+          name={`${item?.LAST_NAME || ""} ${item?.FIRST_NAME || ""}`}
+          classNames={{
+            description: "w-48 truncat",
+            name: "w-48 font-helvetica text-xs uppercase",
+          }}
+          css={{
+            ".nextui-user-icon svg": {
+              color: "red", // Set the color of the default icon
+            },
+          }}
+          description={
+            <div className="flex flex-co gap-y-1 justify-cente gap-x-3 m">
+              {item?.DESIGNATION ? (
+                <p className="font-helvetica my-auto text-black opacity-50 capitalize flex gap-x-2">
+                  {item?.DESIGNATION?.toLowerCase()}
+                  <span>-</span>
+                </p>
+              ) : null}
+              <p className="font-helvetica text-black opacity-30 my-auto capitalize">
+                {item?.STAFF_NUMBER}
+              </p>
+            </div>
+          }
+        />
+      ),
+      searchValue: `${item?.LAST_NAME || ""} ${item?.FIRST_NAME || ""} ${
+        item?.STAFF_ID
+      }`,
+    };
+  });
   return (
     <>
       <main className="">
@@ -76,10 +135,15 @@ const ProjectInformation = (props) => {
             />
           </div>
           {project_type === "job-order" ? (
-            <JobOrderForm control={control} />
+            <JobOrderForm control={control} departments={departments} />
           ) : (
             project_type === "local-purchase-order" && (
-              <PurchaseOrderForm control={control} />
+              <PurchaseOrderForm
+                control={control}
+                departments={departments}
+                isLoadingStaff={isLoadingStaff}
+                staffList={staffList}
+              />
             )
           )}
         </div>
@@ -96,7 +160,7 @@ const ProjectInformation = (props) => {
 
 export default ProjectInformation;
 
-const JobOrderForm = ({ control }) => {
+const JobOrderForm = ({ control, departments }) => {
   return (
     <>
       <div>
@@ -167,11 +231,7 @@ const JobOrderForm = ({ control }) => {
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={[
-                  { label: "Technical", value: "techinal" },
-                  { label: "Soft skill", value: "soft skill" },
-                  { label: "Other", value: "other" },
-                ]}
+                options={departments}
                 {...field}
                 size="large"
                 className="w-full"
@@ -329,10 +389,39 @@ const JobOrderForm = ({ control }) => {
           )}
         />
       </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Voucher statement
+        </label>
+        <Controller
+          name="voucher_statement"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Textarea
+              aria-label="voucher_number"
+              variant="bordered"
+              placeholder="voucher statment"
+              className="rounded-sm"
+              classNames={{
+                inputWrapper: "border shadow-none rounded-lg",
+              }}
+              minRows={1}
+              {...field}
+              errorMessage={error?.message}
+              isInvalid={!!error?.message}
+            />
+          )}
+        />
+      </div>
     </>
   );
 };
-const PurchaseOrderForm = ({ control }) => {
+const PurchaseOrderForm = ({
+  control,
+  departments,
+  isLoadingStaff,
+  staffList,
+}) => {
   return (
     <>
       <div>
@@ -345,11 +434,7 @@ const PurchaseOrderForm = ({ control }) => {
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={[
-                  { label: "Technical", value: "techinal" },
-                  { label: "Soft skill", value: "soft skill" },
-                  { label: "Other", value: "other" },
-                ]}
+                options={departments}
                 {...field}
                 size="large"
                 className="w-full"
@@ -425,11 +510,8 @@ const PurchaseOrderForm = ({ control }) => {
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={[
-                  { label: "Technical", value: "techinal" },
-                  { label: "Soft skill", value: "soft skill" },
-                  { label: "Other", value: "other" },
-                ]}
+                options={staffList}
+                loading={isLoadingStaff}
                 labelInValue
                 {...field}
                 size="large"
@@ -526,30 +608,6 @@ const PurchaseOrderForm = ({ control }) => {
                 </span>
               )}
             </>
-          )}
-        />
-      </div>
-      <div>
-        <label htmlFor="" className="font-outfit mb-2">
-          Voucher statement
-        </label>
-        <Controller
-          name="voucher_statement"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Textarea
-              aria-label="voucher_number"
-              variant="bordered"
-              placeholder="voucher statment"
-              className="rounded-sm"
-              classNames={{
-                inputWrapper: "border shadow-none rounded-lg",
-              }}
-              minRows={1}
-              {...field}
-              errorMessage={error?.message}
-              isInvalid={!!error?.message}
-            />
           )}
         />
       </div>

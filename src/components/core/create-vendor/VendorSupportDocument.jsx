@@ -6,9 +6,11 @@ import { TfiTrash } from "react-icons/tfi";
 import Button from "../../shared/ui/Button";
 
 const VendorSupportDocument = (props) => {
-  const { handlePrev, setValue, watch, handleSubmit } = props;
+  const { handlePrev, setValue, watch, handleSubmit, isSubmitting } = props;
 
   const documents = watch("support_documents");
+
+  console.log(documents);
 
   const setDocuments = (val) => {
     console.log(val);
@@ -62,8 +64,8 @@ const VendorSupportDocument = (props) => {
     }
   };
 
-  const completedCount = documents.filter((d) => d.uploaded).length;
-  const totalCount = documents.length;
+  const completedCount = documents?.filter((d) => d?.uploaded)?.length;
+  const totalCount = documents?.length;
   const progress = (completedCount / totalCount) * 100;
 
   return (
@@ -114,9 +116,9 @@ const VendorSupportDocument = (props) => {
 
         {/* Documents List */}
         <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {documents.map((doc) => (
+          {documents?.map((doc) => (
             <div
-              key={doc.id}
+              key={doc?.id}
               className="bg-white rounded-lg border border-gray-200 overflow-hidden h-full"
             >
               <div className="p-4 relative">
@@ -150,11 +152,13 @@ const VendorSupportDocument = (props) => {
                       <p className="text-gray-600 font-primary text-[13px]">
                         {doc.description}
                       </p>
-                      {doc.requiresRenewal && (
+                      {doc.requiresRenewal ? (
                         <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary bg-blue-50 px-2 py-1 rounded-full font-outfit">
                           <CiCalendar className="w-3 h-3" />
                           Requires validity dates
                         </span>
+                      ) : (
+                        ""
                       )}
                     </div>
                   </div>
@@ -214,7 +218,7 @@ const VendorSupportDocument = (props) => {
                     </div>
 
                     {/* Date Inputs for Renewable Documents */}
-                    {doc.requiresRenewal && (
+                    {doc.requiresRenewal ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm text-gray-500 font-outfit">
@@ -251,6 +255,8 @@ const VendorSupportDocument = (props) => {
                           />
                         </div>
                       </div>
+                    ) : (
+                      ""
                     )}
                   </>
                 )}
@@ -269,7 +275,12 @@ const VendorSupportDocument = (props) => {
               <IoChevronBackOutline /> Previous
             </Button>
           </div>
-          <Button radius="sm" color="primary" onPress={handleSubmit}>
+          <Button
+            radius="sm"
+            color="primary"
+            onPress={handleSubmit}
+            isLoading={isSubmitting}
+          >
             Submit
           </Button>
         </div>

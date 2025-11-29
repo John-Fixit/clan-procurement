@@ -90,7 +90,6 @@ const CreateDocument = ({ onClose, data }) => {
       docId: data?.ID,
     };
     try {
-      console.log(json);
       const res = await mutateAddDoc(json);
       successToast(res?.data?.message);
       onClose();
