@@ -2,6 +2,11 @@ import { Select, Avatar, Tag, Space } from "antd";
 import { useMemo } from "react";
 import Button from "../../shared/ui/Button";
 import { IoChevronBackOutline } from "react-icons/io5";
+import { useGetAllStaff } from "../../../service/api/general";
+import useCurrentUser from "../../../hooks/useCurrentUser";
+import { filePrefix } from "../../../utils/file-prefix";
+import { User } from "@heroui/react";
+import { FaUser } from "react-icons/fa";
 
 // Mock data for approvers
 const mockApprovers = [
@@ -66,6 +71,56 @@ const ProjectApproval = (props) => {
 
   // Watch the approvers field from react-hook-form
   const selectedApprovers = watch("approvers") || [];
+  const { userData } = useCurrentUser();
+
+  const { data: get_staff, isPending: isLoadingStaff } = useGetAllStaff(
+    userData?.data?.COMPANY_ID
+  );
+
+  const staffList = get_staff?.map((item) => {
+    return {
+      ...item,
+      value: item?.STAFF_ID,
+      // value: item?.FIRST_NAME + " " + item?.LAST_NAME,
+      label: (
+        <User
+          avatarProps={{
+            icon: <FaUser size={20} className="" />,
+            radius: "full",
+            src: item?.FILE_NAME ? filePrefix + item?.FILE_NAME : "",
+            className:
+              "w-8 h-8 my-2 object-cover rounded-full border-default-200 border",
+          }}
+          name={`${item?.LAST_NAME || ""} ${item?.FIRST_NAME || ""}`}
+          classNames={{
+            description: "w-48 truncat",
+            name: "w-48 font-helvetica text-xs uppercase",
+          }}
+          css={{
+            ".nextui-user-icon svg": {
+              color: "red", // Set the color of the default icon
+            },
+          }}
+          description={
+            <div className="flex flex-co gap-y-1 justify-cente gap-x-3 m">
+              {item?.DESIGNATION ? (
+                <p className="font-helvetica my-auto text-black opacity-50 capitalize flex gap-x-2">
+                  {item?.DESIGNATION?.toLowerCase()}
+                  <span>-</span>
+                </p>
+              ) : null}
+              <p className="font-helvetica text-black opacity-30 my-auto capitalize">
+                {item?.STAFF_NUMBER}
+              </p>
+            </div>
+          }
+        />
+      ),
+      searchValue: `${item?.LAST_NAME || ""} ${item?.FIRST_NAME || ""} ${
+        item?.STAFF_ID
+      }`,
+    };
+  });
 
   const getInitials = (name) => {
     return name
@@ -76,8 +131,9 @@ const ProjectApproval = (props) => {
   };
 
   const handleChange = (value) => {
+    console.log(value);
     // value is array of IDs
-    const selected = mockApprovers.filter((approver) =>
+    const selected = staffList.filter((approver) =>
       value.includes(approver.id)
     );
     setValue("approvers", selected);
@@ -194,23 +250,26 @@ const ProjectApproval = (props) => {
         mode="multiple"
         style={{ width: "100%" }}
         placeholder="Search by name, email, or role..."
-        value={selectedApprovers.map((a) => a.id)}
-        onChange={handleChange}
-        options={renderOption}
+        value={selectedApprovers.map((a) => a.value)}
+        onChange={(value, option) => {
+          setValue("approvers", option);
+        }}
+        options={staffList}
         size="large"
-        tagRender={tagRender}
+        // tagRender={tagRender}
+        labelInValue
         maxTagCount="responsive"
         showSearch
-        filterOption={(input, option) => {
-          const approver = mockApprovers.find((a) => a.id === option.value);
-          if (!approver) return false;
-          const searchLower = input.toLowerCase();
-          return (
-            approver.name.toLowerCase().includes(searchLower) ||
-            approver.email.toLowerCase().includes(searchLower) ||
-            approver.role.toLowerCase().includes(searchLower)
-          );
-        }}
+        // filterOption={(input, option) => {
+        //   const approver = mockApprovers.find((a) => a.id === option.value);
+        //   if (!approver) return false;
+        //   const searchLower = input.toLowerCase();
+        //   return (
+        //     approver.name.toLowerCase().includes(searchLower) ||
+        //     approver.email.toLowerCase().includes(searchLower) ||
+        //     approver.role.toLowerCase().includes(searchLower)
+        //   );
+        // }}
       />
 
       <div

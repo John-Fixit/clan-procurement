@@ -5,7 +5,7 @@ export const useCreateProject = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload) => {
-      return await API.post(`/project/create`, payload);
+      return await API.post(`procurement/create`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -19,7 +19,7 @@ export const useGetProject = () => {
   return useQuery({
     queryKey: ["get_projects"],
     queryFn: async () => {
-      const res = await API.get(`/projects/get-documents`);
+      const res = await API.get(`procurement/get-procurements`);
       return res.data?.data?.data;
     },
   });

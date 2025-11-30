@@ -11,6 +11,7 @@ import { errorToast, successToast } from "../../../utils/toastPopUps";
 import useDrawerStore from "../../../hooks/useDrawerStore";
 import { uploadFileData } from "../../../utils/uploadFile";
 import useCurrentUser from "../../../hooks/useCurrentUser";
+import ProjectNote from "./ProjectNote";
 
 const newItemRow = {
   date: "",
@@ -60,7 +61,7 @@ const CreateProject = () => {
 
   const hook_form_props = useForm({
     defaultValues: {
-      project_type: "job-order",
+      project_type: "Job Order",
       approvers: [],
       purchase_order_items: [newItemRow],
     },
@@ -136,7 +137,7 @@ const CreateProject = () => {
         values.documents || []
       );
 
-      console.log(values);
+      // console.log(values);
       const json = {
         order_type: values?.project_type,
         order_no: values?.order_number,
@@ -151,10 +152,25 @@ const CreateProject = () => {
         location_of_work: values?.work_location,
         file_reference: values?.file_reference,
         tender_reference: values?.tender_reference,
-        vendor_statement: values?.voucher_statement,
+        vendor_statement: values?.vendor_statement,
+        tax_id: values?.tax?.ID,
+        tax_percentage: values?.tax?.PERCENTAGE,
+        note: values?.note,
+        job_amount: values?.sum_amount,
         support_document: uploadedDocuments
-          ?.map((supdoc) => supdoc.uploaded_url)
+          ?.map((supdoc) => ({
+            attachment_url: supdoc.uploaded_url,
+          }))
           ?.filter(Boolean),
+        approval_request: values?.approvers?.map((appr, index) => ({
+          designation: appr?.DESIGNATION,
+          staff_id: appr?.STAFF_ID,
+          staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
+          // "date_received": "2025-10-20",
+          // "date_treated": "2025-10-21",
+          sn: index + 1,
+          is_approved: 0,
+        })),
       };
 
       console.log(json);
@@ -191,6 +207,16 @@ const CreateProject = () => {
       title: "Support Documents",
       content: (
         <ProjectSupportDocument
+          {...hook_form_props}
+          handleNext={handleNext}
+          handlePrev={handlePrev}
+        />
+      ),
+    },
+    {
+      title: "Add Note",
+      content: (
+        <ProjectNote
           {...hook_form_props}
           handleNext={handleNext}
           handlePrev={handlePrev}

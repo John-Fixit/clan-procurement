@@ -7,6 +7,9 @@ import { useGetAllStaff, useGetDepartment } from "../../../service/api/general";
 import useCurrentUser from "../../../hooks/useCurrentUser";
 import { filePrefix } from "../../../utils/file-prefix";
 import { FaUser } from "react-icons/fa";
+import { useGetTax } from "../../../service/api/setting";
+import { useGetVendor } from "../../../service/api/vendor";
+import { useMemo } from "react";
 
 const ProjectInformation = (props) => {
   const { control, watch, handleNext } = props;
@@ -19,15 +22,35 @@ const ProjectInformation = (props) => {
   const { data: get_staff, isPending: isLoadingStaff } = useGetAllStaff(
     userData?.data?.COMPANY_ID
   );
+
+  const { data: get_tax, isPending: isLoadingTx } = useGetTax();
+
+  const { data: get_vendors, isPending: isLoadingVendors } = useGetVendor();
+
+  const vendorsList = useMemo(
+    () =>
+      get_vendors?.map((vvd) => ({
+        ...vvd,
+        value: vvd?.VENDOR_ID,
+        label: vvd?.FULLNAME,
+      })) || [],
+    [get_vendors]
+  );
+
+  const taxOptions = get_tax?.map((tax) => ({
+    ...tax,
+    value: tax?.ID,
+    label: tax?.TAX_NAME + " (" + parseFloat(tax?.PERCENTAGE) + "%)",
+  }));
   const departments = get_departments?.map((department) => ({
-    value: department?.ID,
+    value: department?.NAME,
     label: department?.NAME,
     ...department,
   }));
   const staffList = get_staff?.map((item) => {
     return {
       ...item,
-      value: item?.STAFF_ID,
+      value: item?.FIRST_NAME + " " + item?.LAST_NAME,
       label: (
         <User
           avatarProps={{
@@ -67,6 +90,7 @@ const ProjectInformation = (props) => {
       }`,
     };
   });
+
   return (
     <>
       <main className="">
@@ -92,9 +116,9 @@ const ProjectInformation = (props) => {
                     options={[
                       {
                         label: "Local Purchase Order",
-                        value: "local-purchase-order",
+                        value: "Local Purchase Order",
                       },
-                      { label: "Job Order", value: "job-order" },
+                      { label: "Job Order", value: "Job Order" },
                     ]}
                     {...field}
                     onChange={(value) => field.onChange(value)}
@@ -134,15 +158,25 @@ const ProjectInformation = (props) => {
               )}
             />
           </div>
-          {project_type === "job-order" ? (
-            <JobOrderForm control={control} departments={departments} />
+          {project_type === "Job Order" ? (
+            <JobOrderForm
+              control={control}
+              departments={departments}
+              taxOptions={taxOptions}
+              isLoadingTx={isLoadingTx}
+              isLoadingVendors={isLoadingVendors}
+              vendorsList={vendorsList}
+            />
           ) : (
-            project_type === "local-purchase-order" && (
+            project_type === "Local Purchase Order" && (
               <PurchaseOrderForm
                 control={control}
                 departments={departments}
                 isLoadingStaff={isLoadingStaff}
                 staffList={staffList}
+                taxOptions={taxOptions}
+                isLoadingVendors={isLoadingVendors}
+                vendorsList={vendorsList}
               />
             )
           )}
@@ -160,7 +194,14 @@ const ProjectInformation = (props) => {
 
 export default ProjectInformation;
 
-const JobOrderForm = ({ control, departments }) => {
+const JobOrderForm = ({
+  control,
+  departments,
+  taxOptions,
+  isLoadingTax,
+  vendorsList,
+  isLoadingVendors,
+}) => {
   return (
     <>
       <div>
@@ -168,7 +209,7 @@ const JobOrderForm = ({ control, departments }) => {
           Date Issued
         </label>
         <Controller
-          name="project_title"
+          name="date_issued"
           control={control}
           rules={{
             required: "This field is required",
@@ -328,6 +369,7 @@ const JobOrderForm = ({ control, departments }) => {
           )}
         />
       </div>
+
       <div>
         <label htmlFor="" className="font-outfit mb-2">
           Select Vendor
@@ -341,16 +383,48 @@ const JobOrderForm = ({ control, departments }) => {
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={[
-                  { label: "Technical", value: "techinal" },
-                  { label: "Soft skill", value: "soft skill" },
-                  { label: "Other", value: "other" },
-                ]}
+                options={vendorsList}
+                loading={isLoadingVendors}
                 labelInValue
                 {...field}
                 size="large"
                 className="w-full"
                 placeholder="Select vendor"
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Tax
+        </label>
+        <Controller
+          name="tax"
+          control={control}
+          rules={{
+            required: "This field is required",
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={taxOptions}
+                labelInValue
+                {...field}
+                onChange={(value, option) => {
+                  field.onChange(option);
+                }}
+                loading={isLoadingTax}
+                size="large"
+                className="w-full"
+                placeholder="Select a tax"
               />
 
               {!!error?.message && (
@@ -389,23 +463,23 @@ const JobOrderForm = ({ control, departments }) => {
           )}
         />
       </div>
-      <div>
+      <div className="col-span-2">
         <label htmlFor="" className="font-outfit mb-2">
-          Voucher statement
+          Vendor statement
         </label>
         <Controller
-          name="voucher_statement"
+          name="vendor_statement"
           control={control}
           render={({ field, fieldState: { error } }) => (
             <Textarea
-              aria-label="voucher_number"
+              aria-label="vendor_statement"
               variant="bordered"
-              placeholder="voucher statment"
+              placeholder="vendor statment"
               className="rounded-sm"
               classNames={{
                 inputWrapper: "border shadow-none rounded-lg",
               }}
-              minRows={1}
+              minRows={4}
               {...field}
               errorMessage={error?.message}
               isInvalid={!!error?.message}

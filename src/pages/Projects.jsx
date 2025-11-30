@@ -20,11 +20,9 @@ export default function Projects() {
               variant={"underlined"}
               color="primary"
             >
-              <Tab key="photos" title="My Project" />
-              <Tab key="music" title="Groups" />
-              <Tab key="videos" title="Department" />
-              <Tab key="company" title="Company" />
-              <Tab key="all_project" title="All Project" />
+              <Tab key="photos" title="Pending" />
+              <Tab key="music" title="Approved" />
+              <Tab key="videos" title="Decline" />
             </Tabs>
             <div className="flex items-center space-x-3">
               <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
@@ -51,7 +49,7 @@ export default function Projects() {
 
       {/* Main Content */}
       <div className="mx-auto px-9 py-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Select
               placeholder="active object"
@@ -83,10 +81,7 @@ export default function Projects() {
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full sm:w-64 md:w-80"
             />
           </div>
-        </div>
-
-        {/* Progress Overview */}
-        <ProjectTableHeader />
+        </div> */}
 
         {/* Objectives Table */}
         <ProjectTable />
