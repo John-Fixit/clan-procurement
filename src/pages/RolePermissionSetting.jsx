@@ -132,7 +132,6 @@ const RolePermissionSetting = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add logic to save staff
-    console.log("Form data:", formData);
     setIsModalOpen(false);
   };
 

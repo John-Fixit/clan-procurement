@@ -96,8 +96,6 @@ const VendorSupportDocument = (props) => {
   const totalCount = documents?.length;
   const progress = (completedCount / totalCount) * 100;
 
-  console.log(documents);
-
   return (
     <div className="min-h-screen bg-gray50">
       <div className="max-w-4xl mx-auto">

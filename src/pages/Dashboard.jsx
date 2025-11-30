@@ -11,7 +11,6 @@ import useCurrentUser from "../hooks/useCurrentUser";
 export default function Dashboard() {
   const { userData } = useCurrentUser();
   const profileData = userData?.data;
-  console.log(profileData);
   return (
     <div className="min-h-screen bg-gray-50 p-8 space-y-6">
       {/* <NewObjectiveModal /> */}

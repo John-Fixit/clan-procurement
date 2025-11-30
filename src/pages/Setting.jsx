@@ -9,6 +9,7 @@ import { Input } from "antd";
 import { catchErrFunc } from "../utils/catchErrFunc";
 import { useAddDocument, useAddTax } from "../service/api/setting";
 import { successToast } from "../utils/toastPopUps";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 const Setting = () => {
   const [showForm, setShowForm] = useState({ state: false, type: "" });
@@ -224,6 +225,8 @@ const CreateDocument = ({ onClose, data }) => {
 
   const disableBtn = formData?.name === "";
 
+  const { userData } = useCurrentUser();
+
   const { mutateAsync: mutateAddDoc, isPending } = useAddDocument();
 
   const handleSubmit = async () => {
@@ -232,11 +235,10 @@ const CreateDocument = ({ onClose, data }) => {
     const json = {
       documnet_nam: name,
       is_yearly_renewable: renewable,
-      date_created: "2025-01-02",
-      created_b: "admin",
+      date_created: "",
+      created_b: userData?.data?.FIRST_NAME + " " + userData?.data?.LAST_NAME,
     };
     try {
-      console.log(json);
       const res = await mutateAddDoc(json);
       successToast(res?.data?.message);
       onClose();
