@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import StarLoader from "../loaders/StarLoader";
 import { Result } from "antd";
 import useDrawerStore from "../../../hooks/useDrawerStore";
+import { Pagination } from "@heroui/react";
 
 const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
   const { openDrawer } = useDrawerStore();
@@ -57,6 +58,9 @@ const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
 
   const hasSearchFilter = Boolean(searchQuery?.trim());
 
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+
   const filteredProjects = useMemo(() => {
     let prevData = projects?.length ? [...projects] : [];
 
@@ -84,9 +88,19 @@ const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
     return prevData;
   }, [hasSearchFilter, projects, searchQuery]);
 
+  const totalPage = Math.ceil(filteredProjects?.length / pageSize);
+
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
+
+  // const handlePageSizeChange = (pageSize) => {
+  //   setPageSize(pageSize);
+  // };
+
   const tableData = useMemo(() => {
-    return filteredProjects;
-  }, [filteredProjects]);
+    return filteredProjects?.slice((page - 1) * pageSize, page * pageSize);
+  }, [filteredProjects, page, pageSize]);
 
   return (
     <>
@@ -241,6 +255,15 @@ const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
                 )}
               </tbody>
             </table>
+            <div className="my-4 flex justify-end mx-6">
+              <Pagination
+                showControls
+                initialPage={page}
+                page={page}
+                total={totalPage}
+                onChange={handlePageChange}
+              />
+            </div>
           </div>
         </div>
       </div>
