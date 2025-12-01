@@ -13,6 +13,7 @@ import { Avatar } from "@heroui/react";
 import { preProfileLink } from "../utils/pre-profile-link";
 import { useMemo, useState } from "react";
 import { useGetDocument } from "../service/api/setting";
+import StarLoader from "../components/core/loaders/StarLoader";
 
 export default function Vendor() {
   const { openDrawer } = useDrawerStore();
