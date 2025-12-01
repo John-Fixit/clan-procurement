@@ -2,7 +2,7 @@ const avatarColors = [
   "#FF6B6B", // red
   "#FF8E72", // warm orange
   "#FFB562", // sand yellow
-  // "#FFD93D", // bright yellow
+  "#e08d4b", // bright yellow
   "#6BCB77", // green
   "#4D96FF", // blue
   "#6A4CFE", // indigo

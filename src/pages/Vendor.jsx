@@ -177,21 +177,18 @@ export default function Vendor() {
                 <span className="hidden sm:inline">
                   {statistics?.no_document} No document
                 </span>
-                <span className="sm:hidden">0 Off</span>
               </button>
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2 shrink-0"></span>
                 <span className="hidden sm:inline">
                   {statistics?.not_completed} Incomplete document
                 </span>
-                <span className="sm:hidden">0 Risk</span>
               </button>
               <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2 shrink-0"></span>
                 <span className="hidden sm:inline">
                   {statistics?.completed} Complete document
                 </span>
-                <span className="sm:hidden">1 On</span>
               </button>
             </div>
 
