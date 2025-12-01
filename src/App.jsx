@@ -13,6 +13,7 @@ import DocumentSetting from "./pages/DocumentSetting";
 import Approval from "./pages/Approval";
 import RolePermissionSetting from "./pages/RolePermissionSetting";
 import ProtectedRoute from "./components/protected-route";
+import AllProcurement from "./pages/AllProcurement";
 
 function App() {
   const RedirectToHome = () => {
@@ -43,6 +44,8 @@ function App() {
           <Route path="okrs" element={<OKRDashboard />} />
           <Route path="vendor" element={<Vendor />} />
           <Route path="project" element={<Projects />} />
+          <Route path="project/procurement" element={<AllProcurement />} />
+          <Route path="project/request" element={<Projects />} />
           <Route path="approval" element={<Approval />} />
           <Route path="report" element={<Report />} />
           <Route path="setting" element={<Setting />} />

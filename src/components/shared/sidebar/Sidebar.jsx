@@ -1,20 +1,27 @@
 import { useState } from "react";
 import { CiLogout } from "react-icons/ci";
-import { FaRegUser, FaUserAlt } from "react-icons/fa";
 import {
   IoFolderOpenOutline,
   IoFolderOpenSharp,
   IoChevronDown,
+  IoSettings,
+  IoSettingsOutline,
+  IoDocumentText,
+  IoDocumentTextOutline,
+  IoShieldOutline,
+  IoShieldSharp,
 } from "react-icons/io5";
 import {
   MdAnalytics,
   MdApproval,
   MdOutlineAnalytics,
+  MdOutlineRequestQuote,
   MdOutlineSpaceDashboard,
+  MdRequestQuote,
   MdSpaceDashboard,
   MdStore,
 } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useSidebarStore from "../../../hooks/use-sidebar-store";
 import clsx from "clsx";
 import { RiSettings5Line } from "react-icons/ri";
@@ -27,10 +34,13 @@ import {
 import { useScreenSize } from "react-haiku";
 import Button from "../ui/Button";
 import useCurrentUser from "../../../hooks/useCurrentUser";
+import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi2";
+import { AiFillMoneyCollect, AiOutlineMoneyCollect } from "react-icons/ai";
 
 const Sidebar = () => {
-  const [currentPath, setCurrentPath] = useState("/dashboard");
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const currentPath = useLocation().pathname;
+
+  const [dropDownTargetState, setDropdownTargetState] = useState(null);
 
   const screenSize = useScreenSize();
 
@@ -40,7 +50,6 @@ const Sidebar = () => {
   const sidebarOpen = screenSize.gte("lg") ? true : isSidebarOpen;
 
   const routeNavigate = (path) => {
-    setCurrentPath(path);
     navigate(path);
     // Close sidebar on mobile/tablet after navigation
     screenSize.lte("md") && toggleSidebar();
@@ -54,18 +63,33 @@ const Sidebar = () => {
       icon: MdOutlineSpaceDashboard,
       activeIcon: MdSpaceDashboard,
     },
-    {
-      path: "/okrs",
-      label: "User Management",
-      icon: FaRegUser,
-      activeIcon: FaUserAlt,
-    },
+    // {
+    //   path: "/okrs",
+    //   label: "User Management",
+    //   icon: FaRegUser,
+    //   activeIcon: FaUserAlt,
+    // },
     { path: "/vendor", label: "Vendors", icon: MdStore, activeIcon: MdStore },
     {
       path: "/project",
       label: "Projects",
       icon: IoFolderOpenOutline,
       activeIcon: IoFolderOpenSharp,
+      relativePath: "/project",
+      sub_menu: [
+        {
+          path: "/project/procurement",
+          label: "Procurement",
+          icon: HiOutlineShoppingBag,
+          activeIcon: HiShoppingBag,
+        },
+        {
+          path: "/project/request",
+          label: "Request",
+          icon: MdOutlineRequestQuote,
+          activeIcon: MdRequestQuote,
+        },
+      ],
     },
     {
       path: "/report",
@@ -79,15 +103,34 @@ const Sidebar = () => {
       icon: MdApproval,
       activeIcon: MdApproval,
     },
+    {
+      path: "/setting",
+      label: "Setting",
+      icon: IoSettingsOutline,
+      activeIcon: IoSettings,
+      relativePath: "/setting",
+      sub_menu: [
+        {
+          path: "/setting/tax",
+          label: "Tax",
+          icon: AiOutlineMoneyCollect,
+          activeIcon: AiFillMoneyCollect,
+        },
+        {
+          path: "/setting/document",
+          label: "Document",
+          icon: IoDocumentTextOutline,
+          activeIcon: IoDocumentText,
+        },
+        {
+          path: "/setting/permission",
+          label: "Role & Permission",
+          icon: IoShieldOutline,
+          activeIcon: IoShieldSharp,
+        },
+      ],
+    },
   ];
-
-  const settingsSubmenu = [
-    { path: "/setting/tax", label: "Tax" },
-    { path: "/setting/document", label: "Document" },
-    { path: "/setting/permission", label: "Role & Permission" },
-  ];
-
-  const isSettingsActive = currentPath.startsWith("/setting");
 
   return (
     <>
@@ -123,7 +166,7 @@ const Sidebar = () => {
           )}
         >
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded shrink-0"></div>
+            <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-pink-500 rounded shrink-0"></div>
             <h1
               className={clsx(
                 "text-xl font-bold text-gray-800 transition-opacity duration-300",
@@ -146,6 +189,13 @@ const Sidebar = () => {
             {navItems.map((item) => {
               const isActive = currentPath === item.path;
               const Icon = isActive ? item?.activeIcon || item.icon : item.icon;
+              const isDropActive = currentPath.startsWith(item.relativePath);
+
+              console.log(isDropActive);
+
+              const isMenuOpen =
+                dropDownTargetState?.state &&
+                dropDownTargetState?.menu?.path === item.path;
               return (
                 <li key={item.path}>
                   <Tooltip
@@ -154,80 +204,99 @@ const Sidebar = () => {
                     isDisabled={sidebarOpen}
                     className="lg:block hidden"
                   >
-                    <button
-                      onClick={() => routeNavigate(item.path)}
-                      className={clsx(
-                        "w-full flex items-center gap-3 py-2.5 rounded-lg text-left transition-all cursor-pointer",
-                        isActive
-                          ? "bg-indigo-50 text-indigo-600 font-medium"
-                          : "text-gray-700 hover:bg-gray-50",
-                        sidebarOpen ? "px-4" : "lg:px-3 lg:justify-center px-4"
-                      )}
-                    >
-                      <Icon size={20} className="shrink-0" />
-                      <span
+                    {item?.sub_menu?.length ? (
+                      <>
+                        <button
+                          onClick={() =>
+                            setDropdownTargetState({
+                              state: !dropDownTargetState?.state,
+                              menu: item,
+                            })
+                          }
+                          className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left transition-all  cursor-pointer ${
+                            isDropActive
+                              ? " text-indigo-600 font-medium"
+                              : "text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon size={20} className="shrink-0" />
+                            <span
+                              className={clsx(
+                                "text-sm transition-opacity duration-300",
+                                !sidebarOpen && "lg:hidden"
+                              )}
+                            >
+                              {item.label}
+                            </span>
+                          </div>
+                          <IoChevronDown
+                            className={`text-sm transition-transform duration-300 ${
+                              isMenuOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                            isMenuOpen
+                              ? "max-h-40 opacity-100"
+                              : "max-h-0 opacity-0"
+                          }`}
+                        >
+                          <ul className="mt-1 space-y-1 pl-4">
+                            {item?.sub_menu.map((item) => {
+                              const isActive = currentPath === item.path;
+                              const Icon = isActive
+                                ? item?.activeIcon || item.icon
+                                : item.icon;
+                              return (
+                                <li key={item.path}>
+                                  <button
+                                    onClick={() => routeNavigate(item.path)}
+                                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left transition-all text-sm ${
+                                      isActive
+                                        ? "bg-indigo-50 text-indigo-600 font-medium"
+                                        : "text-gray-600 hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <Icon size={20} className="shrink-0" />
+                                    {item.label}
+                                  </button>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => routeNavigate(item.path)}
                         className={clsx(
-                          "text-sm transition-opacity duration-300",
-                          !sidebarOpen && "lg:hidden"
+                          "w-full flex items-center gap-3 py-2.5 rounded-lg text-left transition-all cursor-pointer",
+                          isActive
+                            ? "bg-indigo-50 text-indigo-600 font-medium"
+                            : "text-gray-700 hover:bg-gray-50",
+                          sidebarOpen
+                            ? "px-4"
+                            : "lg:px-3 lg:justify-center px-4"
                         )}
                       >
-                        {item.label}
-                      </span>
-                    </button>
+                        <Icon size={20} className="shrink-0" />
+                        <span
+                          className={clsx(
+                            "text-sm transition-opacity duration-300",
+                            !sidebarOpen && "lg:hidden"
+                          )}
+                        >
+                          {item.label}
+                        </span>
+                      </button>
+                    )}
                   </Tooltip>
                 </li>
               );
             })}
           </ul>
-
-          {/* Settings Dropdown */}
-
-          <div>
-            <button
-              onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left transition-all  cursor-pointer ${
-                isSettingsActive
-                  ? " text-indigo-600 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <RiSettings5Line className="text-lg" />
-                <span className="text-sm">Settings</span>
-              </div>
-              <IoChevronDown
-                className={`text-sm transition-transform duration-300 ${
-                  isSettingsOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-            {/* Dropdown Menu with Animation */}
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                isSettingsOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-              }`}
-            >
-              <ul className="mt-1 space-y-1 pl-4">
-                {settingsSubmenu.map((item) => {
-                  const isActive = currentPath === item.path;
-                  return (
-                    <li key={item.path}>
-                      <button
-                        onClick={() => routeNavigate(item.path)}
-                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left transition-all text-sm ${
-                          isActive
-                            ? "bg-indigo-50 text-indigo-600 font-medium"
-                            : "text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        {item.label}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
         </nav>
 
         {/* Bottom Actions */}

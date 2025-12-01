@@ -5,6 +5,8 @@ import { format } from "date-fns";
 const LocalPurchaseOrder = ({ details }) => {
   const purchaseOrder = details?.data || {};
 
+  const items = details?.procurement_items;
+
   return (
     <main>
       <div className="p-6 bg-white min-w-220 relative">

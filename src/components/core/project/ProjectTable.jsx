@@ -16,6 +16,7 @@ const ProjectTable = ({
   is_approval,
   setSelectedStatus,
   selectedStatus,
+  visible_status,
 }) => {
   const { openDrawer } = useDrawerStore();
 
@@ -124,6 +125,7 @@ const ProjectTable = ({
         }}
         selectedStatus={selectedStatus}
         setSelectedStatus={setSelectedStatus}
+        visible_status={visible_status}
       />
       <div className="w-full">
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

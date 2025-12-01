@@ -35,32 +35,34 @@ const ProjectTableHeader = ({
     <>
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            {statusOption?.map((status) => (
-              <button
-                className={clsx(
-                  "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700  flex items-center whitespace-nowrap cursor-pointer",
-                  status?.value === selectedStatus ? status.activeColor : ""
-                )}
-                onClick={() => setSelectedStatus(status?.value)}
-              >
-                <span
+          {selectedStatus && (
+            <div className="flex flex-wrap items-center gap-2">
+              {statusOption?.map((status) => (
+                <button
                   className={clsx(
-                    "w-2 h-2 rounded-full mr-2 shrink-0",
-                    status?.statusColor
+                    "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700  flex items-center whitespace-nowrap cursor-pointer",
+                    status?.value === selectedStatus ? status.activeColor : ""
                   )}
-                ></span>
-                <span className="inline">
-                  {loading?.[status?.value] ? (
-                    <StarLoader size={18} />
-                  ) : (
-                    statusCount?.[status?.value]
-                  )}{" "}
-                  {status?.label}
-                </span>
-              </button>
-            ))}
-          </div>
+                  onClick={() => setSelectedStatus(status?.value)}
+                >
+                  <span
+                    className={clsx(
+                      "w-2 h-2 rounded-full mr-2 shrink-0",
+                      status?.statusColor
+                    )}
+                  ></span>
+                  <span className="inline">
+                    {loading?.[status?.value] ? (
+                      <StarLoader size={18} />
+                    ) : (
+                      statusCount?.[status?.value]
+                    )}{" "}
+                    {status?.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="relative w-full sm:w-auto">
             <LuSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
