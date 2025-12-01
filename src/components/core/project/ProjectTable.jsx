@@ -7,8 +7,16 @@ import StarLoader from "../loaders/StarLoader";
 import { Result } from "antd";
 import useDrawerStore from "../../../hooks/useDrawerStore";
 import { Pagination } from "@heroui/react";
+import { catchErrFunc } from "../../../utils/catchErrFunc";
 
-const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
+const ProjectTable = ({
+  projects,
+  isError,
+  isLoadingProject,
+  is_approval,
+  setSelectedStatus,
+  selectedStatus,
+}) => {
   const { openDrawer } = useDrawerStore();
 
   const [selectedProject, setSelectedProject] = useState({
@@ -22,37 +30,41 @@ const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
 
   const handleGetVendorDetail = async (project, action) => {
     setSelectedProject({ id: project?.ID, action });
+    try {
+      const projectDetail = await mutateGetProjectDetail(
+        project?.ID || project?.PROCUREMENT_ID
+      );
 
-    const projectDetail = await mutateGetProjectDetail(
-      project?.ID || project?.PROCUREMENT_ID
-    );
+      const support_documents = projectDetail?.support_documents;
 
-    const support_documents = projectDetail?.support_documents;
-
-    const details = {
-      ...projectDetail,
-      data: {
+      const details = {
         ...projectDetail,
-      },
-      approvers: projectDetail?.approval_request,
-      notes: [],
-      support_documents,
-    };
+        ...project,
+        data: {
+          ...projectDetail,
+        },
+        approvers: projectDetail?.approval_request,
+        notes: [],
+        support_documents,
+      };
 
-    if (action === "EDIT") {
-      openDrawer({
-        viewName: "create-project",
-        projectDetail: details,
-        drawerSize: "950",
-      });
-    } else {
-      openDrawer({
-        viewName: "project-detail",
-        drawerSize:
-          details?.RODER_TYPE === "Local Purchase Order" ? "1200" : null,
-        projectDetail: details,
-        is_approval,
-      });
+      if (action === "EDIT") {
+        openDrawer({
+          viewName: "create-project",
+          projectDetail: details,
+          drawerSize: "950",
+        });
+      } else {
+        openDrawer({
+          viewName: "project-detail",
+          drawerSize:
+            details?.RODER_TYPE === "Local Purchase Order" ? "1200" : null,
+          projectDetail: details,
+          is_approval,
+        });
+      }
+    } catch (err) {
+      catchErrFunc(err);
     }
   };
 
@@ -107,6 +119,18 @@ const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
       <ProjectTableHeader
         setSearQuery={setSearQuery}
         searchQuery={searchQuery}
+        loading={{
+          pending: false,
+          approved: false,
+          declined: false,
+        }}
+        statusCount={{
+          pending: 0,
+          approved: 0,
+          declined: 0,
+        }}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
       />
       <div className="w-full">
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -229,12 +253,14 @@ const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
                           selectedProject?.action === "EDIT" ? (
                             <StarLoader size={18} />
                           ) : (
-                            <ActionIcons
-                              variant={"EDIT"}
-                              action={() =>
-                                handleGetVendorDetail(project, "EDIT")
-                              }
-                            />
+                            selectedStatus === "pending" && (
+                              <ActionIcons
+                                variant={"EDIT"}
+                                action={() =>
+                                  handleGetVendorDetail(project, "EDIT")
+                                }
+                              />
+                            )
                           )}
                           {isPendingDetail &&
                           selectedProject?.id === project?.ID &&

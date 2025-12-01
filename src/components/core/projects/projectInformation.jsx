@@ -158,7 +158,7 @@ const ProjectInformation = (props) => {
               )}
             />
           </div>
-          {project_type === "Job Order" ? (
+          {project_type?.toLowerCase() == "Job Order"?.toLowerCase() ? (
             <JobOrderForm
               control={control}
               departments={departments}
@@ -168,7 +168,8 @@ const ProjectInformation = (props) => {
               vendorsList={vendorsList}
             />
           ) : (
-            project_type === "Local Purchase Order" && (
+            project_type?.toLowerCase() ===
+              "Local Purchase Order"?.toLowerCase() && (
               <PurchaseOrderForm
                 control={control}
                 departments={departments}

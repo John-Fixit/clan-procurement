@@ -21,25 +21,25 @@ const ProjectDetail = () => {
   } = useDrawerStore();
 
   const sideTabs = [
-    // {
-    //   title: "Detail",
-    //   content: (
-    //     <JobOrderDetail details={projectDetail} is_approval={is_approval} />
-    //   ),
-    // },
-
     {
       title: "Detail",
-      content:
-        projectDetail?.ORDER_TYPE === "Local Purchase Order" ? (
-          <LocalPurchaseOrder
-            details={projectDetail}
-            is_approval={is_approval}
-          />
-        ) : (
-          <JoborderTemplate details={projectDetail} is_approval={is_approval} />
-        ),
+      content: (
+        <JobOrderDetail details={projectDetail} is_approval={is_approval} />
+      ),
     },
+
+    // {
+    //   title: "Detail",
+    //   content:
+    //     projectDetail?.ORDER_TYPE === "Local Purchase Order" ? (
+    //       <LocalPurchaseOrder
+    //         details={projectDetail}
+    //         is_approval={is_approval}
+    //       />
+    //     ) : (
+    //       <JoborderTemplate details={projectDetail} is_approval={is_approval} />
+    //     ),
+    // },
     {
       title: "Support Documents",
       content: <SupportDocumentView details={projectDetail} />,
@@ -80,12 +80,31 @@ const ProjectDetail = () => {
     modal.confirm({ ...config, onOk: () => handleConfirmApprove(json) });
   };
 
-  const handleReject = () => {};
+  const handleReject = (request) => {
+    console.log(request);
+    const config = {
+      title: "Confirm!",
+      okText: "Yes, Reject",
+      content: (
+        <>
+          <p className="fot-primary">
+            Are you sure to reject this Procurement request?
+          </p>
+        </>
+      ),
+    };
+
+    const json = {
+      approval_id: request?.APPROVAL_ID,
+      is_approved: -1,
+      status: "reject",
+    };
+    modal.confirm({ ...config, onOk: () => handleConfirmApprove(json) });
+  };
 
   const handleConfirmApprove = async (payload) => {
     try {
       const res = await mutateApproveProject(payload);
-      console.log(res);
       successToast(res?.data?.message);
       closeDrawer();
     } catch (err) {
@@ -101,8 +120,8 @@ const ProjectDetail = () => {
         setSelectedTab={setSelectedTab}
         sideTabs={sideTabs}
         is_approval={is_approval}
-        handleApprove={handleApprove}
-        handleReject={handleReject}
+        handleApprove={() => handleApprove(projectDetail)}
+        handleReject={() => handleReject(projectDetail)}
       />
     </>
   );

@@ -38,7 +38,7 @@ export default function JobOrderDetail({ details }) {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="bg-gray-200 rounded-lg p-3 px-6 mb-6 textwhite">
+        <div className="bg-primary rounded-lg p-3 px-6 mb-6 text-white">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold">{jobOrder.ORDER_TYPE}</h1>
@@ -53,7 +53,7 @@ export default function JobOrderDetail({ details }) {
                       ? "danger"
                       : "warning"
                   }
-                  variant="flat"
+                  variant="solid"
                 >
                   <div className="flex gap-1">
                     {jobOrder.IS_APPROVED ? (
@@ -127,43 +127,45 @@ export default function JobOrderDetail({ details }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Financial Details */}
-          <Section title="Financial Details">
-            <div className="grid grid-cols-2 gap-6"></div>
-            <DetailItem
-              icon={FiDollarSign}
-              label="Job Amount"
-              value={formatCurrency(jobOrder.JOB_AMOUNT || 0)}
-            />
-            <DetailItem
-              icon={FiDollarSign}
-              label="Tax Rate"
-              value={`${jobOrder.TAX_VALUE || 0}%`}
-            />
-            <DetailItem
-              icon={FiDollarSign}
-              label="Tax Amount"
-              value={formatCurrency(
-                (parseFloat(jobOrder.JOB_AMOUNT || 0) *
-                  parseFloat(jobOrder.TAX_VALUE || 0)) /
-                  100
-              )}
-            />
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-semibold text-gray-700">
-                  Total Amount
-                </span>
-                <span className="text-xl font-bold text-gray-900">
-                  {formatCurrency(
-                    parseFloat(jobOrder.JOB_AMOUNT || 0) +
-                      (parseFloat(jobOrder.JOB_AMOUNT || 0) *
-                        parseFloat(jobOrder.TAX_VALUE || 0)) /
-                        100
-                  )}
-                </span>
+          {jobOrder.ORDER_TYPE == "Job Order" && (
+            <Section title="Financial Details">
+              <div className="grid grid-cols-2 gap-6"></div>
+              <DetailItem
+                icon={FiDollarSign}
+                label="Job Amount"
+                value={formatCurrency(jobOrder.JOB_AMOUNT || 0)}
+              />
+              <DetailItem
+                icon={FiDollarSign}
+                label="Tax Rate"
+                value={`${jobOrder.TAX_VALUE || 0}%`}
+              />
+              <DetailItem
+                icon={FiDollarSign}
+                label="Tax Amount"
+                value={formatCurrency(
+                  (parseFloat(jobOrder.JOB_AMOUNT || 0) *
+                    parseFloat(jobOrder.TAX_VALUE || 0)) /
+                    100
+                )}
+              />
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Total Amount
+                  </span>
+                  <span className="text-xl font-bold text-gray-900">
+                    {formatCurrency(
+                      parseFloat(jobOrder.JOB_AMOUNT || 0) +
+                        (parseFloat(jobOrder.JOB_AMOUNT || 0) *
+                          parseFloat(jobOrder.TAX_VALUE || 0)) /
+                          100
+                    )}
+                  </span>
+                </div>
               </div>
-            </div>
-          </Section>
+            </Section>
+          )}
 
           {/* Project Details */}
           <Section title="Project Details">
@@ -186,6 +188,19 @@ export default function JobOrderDetail({ details }) {
               icon={FiPackage}
               label="Department"
               value={`Department ${jobOrder.DEPARTMENT_SUPPLIED}`}
+            />
+          </Section>
+          {/* Receiving Details */}
+          <Section title="Receiving Information">
+            <DetailItem
+              icon={FiUser}
+              label="Received By"
+              value={` ${jobOrder.RECEIVED_BY || "N/A"}`}
+            />
+            <DetailItem
+              icon={FiFileText}
+              label="Received Note Number"
+              value={jobOrder.RECEIVED_NOTE_NO}
             />
           </Section>
         </div>
@@ -215,37 +230,26 @@ export default function JobOrderDetail({ details }) {
             />
           </div>
         </Section>
-
-        {/* Receiving Details */}
-        <Section title="Receiving Information">
-          <DetailItem
-            icon={FiUser}
-            label="Received By"
-            value={` ${jobOrder.RECEIVED_BY || "N/A"}`}
-          />
-          <DetailItem
-            icon={FiFileText}
-            label="Received Note Number"
-            value={jobOrder.RECEIVED_NOTE_NO}
-          />
-        </Section>
       </div>
     </div>
   );
 }
 
 // eslint-disable-next-line no-unused-vars
-const DetailItem = ({ icon: Icon, label, value }) => (
-  <div className="flex items-start space-x-3 py-2 border-b border-gray-100 last:border-0">
-    <div className="flex-shrink-0 mt-1">
-      <Icon className="w-5 h-5 text-blue-600" />
+const DetailItem = ({ icon: Icon, label, value }) =>
+  value ? (
+    <div className="flex items-start space-x-3 py-2 border-b border-gray-100 last:border-0">
+      <div className="shrink-0 mt-1">
+        <Icon className="w-5 h-5 text-blue-600" />
+      </div>
+      <div className="flex-1">
+        <p className="text-sm font-medium text-gray-500">{label}</p>
+        <p className="text-base text-gray-900 mt-1">{value || "N/A"}</p>
+      </div>
     </div>
-    <div className="flex-1">
-      <p className="text-sm font-medium text-gray-500">{label}</p>
-      <p className="text-base text-gray-900 mt-1">{value || "N/A"}</p>
-    </div>
-  </div>
-);
+  ) : (
+    ""
+  );
 
 const Section = ({ title, children }) => (
   <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">

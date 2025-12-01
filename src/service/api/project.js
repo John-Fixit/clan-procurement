@@ -1,25 +1,32 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API } from "../axiosInstance";
 
-export const useCreateProject = () => {
+export const useCreateProject = (procurementId) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload) => {
+      if (procurementId) {
+        return await API.put(`procurement/update/${procurementId}`, payload);
+      }
       return await API.post(`procurement/create`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["get_projects"],
+        queryKey: [`get_projects_0`],
       });
     },
   });
 };
 
-export const useGetProject = () => {
+export const useGetProject = (status) => {
   return useQuery({
-    queryKey: ["get_projects"],
+    queryKey: [`get_projects_${status}`],
     queryFn: async () => {
-      const res = await API.get(`procurement/get-procurements`);
+      const res = await API.get(`procurement/get-procurements`, {
+        params: {
+          status,
+        },
+      });
       return res.data?.data?.data;
     },
   });
@@ -69,7 +76,11 @@ export const useApproveProject = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload) => {
-      const res = await API.post(`procurement/approve`, payload);
+      const { status, ...json } = payload;
+      const res = await API.post(
+        status === "reject" ? `procurement/reject` : `procurement/approve`,
+        { ...json }
+      );
       return res;
     },
     onSuccess: () => {

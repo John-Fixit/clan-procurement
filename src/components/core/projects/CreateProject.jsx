@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import ProjectInformation from "./projectInformation";
 import ProjectSupportDocument from "./ProjectSupportDocument";
@@ -49,7 +49,12 @@ const validateRequiredField = (values) => {
 const CreateProject = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const { closeDrawer } = useDrawerStore();
+  const {
+    closeDrawer,
+    data: { projectDetail },
+  } = useDrawerStore();
+
+  const projectDetailData = projectDetail?.data || {};
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -62,9 +67,44 @@ const CreateProject = () => {
 
   const hook_form_props = useForm({
     defaultValues: {
-      project_type: "Job Order",
-      approvers: [],
+      project_type: projectDetailData?.ORDER_TYPE || "Job Order",
+      projectNote: projectDetailData?.NOTE,
+      completion_date: projectDetailData?.RECEIVED_DATE || "",
+      date_issued: projectDetailData?.DATE_AWARDED,
+      file_reference: projectDetailData?.FILE_REFERENCE,
+      order_number: projectDetailData?.ORDER_NO,
+      tender_reference: projectDetailData?.TENDER_REFERENCE,
+      recipient_department: projectDetailData?.DEPARTMENT_SUPPLIED,
+      work_location: projectDetailData?.LOCATION_OF_WORK,
+      vendor_statement: projectDetailData?.VENDOR_STATEMENT,
+      date_supplied: projectDetailData?.DATE_SUPPLIED,
+      sum_amount: Number(projectDetailData?.JOB_AMOUNT) || "",
+
+      received_by: {
+        value: projectDetailData?.RECEIVED_BY,
+      },
+      received_note_date: projectDetailData?.RECEIVED_NOTE_DATE,
+      received_note_no: projectDetailData?.RECEIVED_NOTE_NO,
+
+      vendor: {
+        label: projectDetailData?.VENDOR_NAME,
+        value: projectDetailData?.VENDOR_ID,
+      },
+      tax: {
+        label: Number(projectDetailData?.TAX_VALUE),
+        value: projectDetailData?.TAX_ID,
+      },
+      approvers:
+        projectDetailData?.approval_request?.map((appr) => ({
+          ...appr,
+          DESIGNATION: appr?.designation,
+          STAFF_ID: appr?.staff_id,
+          FIRST_NAME: appr?.staff?.split(" ")[0],
+          LAST_NAME: appr?.staff?.split(" ")[1],
+          value: appr?.staff_id,
+        })) || [],
       purchase_order_items: [newItemRow],
+      documents: [],
     },
   });
 
@@ -78,7 +118,7 @@ const CreateProject = () => {
   const project_type = watch("project_type");
 
   const { mutateAsync: mutateAddProject, isPending: isSubmitting } =
-    useCreateProject();
+    useCreateProject(projectDetailData?.ID);
 
   const { userData } = useCurrentUser();
 
@@ -190,7 +230,7 @@ const CreateProject = () => {
         tender_reference: values?.tender_reference,
         vendor_statement: values?.vendor_statement,
         tax_id: values?.tax?.ID,
-        tax_percentage: values?.tax?.PERCENTAGE,
+        tax_value: values?.tax?.PERCENTAGE,
         note: values?.note,
         job_amount: values?.sum_amount,
         support_documents: uploadedDocuments
@@ -200,7 +240,7 @@ const CreateProject = () => {
           ?.filter(Boolean),
         approval_request: values?.approvers?.map((appr, index) => ({
           designation: appr?.DESIGNATION,
-          staff_id: 1,
+          staff_id: appr?.STAFF_ID, //1
           staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
           sn: index + 1,
           is_approved: 0,

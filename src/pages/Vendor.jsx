@@ -14,6 +14,8 @@ import { preProfileLink } from "../utils/pre-profile-link";
 import { useMemo, useState } from "react";
 import { useGetDocument } from "../service/api/setting";
 import StarLoader from "../components/core/loaders/StarLoader";
+import { Pagination } from "@heroui/react";
+import clsx from "clsx";
 
 export default function Vendor() {
   const { openDrawer } = useDrawerStore();
@@ -26,7 +28,25 @@ export default function Vendor() {
     isError,
   } = useGetVendor();
 
-  const vendorsList = useMemo(() => get_vendors || [], [get_vendors]);
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
+  const vendorsList = useMemo(() => {
+    if (selectedStatus === "no_document") {
+      return (
+        get_vendors?.filter((vendor) => vendor?.STATUS === "no_document") || []
+      );
+    } else if (selectedStatus === "not_completed") {
+      return (
+        get_vendors?.filter((vendor) => vendor?.STATUS === "not_completed") ||
+        []
+      );
+    } else if (selectedStatus === "completed") {
+      return (
+        get_vendors?.filter((vendor) => vendor?.STATUS === "completed") || []
+      );
+    }
+    return get_vendors || [];
+  }, [get_vendors, selectedStatus]);
 
   const [selectedVendor, setSelectedVendor] = useState(null);
 
@@ -58,13 +78,13 @@ export default function Vendor() {
   }
 
   const statistics = useMemo(() => {
-    const noDoc = vendorsList?.filter(
+    const noDoc = get_vendors?.filter(
       (vendor) => vendor?.STATUS === "no_document"
     );
-    const notCompleteDoc = vendorsList?.filter(
+    const notCompleteDoc = get_vendors?.filter(
       (vendor) => vendor?.STATUS === "not_completed"
     );
-    const completedDoc = vendorsList?.filter(
+    const completedDoc = get_vendors?.filter(
       (vendor) => vendor?.STATUS === "completed"
     );
     return {
@@ -72,7 +92,7 @@ export default function Vendor() {
       not_completed: notCompleteDoc?.length,
       completed: completedDoc?.length,
     };
-  }, [vendorsList]);
+  }, [get_vendors]);
 
   const handleGetVendorDetail = async (vendor, action) => {
     setSelectedVendor({ id: vendor?.VENDOR_ID, action });
@@ -108,6 +128,9 @@ export default function Vendor() {
 
   const hasSearchFilter = Boolean(searchQuery?.trim());
 
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+
   const filteredProjects = useMemo(() => {
     let prevData = vendorsList?.length ? [...vendorsList] : [];
 
@@ -136,9 +159,14 @@ export default function Vendor() {
     return prevData;
   }, [hasSearchFilter, searchQuery, vendorsList]);
 
+  const totalPage = Math.ceil(filteredProjects?.length / pageSize);
+
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
   const tableData = useMemo(() => {
-    return filteredProjects;
-  }, [filteredProjects]);
+    return filteredProjects?.slice((page - 1) * pageSize, page * pageSize);
+  }, [filteredProjects, page, pageSize]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -172,21 +200,48 @@ export default function Vendor() {
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-wrap items-center gap-2">
-              <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
+              <button
+                className={clsx(
+                  "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
+                  selectedStatus === "all" && "bg-blue-100"
+                )}
+                onClick={() => setSelectedStatus("all")}
+              >
+                <span className="inline">All</span>
+              </button>
+              <button
+                className={clsx(
+                  "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
+                  selectedStatus === "no_document" && "bg-blue-100"
+                )}
+                onClick={() => setSelectedStatus("no_document")}
+              >
                 <span className="w-2 h-2 bg-red-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">
+                <span className="inline">
                   {statistics?.no_document} No document
                 </span>
               </button>
-              <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
+              <button
+                className={clsx(
+                  "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
+                  selectedStatus === "not_completed" && "bg-blue-100"
+                )}
+                onClick={() => setSelectedStatus("not_completed")}
+              >
                 <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">
+                <span className="inline">
                   {statistics?.not_completed} Incomplete document
                 </span>
               </button>
-              <button className="px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center whitespace-nowrap">
+              <button
+                className={clsx(
+                  "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
+                  selectedStatus === "completed" && "bg-blue-100"
+                )}
+                onClick={() => setSelectedStatus("completed")}
+              >
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-2 shrink-0"></span>
-                <span className="hidden sm:inline">
+                <span className="inline">
                   {statistics?.completed} Complete document
                 </span>
               </button>
@@ -376,6 +431,15 @@ export default function Vendor() {
                   )}
                 </tbody>
               </table>
+            </div>
+            <div className="my-4 flex justify-end mx-6">
+              <Pagination
+                showControls
+                initialPage={page}
+                page={page}
+                total={totalPage}
+                onChange={handlePageChange}
+              />
             </div>
           </div>
         </div>
