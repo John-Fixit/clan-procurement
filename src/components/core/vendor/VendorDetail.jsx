@@ -8,6 +8,8 @@ import {
   BsBoxArrowUpRight,
 } from "react-icons/bs";
 import useDrawerStore from "../../../hooks/useDrawerStore";
+import { Avatar } from "@heroui/react";
+import { preProfileLink } from "../../../utils/pre-profile-link";
 
 export default function VendorDetail() {
   const { data } = useDrawerStore();
@@ -31,13 +33,16 @@ export default function VendorDetail() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {vendor.FULLNAME}
-              </h1>
-              <p className="text-sm text-gray-500">
-                Vendor ID: #{vendor.VENDOR_ID}
-              </p>
+            <div className="flex gap-3 items-center">
+              <Avatar
+                src={preProfileLink(vendor.FULLNAME)}
+                className="w-20 h-20"
+              />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {vendor.FULLNAME}
+                </h1>
+              </div>
             </div>
             <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
               Active

@@ -1,19 +1,30 @@
-export const preProfileLink = (name = "") => {
-  const firstName = name?.split(" ")[0];
-  const lastName = name?.split(" ")[1];
-  const bgColor = stringToColor(name); // dynamic color from name
-  const color = "eeeeee";
-  return `https://ui-avatars.com/api/?name=${firstName} ${lastName}&background=${bgColor.replace(
-    "#",
-    ""
-  )}&color=${color}`;
-};
-
-function stringToColor(str) {
+const avatarColors = [
+  "#FF6B6B", // red
+  "#FF8E72", // warm orange
+  "#FFB562", // sand yellow
+  // "#FFD93D", // bright yellow
+  "#6BCB77", // green
+  "#4D96FF", // blue
+  "#6A4CFE", // indigo
+  "#A66BFE", // purple
+  "#FF6EC7", // pink
+  "#3EC1D3", // cyan
+];
+function getAvatarColor(name) {
   let hash = 0;
-  for (let i = 0; i < str?.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < name?.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const hue = Math.abs(hash) % 360; // keep it within [0, 360)
-  return `hsl(${hue}, 60%, 40%)`;
+
+  return avatarColors[Math.abs(hash) % avatarColors?.length];
 }
+
+export const preProfileLink = (name = "") => {
+  const nameArr = name?.split(" ");
+  const firstName = nameArr?.[0];
+  const lastName = nameArr?.[1];
+  const bgColor = getAvatarColor(name).replace("#", "");
+  const color = "FFFFFF"; // white text
+
+  return `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=${bgColor}&color=${color}`;
+};
