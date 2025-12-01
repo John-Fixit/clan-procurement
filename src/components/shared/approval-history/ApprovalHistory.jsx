@@ -13,7 +13,7 @@ const ApprovalHistory = ({ details }) => {
 
   return (
     <>
-      <div className="shadow rounded p-4 bg-white">
+      <div className="border border-gray-300 rounded-lg p-4 bg-white">
         <h4 className="text-lg">Approval History</h4>
         <div className="my-4 w-full">
           {details?.approvers?.length > 0 ? (

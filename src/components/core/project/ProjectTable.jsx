@@ -43,6 +43,7 @@ const ProjectTable = ({
         data: {
           ...projectDetail,
         },
+        procurement_items: projectDetail?.procurement_items,
         approvers: projectDetail?.approval_request,
         notes: [],
         support_documents,
@@ -106,10 +107,6 @@ const ProjectTable = ({
     setPage(page);
   };
 
-  // const handlePageSizeChange = (pageSize) => {
-  //   setPageSize(pageSize);
-  // };
-
   const tableData = useMemo(() => {
     return filteredProjects?.slice((page - 1) * pageSize, page * pageSize);
   }, [filteredProjects, page, pageSize]);
@@ -120,14 +117,10 @@ const ProjectTable = ({
         setSearQuery={setSearQuery}
         searchQuery={searchQuery}
         loading={{
-          pending: false,
-          approved: false,
-          declined: false,
+          [selectedStatus]: isLoadingProject,
         }}
         statusCount={{
-          pending: 0,
-          approved: 0,
-          declined: 0,
+          [selectedStatus]: projects?.length,
         }}
         selectedStatus={selectedStatus}
         setSelectedStatus={setSelectedStatus}

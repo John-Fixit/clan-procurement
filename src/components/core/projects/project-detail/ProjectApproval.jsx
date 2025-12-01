@@ -106,7 +106,6 @@ const ProjectApproval = (props) => {
         loading={isLoadingStaff}
         options={staffList}
         size="large"
-        // tagRender={tagRender}
         labelInValue
         maxTagCount="responsive"
         showSearch

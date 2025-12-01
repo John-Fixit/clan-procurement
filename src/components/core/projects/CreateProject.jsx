@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import ProjectInformation from "./projectInformation";
 import ProjectSupportDocument from "./ProjectSupportDocument";
@@ -43,6 +43,25 @@ const validateRequiredField = (values) => {
       }
     }
   });
+  return newErrors;
+};
+
+const productItemRequiredField = {
+  product_id: "Product must be picked for each item",
+  tax: "All item must have tax",
+  quantity: "All item must have quantity",
+  unit_price: "All item must have unit price",
+};
+
+const validateProducts = (products) => {
+  const newErrors = {};
+
+  Object.keys(productItemRequiredField).forEach((field) => {
+    if (!products?.[field]) {
+      newErrors[field] = productItemRequiredField[field];
+    }
+  });
+
   return newErrors;
 };
 
@@ -91,7 +110,8 @@ const CreateProject = () => {
         value: projectDetailData?.VENDOR_ID,
       },
       tax: {
-        label: Number(projectDetailData?.TAX_VALUE),
+        label:
+          projectDetailData?.TAX_VALUE && Number(projectDetailData?.TAX_VALUE),
         value: projectDetailData?.TAX_ID,
       },
       approvers:
@@ -103,7 +123,16 @@ const CreateProject = () => {
           LAST_NAME: appr?.staff?.split(" ")[1],
           value: appr?.staff_id,
         })) || [],
-      purchase_order_items: [newItemRow],
+      purchase_order_items: projectDetail?.procurement_items?.map((item) => ({
+        ...item,
+        quantity: item?.quantity,
+        unit_price: item?.unit_price,
+        tax: item?.tax,
+        product_id: item?.product_id,
+        description: item?.description,
+        tax_id: item?.tax_id,
+        vote_or_charge: item?.vote_or_charge,
+      })) || [newItemRow],
       documents: [],
     },
   });
@@ -182,14 +211,11 @@ const CreateProject = () => {
       const fieldErrors = Object.keys(hookErrors)?.map(
         (fld) => `${fld?.replaceAll("_", " ")} is required`
       );
-
       const combinedMessage = fieldErrors?.join("\n");
       errorToast(combinedMessage);
       return;
     }
     const values = getValues();
-
-    console.log(values);
 
     const errors = validateRequiredField(values);
 
@@ -204,54 +230,64 @@ const CreateProject = () => {
         values.documents || []
       );
 
-      const items = values?.purchase_order_items?.map((item) => ({
-        product_id: item?.product_id,
-        tax_id: item?.tax?.value,
-        unit_price: item?.unit_price,
-        tax: Number(item?.tax?.PERCENTAGE),
-        quantity: item?.quantity,
-        description: item?.description, //"24-inch monitor, high resolution, black"
-      }));
+      const items = values?.purchase_order_items?.map((item) => {
+        const errors = validateProducts(item);
+        if (Object.keys(errors).length > 0) {
+          const combinedMessage = Object.values(errors).join("\n");
+          errorToast(combinedMessage);
 
-      // console.log(values);
-      const json = {
-        order_type: values?.project_type,
-        order_no: values?.order_number,
-        vendor_id: values?.vendor?.value,
-        date_supplied: values?.date_supplied,
-        department_supplied: values?.recipient_department,
-        date_awarded: values?.date_issued,
-        received_by: values?.received_by?.value,
-        received_date: values?.completion_date,
-        received_note_no: values?.received_note_no,
-        received_note_date: values?.received_note_date,
-        location_of_work: values?.work_location,
-        file_reference: values?.file_reference,
-        tender_reference: values?.tender_reference,
-        vendor_statement: values?.vendor_statement,
-        tax_id: values?.tax?.ID,
-        tax_value: values?.tax?.PERCENTAGE,
-        note: values?.note,
-        job_amount: values?.sum_amount,
-        support_documents: uploadedDocuments
-          ?.map((supdoc) => ({
-            attachment_url: supdoc.uploaded_url,
-          }))
-          ?.filter(Boolean),
-        approval_request: values?.approvers?.map((appr, index) => ({
-          designation: appr?.DESIGNATION,
-          staff_id: appr?.STAFF_ID, //1
-          staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
-          sn: index + 1,
-          is_approved: 0,
-        })),
-        procurement_items: items,
-      };
-      // validate required fields before proceeding
+          return;
+        }
+        return {
+          product_id: item?.product_id,
+          tax_id: item?.tax?.value,
+          unit_price: item?.unit_price,
+          tax: Number(item?.tax?.PERCENTAGE),
+          quantity: item?.quantity,
+          description: item?.description, //"24-inch monitor, high resolution, black"
+        };
+      });
 
-      const res = await mutateAddProject(json);
-      successToast(res?.data?.message);
-      closeDrawer();
+      if (items?.[0]) {
+        const json = {
+          order_type: values?.project_type,
+          order_no: values?.order_number,
+          vendor_id: values?.vendor?.value,
+          date_supplied: values?.date_supplied,
+          department_supplied: values?.recipient_department,
+          date_awarded: values?.date_issued,
+          received_by: values?.received_by?.value,
+          received_date: values?.completion_date,
+          received_note_no: values?.received_note_no,
+          received_note_date: values?.received_note_date,
+          location_of_work: values?.work_location,
+          file_reference: values?.file_reference,
+          tender_reference: values?.tender_reference,
+          vendor_statement: values?.vendor_statement,
+          tax_id: values?.tax?.ID,
+          tax_value: values?.tax?.PERCENTAGE,
+          note: values?.projectNote,
+          job_amount: values?.sum_amount,
+          support_documents: uploadedDocuments
+            ?.map((supdoc) => ({
+              attachment_url: supdoc.uploaded_url,
+            }))
+            ?.filter(Boolean),
+          approval_request: values?.approvers?.map((appr, index) => ({
+            designation: appr?.DESIGNATION,
+            staff_id: appr?.STAFF_ID, //1
+            staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
+            sn: index + 1,
+            is_approved: 0,
+          })),
+          procurement_items: items,
+        };
+        // validate required fields before proceeding
+
+        const res = await mutateAddProject(json);
+        successToast(res?.data?.message);
+        closeDrawer();
+      }
     } catch (err) {
       catchErrFunc(err);
     } finally {

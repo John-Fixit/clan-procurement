@@ -11,6 +11,7 @@ import { useApproveProject } from "../../../../service/api/project";
 import { successToast } from "../../../../utils/toastPopUps";
 import PurchaseOrderItems from "../purchaseOrderItems";
 import LocalPurchaseOrder from "../../templates/local-purchase-order/LocalPurchaseOrder";
+import LocalPurchaseItemsView from "./LocalPurchaseItemsView";
 
 const ProjectDetail = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -27,19 +28,11 @@ const ProjectDetail = () => {
         <JobOrderDetail details={projectDetail} is_approval={is_approval} />
       ),
     },
+    projectDetail?.procurement_items && {
+      title: "Items",
+      content: <LocalPurchaseItemsView details={projectDetail} />,
+    },
 
-    // {
-    //   title: "Detail",
-    //   content:
-    //     projectDetail?.ORDER_TYPE === "Local Purchase Order" ? (
-    //       <LocalPurchaseOrder
-    //         details={projectDetail}
-    //         is_approval={is_approval}
-    //       />
-    //     ) : (
-    //       <JoborderTemplate details={projectDetail} is_approval={is_approval} />
-    //     ),
-    // },
     {
       title: "Support Documents",
       content: <SupportDocumentView details={projectDetail} />,

@@ -15,19 +15,19 @@ const ProjectTableHeader = ({
       label: "Pending",
       value: "pending",
       statusColor: "bg-yellow-500",
-      activeColor: "bg-orange-100",
+      activeColor: "bg-blue-100",
     },
     {
       label: "Approved",
       value: "approved",
       statusColor: "bg-green-500",
-      activeColor: "bg-green-100",
+      activeColor: "bg-blue-100",
     },
     {
       label: "Declined",
       value: "declined",
       statusColor: "bg-red-500",
-      activeColor: "bg-red-100",
+      activeColor: "bg-blue-100",
     },
   ];
 
