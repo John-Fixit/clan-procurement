@@ -17,7 +17,13 @@ import { useGetDocument } from "../service/api/setting";
 export default function Vendor() {
   const { openDrawer } = useDrawerStore();
 
-  const { data: get_vendors } = useGetVendor();
+  const [searchQuery, setSearQuery] = useState("");
+
+  const {
+    data: get_vendors,
+    isPending: isLoadingVendor,
+    isError,
+  } = useGetVendor();
 
   const vendorsList = useMemo(() => get_vendors || [], [get_vendors]);
 
@@ -99,6 +105,40 @@ export default function Vendor() {
     }
   };
 
+  const hasSearchFilter = Boolean(searchQuery?.trim());
+
+  const filteredProjects = useMemo(() => {
+    let prevData = vendorsList?.length ? [...vendorsList] : [];
+
+    if (hasSearchFilter) {
+      const value = searchQuery?.trim()?.toLowerCase();
+
+      const updatedData = vendorsList?.filter((item) => {
+        const matches = [
+          item?.FULLNAME?.toLowerCase(),
+          item?.EMAIL?.toLowerCase(),
+          item?.BUSINESS?.toLowerCase(),
+          item?.PHONE?.toLowerCase(),
+          item?.ADDRESS?.toLowerCase(),
+        ].some((field) => field?.includes(value));
+
+        // const fullNameMatches = searchTerms.every((term) =>
+        //   fullName.includes(term)
+        // );
+
+        return matches; //|| fullNameMatches;
+      });
+
+      prevData = updatedData.length ? updatedData : [];
+    }
+
+    return prevData;
+  }, [hasSearchFilter, searchQuery, vendorsList]);
+
+  const tableData = useMemo(() => {
+    return filteredProjects;
+  }, [filteredProjects]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Navigation */}
@@ -107,10 +147,6 @@ export default function Vendor() {
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-gray-800">Vendor</h2>
             <div className="flex items-center space-x-3">
-              <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
-                <LuSettings className="w-5 h-5" />
-              </button>
-
               <Button
                 radius="sm"
                 color="primary"
@@ -166,6 +202,8 @@ export default function Vendor() {
                   type="text"
                   placeholder="Search by owner or title"
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full sm:w-64 md:w-80"
+                  value={searchQuery}
+                  onChange={(e) => setSearQuery(e.target.value)}
                 />
               </div>
             </div>
@@ -240,58 +278,104 @@ export default function Vendor() {
                   </tr>
                 </thead>
                 <tbody>
-                  {vendorsList?.map((vendor, index) => (
-                    <tr
-                      key={index + "___vendor" + vendor?.ID}
-                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center space-x-2">
-                          <Avatar
-                            className="w-10 h-10 cursor-pointer"
-                            src={preProfileLink(vendor?.FULLNAME)}
-                          />
-                          <p className="text-sm font-outfit text-gray-500 whitespace-nowrap">
-                            {vendor?.FULLNAME}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <h3 className="text-sm font-outfit text-gray-500 whitespace-nowrap">
-                          {vendor?.EMAIL}
-                        </h3>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="font-outfit text-gray-500 text-sm">
-                          {vendor?.BUSINESS}jljjnl
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-outfit text-gray-500 text-sm">
-                          {vendor?.PHONE}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-outfit text-gray-500 text-sm">
-                          {vendor?.ADDRESS}
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex items-center space-x-1">
-                          <ActionIcons
-                            variant={"EDIT"}
-                            action={() => handleGetVendorDetail(vendor, "EDIT")}
-                          />
-
-                          <ActionIcons
-                            variant={"VIEW"}
-                            action={() => handleGetVendorDetail(vendor, "VIEW")}
-                          />
+                  {vendorsList?.length === 0 || tableData?.length === 0 ? (
+                    <tr>
+                      <td colSpan={6}>
+                        <div className="flex items-center justify-center h-44">
+                          <div className="w-full h-full flex flex-col items-center justify-center">
+                            {isLoadingVendor ? (
+                              <div className="flex justify-center items-center">
+                                <StarLoader />
+                              </div>
+                            ) : isError ? (
+                              <Result
+                                status={"error"}
+                                title="An unexpected error occurred"
+                                classNames={{
+                                  title: "text-gray-500! text-base!",
+                                }}
+                              />
+                            ) : (
+                              // Empty State
+                              <div className="flex flex-col items-center justify-center w-full h-full">
+                                <div className="text-gray-500 text-sm font-medium">
+                                  No projects found
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    tableData?.map((vendor, index) => (
+                      <tr
+                        key={index + "___vendor" + vendor?.ID}
+                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-2">
+                            <Avatar
+                              className="w-10 h-10 cursor-pointer"
+                              src={preProfileLink(vendor?.FULLNAME)}
+                            />
+                            <p className="text-sm font-outfit text-gray-500 whitespace-nowrap">
+                              {vendor?.FULLNAME}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <h3 className="text-sm font-outfit text-gray-500 whitespace-nowrap">
+                            {vendor?.EMAIL}
+                          </h3>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="font-outfit text-gray-500 text-sm">
+                            {vendor?.BUSINESS}jljjnl
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-outfit text-gray-500 text-sm">
+                            {vendor?.PHONE}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-outfit text-gray-500 text-sm">
+                            {vendor?.ADDRESS}
+                          </div>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-1">
+                            {isPendingDetail &&
+                            selectedVendor?.id === vendor?.ID &&
+                            selectedVendor?.action === "EDIT" ? (
+                              <StarLoader size={18} />
+                            ) : (
+                              <ActionIcons
+                                variant={"EDIT"}
+                                action={() =>
+                                  handleGetVendorDetail(vendor, "EDIT")
+                                }
+                              />
+                            )}
+                            {isPendingDetail &&
+                            selectedVendor?.id === vendor?.ID &&
+                            selectedVendor?.action === "VIEW" ? (
+                              <StarLoader size={18} />
+                            ) : (
+                              <ActionIcons
+                                variant={"VIEW"}
+                                action={() =>
+                                  handleGetVendorDetail(vendor, "VIEW")
+                                }
+                              />
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

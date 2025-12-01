@@ -495,6 +495,8 @@ const PurchaseOrderForm = ({
   departments,
   isLoadingStaff,
   staffList,
+  vendorsList,
+  isLoadingVendors,
 }) => {
   return (
     <>
@@ -664,11 +666,8 @@ const PurchaseOrderForm = ({
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={[
-                  { label: "Technical", value: "techinal" },
-                  { label: "Soft skill", value: "soft skill" },
-                  { label: "Other", value: "other" },
-                ]}
+                options={vendorsList}
+                loading={isLoadingVendors}
                 labelInValue
                 {...field}
                 size="large"

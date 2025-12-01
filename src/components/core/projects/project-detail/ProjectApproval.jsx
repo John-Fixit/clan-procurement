@@ -1,9 +1,9 @@
 import { Select, Avatar, Tag, Space } from "antd";
-import Button from "../../shared/ui/Button";
+import Button from "../../../shared/ui/Button";
 import { IoChevronBackOutline } from "react-icons/io5";
-import { useGetAllStaff } from "../../../service/api/general";
-import useCurrentUser from "../../../hooks/useCurrentUser";
-import { filePrefix } from "../../../utils/file-prefix";
+import { useGetAllStaff } from "../../../../service/api/general";
+import useCurrentUser from "../../../../hooks/useCurrentUser";
+import { filePrefix } from "../../../../utils/file-prefix";
 import { User } from "@heroui/react";
 import { FaUser } from "react-icons/fa";
 

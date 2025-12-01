@@ -5,9 +5,19 @@ import ProjectTableHeader from "../components/core/project/ProjectTableHeader";
 import { Tab, Tabs } from "@heroui/react";
 import { Select } from "antd";
 import Button from "../components/shared/ui/Button";
+import { useGetProject } from "../service/api/project";
+import { useMemo } from "react";
 
 export default function Projects() {
   const { openDrawer } = useDrawerStore();
+
+  const {
+    data: get_projects,
+    isError,
+    isPending: isLoadingProject,
+  } = useGetProject();
+
+  const projects = useMemo(() => get_projects || [], [get_projects]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,10 +35,6 @@ export default function Projects() {
               <Tab key="videos" title="Decline" />
             </Tabs>
             <div className="flex items-center space-x-3">
-              <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
-                <LuSettings className="w-5 h-5" />
-              </button>
-
               <Button
                 radius="sm"
                 color="primary"
@@ -84,7 +90,11 @@ export default function Projects() {
         </div> */}
 
         {/* Objectives Table */}
-        <ProjectTable />
+        <ProjectTable
+          projects={projects}
+          isError={isError}
+          isLoadingProject={isLoadingProject}
+        />
       </div>
     </div>
   );

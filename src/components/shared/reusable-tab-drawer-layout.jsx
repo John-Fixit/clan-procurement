@@ -1,19 +1,29 @@
 import React from "react";
+import Button from "./ui/Button";
 
-const ReusableTabDrawerLayout = ({ sideTabs, selectedTab, setSelectedTab }) => {
+const ReusableTabDrawerLayout = ({
+  sideTabs,
+  selectedTab,
+  setSelectedTab,
+  is_approval,
+  handleApprove,
+  handleReject,
+}) => {
   return (
     <div className="flex md:flex-nowrap flex-col md:flex-row hfull gap-4">
-      <div className="flex-1 min-w-0 py-3 md:p-5 overflow-y-auto order-2 md:order-1">
-        {sideTabs?.map((tab, index) => (
-          <div
-            key={index}
-            style={{
-              display: selectedTab === index ? "block" : "none",
-            }}
-          >
-            {tab?.content}
-          </div>
-        ))}
+      <div className="flex-1 min-w-0 py-3 md:p-5 overflow-y-auto order-2 md:order-1 relative">
+        <div className="mb-6">
+          {sideTabs?.map((tab, index) => (
+            <div
+              key={index}
+              style={{
+                display: selectedTab === index ? "block" : "none",
+              }}
+            >
+              {tab?.content}
+            </div>
+          ))}
+        </div>
       </div>
       <div className="shrink-0 w-40 flex flex-col gap-3 pt-10 pb-5 pl-4 border-l border-gray-300 order-1 md:order-2">
         {sideTabs?.map((tab, index) => (
@@ -35,6 +45,27 @@ const ReusableTabDrawerLayout = ({ sideTabs, selectedTab, setSelectedTab }) => {
           </div>
         ))}
       </div>
+      {is_approval && (
+        <div className="fixed w-full bg-white bottom-0 border-t border-gray-200 py-6 px-10">
+          <div className="flex w-[50%] justify-between">
+            <Button
+              radius="sm"
+              color="danger"
+              //   variant="bordered"
+              onPress={() => handleReject && handleReject()}
+            >
+              Reject
+            </Button>
+            <Button
+              radius="sm"
+              color="primary"
+              onPress={() => handleApprove && handleApprove()}
+            >
+              Approve
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

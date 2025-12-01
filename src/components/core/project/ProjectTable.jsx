@@ -1,22 +1,99 @@
 import { LuChevronDown } from "react-icons/lu";
 import ActionIcons from "../../shared/ActionIcons";
 import ProjectTableHeader from "./ProjectTableHeader";
-import { useGetProject } from "../../../service/api/project";
-import { useMemo } from "react";
+import { useGetProjectByMutation } from "../../../service/api/project";
+import { useMemo, useState } from "react";
 import StarLoader from "../loaders/StarLoader";
 import { Result } from "antd";
+import useDrawerStore from "../../../hooks/useDrawerStore";
 
-const ProjectTable = () => {
-  const {
-    data: get_projects,
-    isError,
-    isPending: isLoadingProject,
-  } = useGetProject();
+const ProjectTable = ({ projects, isError, isLoadingProject, is_approval }) => {
+  const { openDrawer } = useDrawerStore();
 
-  const projects = useMemo(() => get_projects || [], [get_projects]);
+  const [selectedProject, setSelectedProject] = useState({
+    id: null,
+    action: null,
+  });
+  const [searchQuery, setSearQuery] = useState("");
+
+  const { mutateAsync: mutateGetProjectDetail, isPending: isPendingDetail } =
+    useGetProjectByMutation();
+
+  const handleGetVendorDetail = async (project, action) => {
+    setSelectedProject({ id: project?.ID, action });
+
+    const projectDetail = await mutateGetProjectDetail(
+      project?.ID || project?.PROCUREMENT_ID
+    );
+
+    const support_documents = projectDetail?.support_documents;
+
+    const details = {
+      ...projectDetail,
+      data: {
+        ...projectDetail,
+      },
+      approvers: projectDetail?.approval_request,
+      notes: [],
+      support_documents,
+    };
+
+    if (action === "EDIT") {
+      openDrawer({
+        viewName: "create-project",
+        projectDetail: details,
+        drawerSize: "950",
+      });
+    } else {
+      openDrawer({
+        viewName: "project-detail",
+        drawerSize:
+          details?.RODER_TYPE === "Local Purchase Order" ? "1200" : null,
+        projectDetail: details,
+        is_approval,
+      });
+    }
+  };
+
+  const hasSearchFilter = Boolean(searchQuery?.trim());
+
+  const filteredProjects = useMemo(() => {
+    let prevData = projects?.length ? [...projects] : [];
+
+    if (hasSearchFilter) {
+      const value = searchQuery?.trim()?.toLowerCase();
+
+      const updatedData = projects?.filter((item) => {
+        const matches = [
+          item?.ORDER_TYPE?.toLowerCase(),
+          item?.ORDER_NO?.toLowerCase(),
+          item?.VENDOR_NAME?.toLowerCase(),
+          item?.DEPARTMENT_SUPPLIED?.toLowerCase(),
+        ].some((field) => field?.includes(value));
+
+        // const fullNameMatches = searchTerms.every((term) =>
+        //   fullName.includes(term)
+        // );
+
+        return matches; //|| fullNameMatches;
+      });
+
+      prevData = updatedData.length ? updatedData : [];
+    }
+
+    return prevData;
+  }, [hasSearchFilter, projects, searchQuery]);
+
+  const tableData = useMemo(() => {
+    return filteredProjects;
+  }, [filteredProjects]);
+
   return (
     <>
-      <ProjectTableHeader />
+      <ProjectTableHeader
+        setSearQuery={setSearQuery}
+        searchQuery={searchQuery}
+      />
       <div className="w-full">
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
@@ -41,21 +118,6 @@ const ProjectTable = () => {
                           />
                         </svg>
                       </button>
-                      {/* <button className="text-gray-400 hover:text-gray-600">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                          />
-                        </svg>
-                      </button> */}
                     </div>
                   </th>
 
@@ -86,7 +148,7 @@ const ProjectTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {projects?.length === 0 ? (
+                {projects?.length === 0 || tableData?.length === 0 ? (
                   <tr>
                     <td colSpan={6}>
                       <div className="flex items-center justify-center h-44">
@@ -116,7 +178,7 @@ const ProjectTable = () => {
                     </td>
                   </tr>
                 ) : (
-                  projects?.map((project, index) => (
+                  tableData?.map((project, index) => (
                     <tr
                       key={index + "___project"}
                       className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
@@ -138,7 +200,7 @@ const ProjectTable = () => {
                       </td>
                       <td className="px-6 py-3">
                         <div className="font-outfit text-gray-500 text-sm">
-                          {project?.VENDOR?.FULLNAME}
+                          {project?.VENDOR_NAME}
                         </div>
                       </td>
                       <td className="px-6 py-3">
@@ -147,8 +209,31 @@ const ProjectTable = () => {
                         </span>
                       </td>
                       <td className="px-6 py-3">
-                        <div className="flex items-center justify-between space-x-2">
-                          <ActionIcons variant={"VIEW"} />
+                        <div className="flex space-x-1 items-center">
+                          {isPendingDetail &&
+                          selectedProject?.id === project?.ID &&
+                          selectedProject?.action === "EDIT" ? (
+                            <StarLoader size={18} />
+                          ) : (
+                            <ActionIcons
+                              variant={"EDIT"}
+                              action={() =>
+                                handleGetVendorDetail(project, "EDIT")
+                              }
+                            />
+                          )}
+                          {isPendingDetail &&
+                          selectedProject?.id === project?.ID &&
+                          selectedProject?.action === "VIEW" ? (
+                            <StarLoader size={18} />
+                          ) : (
+                            <ActionIcons
+                              variant={"VIEW"}
+                              action={() =>
+                                handleGetVendorDetail(project, "VIEW")
+                              }
+                            />
+                          )}
                         </div>
                       </td>
                     </tr>

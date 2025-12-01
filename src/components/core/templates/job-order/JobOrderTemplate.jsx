@@ -1,13 +1,17 @@
 import { useRef } from "react";
 
 import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
+import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 
 const JoborderTemplate = ({
   componentRef,
+  details,
   //   preview = true,
 }) => {
   const defaultRef = useRef(null);
   const ref = componentRef || defaultRef;
+
+  const jobOrderData = details?.data || {};
 
   return (
     <main ref={ref}>
@@ -35,18 +39,22 @@ const JoborderTemplate = ({
         </div>
 
         {/* Form Fields */}
-        <div className="space-y-1 text-sm mb-6">
+        <div className="space-y-1 text-sm mb-6 mt-6">
           <div className="grid grid-cols-2 gap-x-12">
             <div className="space-y-2">
               <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
                 <h3 className="italic font-extralight text-[0.9rem]">Name</h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1">
+                  {jobOrderData?.VENDOR_NAME}
+                </div>
               </div>
               <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
                 <h3 className="italic font-extralight text-[0.9rem]">
                   Address
                 </h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1 line-clamp-1">
+                  {jobOrderData?.VENDOR_ADDRESS}
+                </div>
               </div>
               <div className="mt-6 items-baseline gap-x-1">
                 <div className="border-b-1.5 border-black w-full px-1"></div>
@@ -69,37 +77,49 @@ const JoborderTemplate = ({
                 <h3 className="italic font-extralight text-[0.9rem]">
                   Date Issued
                 </h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1">
+                  {jobOrderData?.DATE_AWARDED}
+                </div>
               </div>
               <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
                 <h3 className="italic font-extralight text-[0.9rem]">
                   Location of work
                 </h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1">
+                  {jobOrderData?.LOCATION_OF_WORK}
+                </div>
               </div>
               <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
                 <h3 className="italic font-extralight text-[0.9rem]">
                   Department
                 </h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1">
+                  {jobOrderData?.DEPARTMENT_SUPPLIED}
+                </div>
               </div>
               <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
                 <h3 className="italic font-extralight text-[0.9rem]">
                   Completion Date
                 </h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1">
+                  {jobOrderData?.RECEIVED_DATE}
+                </div>
               </div>
               <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
                 <h3 className="italic font-extralight text-[0.9rem]">
                   File Reference
                 </h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1">
+                  {jobOrderData?.FILE_REFERENCE}
+                </div>
               </div>
               <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
                 <h3 className="italic font-extralight text-[0.9rem]">
                   Tender Reference
                 </h3>
-                <div className="border-b-1.5 border-black w-full px-1"></div>
+                <div className="border-b-1.5 border-black w-full px-1">
+                  {jobOrderData?.TENDER_REFERENCE}
+                </div>
               </div>
             </div>
           </div>
@@ -109,13 +129,17 @@ const JoborderTemplate = ({
         <div className="space-y-3 text-sm mb-6">
           <div className="flex">
             <span className="mr-2">I</span>
-            <div className="flex-1 border-b-2 border-dotted border-black"></div>
+            <div className="flex-1 border-b-2 border-dotted border-black">
+              {jobOrderData?.VENDOR_NAME}
+            </div>
             <span className="ml-2">(Name)</span>
           </div>
 
           <div className="flex">
             <span className="mr-2">of</span>
-            <div className="flex-1 border-b-2 border-dotted border-black"></div>
+            <div className="flex-1 border-b-2 border-dotted border-black">
+              {jobOrderData?.VENDOR_ADDRESS}
+            </div>
             <span className="ml-2">(Address)</span>
           </div>
 
@@ -125,21 +149,49 @@ const JoborderTemplate = ({
               conditions overleaf.
             </span>
           </div>
+          {/* Auto-wrap vendor statement */}
+          {(() => {
+            const statement = jobOrderData?.VENDOR_STATEMENT || "";
+            const words = statement.split(" ");
+            const lines = [];
+            let currentLine = "";
 
-          <div className="border-b-2 border-dotted border-black h-6"></div>
-          <div className="border-b-2 border-dotted border-black h-6"></div>
-          <div className="border-b-2 border-dotted border-black h-6"></div>
-          <div className="border-b-2 border-dotted border-black h-6"></div>
-          <div className="border-b-2 border-dotted border-black h-6"></div>
-          <div className="border-b-2 border-dotted border-black h-6"></div>
-          <div className="border-b-2 border-dotted border-black h-6"></div>
+            // Simple word wrapping algorithm
+            words.forEach((word) => {
+              if ((currentLine + word).length <= 130) {
+                // Adjust character limit as needed
+                currentLine += (currentLine ? " " : "") + word;
+              } else {
+                lines.push(currentLine);
+                currentLine = word;
+              }
+            });
+
+            if (currentLine) lines.push(currentLine);
+
+            // Fill remaining lines
+            while (lines.length < 7) {
+              lines.push("");
+            }
+
+            return lines.slice(0, 7).map((line, index) => (
+              <div
+                key={index}
+                className="border-b-2 border-dotted border-black min-h-6 py-1 text-gray-600"
+              >
+                {line || "\u00A0"}
+              </div>
+            ));
+          })()}
         </div>
 
         {/* Payment Section */}
         <div className="mb-6">
           <div className="flex items-end">
             <span className="text-sm mr-2">For which the NCAA</span>
-            <div className="flex-1 border-b-2 border-dotted border-black h-6"></div>
+            <div className="flex-1 border-b-2 border-dotted border-black h-6">
+              {jobOrderData?.DEPARTMENT_SUPPLIED}
+            </div>
             <span className="text-sm ml-2">Agreed to pay the sum of</span>
           </div>
           <div className="flex items-center mt-1">
@@ -148,7 +200,9 @@ const JoborderTemplate = ({
           </div>
           <div className="flex items-center justify-end mt-2 space-x-4">
             <span className="text-sm">N</span>
-            <div className="border-b-2 border-dotted border-black w-32 h-6"></div>
+            <div className="border-b-2 border-dotted border-black w-32 h-6">
+              {formatNumberWithComma(jobOrderData?.JOB_AMOUNT)}
+            </div>
             <span className="text-sm">K</span>
             <div className="border-b-2 border-dotted border-black w-24 h-6"></div>
           </div>

@@ -84,6 +84,7 @@ const Sidebar = () => {
   const settingsSubmenu = [
     { path: "/setting/tax", label: "Tax" },
     { path: "/setting/document", label: "Document" },
+    { path: "/setting/permission", label: "Role & Permission" },
   ];
 
   const isSettingsActive = currentPath.startsWith("/setting");

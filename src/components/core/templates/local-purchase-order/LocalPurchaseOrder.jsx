@@ -1,11 +1,14 @@
 import clsx from "clsx";
 import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
+import { format } from "date-fns";
 
-const LocalPurchaseOrder = () => {
+const LocalPurchaseOrder = ({ details }) => {
+  const purchaseOrder = details?.data || {};
+
   return (
     <main>
-      <div className="p-6 bg-white min-w-[55rem] relative">
-        <div className="flex gap-x-6 w-full">
+      <div className="p-6 bg-white min-w-220 relative">
+        <div className="flex justify-center gap-x-6 w-full">
           <div>
             <img src={ncaaLogo} alt="NCAA Logo" width={120} height={120} />
           </div>
@@ -19,12 +22,16 @@ const LocalPurchaseOrder = () => {
           </div>
         </div>
 
-        <div className="mt-4 border-t-2 border-black pt-2">
-          <div className="flex justify-between items-baseline">
+        <div className="mt-4 border-b-2 pb-1 border-black pt-2">
+          <div className="flex justify-between items-start">
             <h2 className="text-xl font-semibold">LOCAL PURCHASE ORDER</h2>
             <div className="flex items-baseline gap-x-2">
-              <h3 className="text-lg font-semibold">N°</h3>
-              <div className="border-b-1.5 border-black min-w-32 px-2"></div>
+              <h3 className="text-xl font-semibold">N</h3>
+              <div className="border-b1.5 border-black min-w-32 px-2 text-lg">
+                {purchaseOrder?.ORDER_NO}
+              </div>
+            </div>
+            <div className="flex items-baseline gap-x-2">
               <p className="text-xs italic">
                 Quote this number on all invoices,
                 <br />
@@ -34,19 +41,22 @@ const LocalPurchaseOrder = () => {
           </div>
         </div>
 
-        <div className="mt-6 border-t-1.5 border-black pt-4">
+        <div className="mt-6 border-black pt-4">
           <div className="flex items-baseline gap-x-2 mb-4">
             <h3 className="text-sm">To</h3>
-            <div className="border-b-1.5 border-black flex-1"></div>
+            <div className="border-b-1.5 border-black flex-1">
+              {purchaseOrder?.DEPARTMENT_SUPPLIED}
+            </div>
           </div>
 
           <div className="grid grid-cols-[1fr_auto_1fr] gap-x-4 mb-4">
             <div className="border-b-1.5 border-black"></div>
             <div className="flex items-baseline gap-x-2">
               <h3 className="text-sm">Date:</h3>
-              <div className="border-b-1.5 border-black w-48"></div>
+              <div className="border-b-1.5 border-black w-48">
+                {format(purchaseOrder?.DATE_AWARDED, "do 'of' MMM. yyyy")}
+              </div>
             </div>
-            <div></div>
           </div>
 
           <div className="flex items-start gap-x-2 mb-2">
@@ -60,7 +70,9 @@ const LocalPurchaseOrder = () => {
 
           <div className="flex items-baseline gap-x-2 mb-6">
             <h3 className="text-sm">DELIVERY DATE:</h3>
-            <div className="border-b-1.5 border-black flex-1"></div>
+            <div className="border-b-1.5 border-black flex-1">
+              {format(purchaseOrder?.DATE_SUPPLIED, "do 'of' MMM. yyyy")}
+            </div>
           </div>
         </div>
 
@@ -70,16 +82,13 @@ const LocalPurchaseOrder = () => {
             <thead className="ltr:text-left rtl:text-right">
               <tr>
                 <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
-                  ITEM
-                  <br />
-                  NO.
+                  ITEM NO.
                 </th>
                 <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
                   DATE
                 </th>
                 <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
                   QUANTITY
-                  <br />K
                 </th>
                 <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center w-64">
                   DESCRIPTION
@@ -111,16 +120,16 @@ const LocalPurchaseOrder = () => {
                 <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
                 <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
                 <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                <th className="py-2 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
                   ₦
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                <th className="py-2 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
                   K
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                <th className="py-2 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
                   ₦
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 text-center">
+                <th className="py-2 px-2 font-medium text-gray-900 text-center border-t-1.5">
                   K
                 </th>
               </tr>
@@ -186,7 +195,9 @@ const LocalPurchaseOrder = () => {
           <div className="border-t-1.5 border-black pt-4">
             <div className="flex items-baseline gap-x-2 mb-8">
               <h3 className="text-sm">Deliver to</h3>
-              <div className="border-b-1.5 border-black flex-1"></div>
+              <div className="border-b-1.5 border-black flex-1">
+                {purchaseOrder?.DEPARTMENT_SUPPLIED}
+              </div>
             </div>
 
             <div className="text-xs italic mb-6">
@@ -199,11 +210,18 @@ const LocalPurchaseOrder = () => {
             <div className="grid grid-cols-2 gap-x-8 mb-8">
               <div className="flex items-baseline gap-x-2">
                 <h3 className="text-sm whitespace-nowrap">Received Note No</h3>
-                <div className="border-b-1.5 border-black flex-1"></div>
+                <div className="border-b-1.5 border-black flex-1">
+                  {purchaseOrder?.RECEIVED_NOTE_NO}
+                </div>
               </div>
               <div className="flex items-baseline gap-x-2">
                 <h3 className="text-sm">Date</h3>
-                <div className="border-b-1.5 border-black flex-1"></div>
+                <div className="border-b-1.5 border-black flex-1">
+                  {format(
+                    purchaseOrder?.RECEIVED_NOTE_DATE,
+                    "do 'of' MMM. yyyy"
+                  )}
+                </div>
               </div>
             </div>
 

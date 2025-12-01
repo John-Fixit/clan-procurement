@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import ProjectInformation from "./projectInformation";
 import ProjectSupportDocument from "./ProjectSupportDocument";
 import ReusableTabDrawerLayout from "../../shared/reusable-tab-drawer-layout";
-import ProjectApproval from "./ProjectApproval";
+import ProjectApproval from "./project-detail/ProjectApproval";
 import PurchaseOrderItems from "./purchaseOrderItems";
 import { catchErrFunc } from "../../../utils/catchErrFunc";
 import { useCreateProject } from "../../../service/api/project";
@@ -15,11 +15,12 @@ import ProjectNote from "./ProjectNote";
 
 const newItemRow = {
   date: "",
-  quantity: 0,
+  quantity: 1,
   description: "",
   vote_or_charge: "",
-  unit_price: 0,
+  unit_price: null,
   total_cost: 0,
+  product_id: null,
 };
 
 const requiredFields = {
@@ -82,33 +83,57 @@ const CreateProject = () => {
   const { userData } = useCurrentUser();
 
   const uploadPendingFiles = async (documents) => {
-    const uploadPromises = documents.map(async (doc) => {
-      // Skip if already has URL (already uploaded) or no file selected
-      if (doc.uploaded_url || !doc.originFileObj) {
-        return doc;
+    const result = [];
+
+    for (const doc of documents) {
+      if (doc?.uploaded_url || !doc?.originFileObj) {
+        result.push(doc);
+        continue;
+      } else {
+        try {
+          const uploadResult = await uploadFileData(
+            doc?.originFileObj,
+            userData?.token
+          );
+          result.push({
+            ...doc,
+            uploaded_url: uploadResult?.file_url,
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
+    }
 
-      try {
-        // Upload the file
-        const uploadResult = await uploadFileData(
-          doc?.originFileObj,
-          userData?.token
-        );
+    return result;
 
-        // Return document with uploaded file URL
-        return {
-          uploaded_url: uploadResult?.file_url,
-        };
-        // eslint-disable-next-line no-unused-vars
-      } catch (error) {
-        return {
-          ...doc,
-          status: "failed",
-        };
-      }
-    });
+    // const uploadPromises = documents.map(async (doc) => {
+    //   // Skip if already has URL (already uploaded) or no file selected
+    //   if (doc.uploaded_url || !doc.originFileObj) {
+    //     return doc;
+    //   }
 
-    return await Promise.all(uploadPromises);
+    //   try {
+    //     // Upload the file
+    //     const uploadResult = await uploadFileData(
+    //       doc?.originFileObj,
+    //       userData?.token
+    //     );
+
+    //     // Return document with uploaded file URL
+    //     return {
+    //       uploaded_url: uploadResult?.file_url,
+    //     };
+    //     // eslint-disable-next-line no-unused-vars
+    //   } catch (error) {
+    //     return {
+    //       ...doc,
+    //       status: "failed",
+    //     };
+    //   }
+    // });
+
+    // return await Promise.all(uploadPromises);
   };
 
   const handleSubmit = async () => {
@@ -124,6 +149,8 @@ const CreateProject = () => {
     }
     const values = getValues();
 
+    console.log(values);
+
     const errors = validateRequiredField(values);
 
     if (Object.keys(errors).length) {
@@ -136,6 +163,15 @@ const CreateProject = () => {
       const uploadedDocuments = await uploadPendingFiles(
         values.documents || []
       );
+
+      const items = values?.purchase_order_items?.map((item) => ({
+        product_id: item?.product_id,
+        tax_id: item?.tax?.value,
+        unit_price: item?.unit_price,
+        tax: Number(item?.tax?.PERCENTAGE),
+        quantity: item?.quantity,
+        description: item?.description, //"24-inch monitor, high resolution, black"
+      }));
 
       // console.log(values);
       const json = {
@@ -157,23 +193,20 @@ const CreateProject = () => {
         tax_percentage: values?.tax?.PERCENTAGE,
         note: values?.note,
         job_amount: values?.sum_amount,
-        support_document: uploadedDocuments
+        support_documents: uploadedDocuments
           ?.map((supdoc) => ({
             attachment_url: supdoc.uploaded_url,
           }))
           ?.filter(Boolean),
         approval_request: values?.approvers?.map((appr, index) => ({
           designation: appr?.DESIGNATION,
-          staff_id: appr?.STAFF_ID,
+          staff_id: 1,
           staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
-          // "date_received": "2025-10-20",
-          // "date_treated": "2025-10-21",
           sn: index + 1,
           is_approved: 0,
         })),
+        procurement_items: items,
       };
-
-      console.log(json);
       // validate required fields before proceeding
 
       const res = await mutateAddProject(json);
@@ -193,7 +226,7 @@ const CreateProject = () => {
         <ProjectInformation {...hook_form_props} handleNext={handleNext} />
       ),
     },
-    project_type === "local-purchase-order" && {
+    project_type === "Local Purchase Order" && {
       title: "Items",
       content: (
         <PurchaseOrderItems

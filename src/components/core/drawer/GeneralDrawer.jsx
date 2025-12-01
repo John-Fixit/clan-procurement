@@ -6,6 +6,7 @@ import { Drawer } from "antd";
 import AddStaff from "../role_permission/AddStaff";
 import VendorDetail from "../vendor/VendorDetail";
 import CreateVendor from "../vendor/create-vendor/CreateVendor";
+import ProjectDetail from "../projects/project-detail/ProjectDetail";
 
 const GeneralDrawer = () => {
   const { isOpen, closeDrawer, data } = useDrawerStore();
@@ -13,12 +14,21 @@ const GeneralDrawer = () => {
 
   const { title, drawerSize } = data;
 
+  const size_1200 = ["project-detail"];
+  const size_1000 = [""];
+
+  const builtSize = size_1200.includes(viewName)
+    ? 1200
+    : size_1000.includes(viewName)
+    ? 1000
+    : null;
+
   return (
     <>
       <Drawer
         open={isOpen}
         onClose={closeDrawer}
-        size={parseFloat(drawerSize) || "large"}
+        size={parseFloat(drawerSize) || builtSize || "large"}
         title={title}
       >
         {viewName === "job-order-template" && <JobOrderTemplate />}
@@ -27,6 +37,7 @@ const GeneralDrawer = () => {
         {viewName === "create-vendor" && <CreateVendor />}
         {viewName === "add-staff-role-permission" && <AddStaff />}
         {viewName === "vendor-detail" && <VendorDetail />}
+        {viewName === "project-detail" && <ProjectDetail />}
       </Drawer>
     </>
   );

@@ -28,10 +28,10 @@ export const useGetVendor = () => {
   });
 };
 
-export const useGetVendorDetail = () => {
+export const useGetVendorDetail = (vendorId) => {
   return useQuery({
-    queryKey: ["get_vendor_detail"],
-    queryFn: async (vendorId) => {
+    queryKey: [`get_vendor_detail_${vendorId}`],
+    queryFn: async () => {
       const res = await API.get(`vendor/get-by-id/${vendorId}`);
       return res.data?.data?.data;
     },

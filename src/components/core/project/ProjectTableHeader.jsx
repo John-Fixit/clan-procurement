@@ -7,7 +7,7 @@ import {
   LuUsers,
 } from "react-icons/lu";
 
-const ProjectTableHeader = () => {
+const ProjectTableHeader = ({ searchQuery, setSearQuery }) => {
   return (
     <>
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
@@ -46,6 +46,8 @@ const ProjectTableHeader = () => {
               type="text"
               placeholder="Search by owner or title"
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full sm:w-64 md:w-80"
+              value={searchQuery}
+              onChange={(e) => setSearQuery(e.target.value)}
             />
           </div>
         </div>
