@@ -3,17 +3,29 @@ import ProjectTable from "../components/core/project/ProjectTable";
 import ProjectTableHeader from "../components/core/project/ProjectTableHeader";
 import { Tab, Tabs } from "@heroui/react";
 import { Select } from "antd";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useGetProjectRequest } from "../service/api/project";
 import useCurrentUser from "../hooks/useCurrentUser";
 
 export default function Approval() {
   const { userData } = useCurrentUser();
+
+  const [selectedStatus, setSelectedStatus] = useState("pending");
+
   const {
     data: get_projects,
     isError,
     isPending: isLoadingProject,
-  } = useGetProjectRequest(userData?.data?.STAFF_ID);
+  } = useGetProjectRequest(
+    userData?.data?.STAFF_ID,
+    selectedStatus === "pending"
+      ? 0
+      : selectedStatus === "approved"
+      ? 1
+      : selectedStatus === "declined"
+      ? -1
+      : null
+  );
 
   const projects = useMemo(() => get_projects || [], [get_projects]);
 
@@ -64,6 +76,8 @@ export default function Approval() {
           isError={isError}
           isLoadingProject={isLoadingProject}
           is_approval={true}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
         />
       </div>
     </div>

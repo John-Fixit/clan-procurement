@@ -9,8 +9,16 @@ API.interceptors.request.use((req) => {
   // Get the token dynamically on each request
   const token = JSON.parse(localStorage.getItem("procurement-auth-session"))
     ?.state?.userData?.token;
+  const user = JSON.parse(localStorage.getItem("procurement-auth-session"))
+    ?.state?.userData?.data;
+
+  const userD = JSON.stringify({
+    staff_id: user?.STAFF_ID,
+    staff_name: user?.FIRST_NAME + " " + user?.LAST_NAME,
+  });
 
   req.headers["token"] = token || "";
+  req.headers["Authorization"] = userD || "";
   req.headers["Content-type"] = "application/json";
   req.headers["Accept"] = "application/json";
   return req;

@@ -31,7 +31,7 @@ const LocalPurchaseItemsView = ({ details }) => {
           <table className="w-full">
             <thead className="bg-gray-200 border-b border-gray-300">
               <tr>
-                <th className="py-2">Item</th>
+                <th className="px-4 py-2 text-start">Item</th>
                 <th className="py-2">Quantity</th>
                 <th className="py-2">Unit Price</th>
                 <th className="py-2">Tax%</th>
@@ -57,7 +57,7 @@ const LocalPurchaseItemsView = ({ details }) => {
                       key={index + "__procurement_items"}
                       className={clsx(index % 2 && "bg-gray-100", "")}
                     >
-                      <td className="py-2">{item?.product}</td>
+                      <td className="py-2 px-4">{item?.product_name}</td>
                       <td className="py-2 text-center">{item?.quantity}</td>
                       <td className="py-2 text-center">
                         {formatNumberWithComma(item?.unit_price)}

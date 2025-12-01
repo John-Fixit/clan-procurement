@@ -2,26 +2,30 @@ import { LuPlus } from "react-icons/lu";
 import useDrawerStore from "../hooks/useDrawerStore";
 import ProjectTable from "../components/core/project/ProjectTable";
 import Button from "../components/shared/ui/Button";
-import { useGetProject } from "../service/api/project";
+import { useGetStaffProject } from "../service/api/project";
 import { useMemo, useState } from "react";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 export default function Projects() {
   const { openDrawer } = useDrawerStore();
 
   const [selectedStatus, setSelectedStatus] = useState("pending");
 
+  const { userData } = useCurrentUser();
+
   const {
     data: get_projects,
     isError,
     isPending: isLoadingProject,
-  } = useGetProject(
+  } = useGetStaffProject(
     selectedStatus === "pending"
       ? 0
       : selectedStatus === "approved"
       ? 1
       : selectedStatus === "declined"
       ? -1
-      : null
+      : null,
+    userData?.data?.STAFF_ID
   );
 
   const projects = useMemo(() => get_projects || [], [get_projects]);

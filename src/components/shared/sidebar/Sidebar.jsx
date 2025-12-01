@@ -173,7 +173,7 @@ const Sidebar = () => {
                 !sidebarOpen && "lg:hidden"
               )}
             >
-              Get started
+              Procurement
             </h1>
           </div>
         </div>
@@ -190,8 +190,6 @@ const Sidebar = () => {
               const isActive = currentPath === item.path;
               const Icon = isActive ? item?.activeIcon || item.icon : item.icon;
               const isDropActive = currentPath.startsWith(item.relativePath);
-
-              console.log(isDropActive);
 
               const isMenuOpen =
                 dropDownTargetState?.state &&

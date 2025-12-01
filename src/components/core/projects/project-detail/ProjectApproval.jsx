@@ -108,17 +108,20 @@ const ProjectApproval = (props) => {
         size="large"
         labelInValue
         maxTagCount="responsive"
-        showSearch
-        // filterOption={(input, option) => {
-        //   const approver = mockApprovers.find((a) => a.id === option.value);
-        //   if (!approver) return false;
-        //   const searchLower = input.toLowerCase();
-        //   return (
-        //     approver.name.toLowerCase().includes(searchLower) ||
-        //     approver.email.toLowerCase().includes(searchLower) ||
-        //     approver.role.toLowerCase().includes(searchLower)
-        //   );
-        // }}
+        showSearch={{
+          filterOption: (input, option) => {
+            const approver = staffList.find((a) => a.STAFF_ID === option.value);
+            if (!approver) return false;
+            const searchLower = input.toLowerCase();
+            return (
+              `${approver?.FIRST_NAME} ${approver?.LAST_NAME}`
+                .toLowerCase()
+                .includes(searchLower) ||
+              approver?.DESIGNATION?.toLowerCase().includes(searchLower) ||
+              approver?.STAFF_NUMBER?.toLowerCase().includes(searchLower)
+            );
+          },
+        }}
       />
 
       <div

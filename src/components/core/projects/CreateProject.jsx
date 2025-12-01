@@ -232,7 +232,10 @@ const CreateProject = () => {
 
       const items = values?.purchase_order_items?.map((item) => {
         const errors = validateProducts(item);
-        if (Object.keys(errors).length > 0) {
+        if (
+          values?.project_type === "Local Purchase Order" &&
+          Object.keys(errors).length > 0
+        ) {
           const combinedMessage = Object.values(errors).join("\n");
           errorToast(combinedMessage);
 
@@ -268,6 +271,9 @@ const CreateProject = () => {
           tax_value: values?.tax?.PERCENTAGE,
           note: values?.projectNote,
           job_amount: values?.sum_amount,
+          creator_id: userData?.data?.STAFF_ID,
+          creator_name:
+            userData?.data?.FIRST_NAME + " " + userData?.data?.LAST_NAME,
           support_documents: uploadedDocuments
             ?.map((supdoc) => ({
               attachment_url: supdoc.uploaded_url,
@@ -275,7 +281,7 @@ const CreateProject = () => {
             ?.filter(Boolean),
           approval_request: values?.approvers?.map((appr, index) => ({
             designation: appr?.DESIGNATION,
-            staff_id: appr?.STAFF_ID, //1
+            staff_id: index + 1, //appr?.STAFF_ID, //1
             staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
             sn: index + 1,
             is_approved: 0,
