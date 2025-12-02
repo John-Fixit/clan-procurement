@@ -5,6 +5,7 @@ import Button from "../components/shared/ui/Button";
 import { useGetStaffProject } from "../service/api/project";
 import { useMemo, useState } from "react";
 import useCurrentUser from "../hooks/useCurrentUser";
+import { useLocation } from "react-router-dom";
 
 export default function Projects() {
   const { openDrawer } = useDrawerStore();
@@ -12,6 +13,14 @@ export default function Projects() {
   const [selectedStatus, setSelectedStatus] = useState("pending");
 
   const { userData } = useCurrentUser();
+
+  const location = useLocation().pathname;
+
+  const lastPathText = location.split("/").at(-1);
+
+  const pageName = lastPathText?.replaceAll("-", " ");
+
+  const isRequest = location.includes("/request");
 
   const {
     data: get_projects,
@@ -36,22 +45,27 @@ export default function Projects() {
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto px-9 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-gray-800">Project</h2>
-            <div className="flex items-center space-x-3">
-              <Button
-                radius="sm"
-                color="primary"
-                onPress={() =>
-                  openDrawer({
-                    viewName: "create-project",
-                    drawerSize: "950",
-                  })
-                }
-              >
-                <LuPlus className="w-4 h-4 mr-1" />
-                Create project
-              </Button>
-            </div>
+            <h2 className="text-2xl font-semibold text-gray-800 capitalize">
+              {pageName || "Project"}
+            </h2>
+            {isRequest && (
+              <div className="flex items-center space-x-3">
+                <Button
+                  radius="sm"
+                  color="primary"
+                  onPress={() =>
+                    openDrawer({
+                      viewName: "create-project",
+                      defaultProjectType: pageName,
+                      drawerSize: "950",
+                    })
+                  }
+                >
+                  <LuPlus className="w-4 h-4 mr-1" />
+                  Create project
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -65,6 +79,7 @@ export default function Projects() {
           isLoadingProject={isLoadingProject}
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
+          canEdit={isRequest && selectedStatus === "pending"}
         />
       </div>
     </div>

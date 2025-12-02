@@ -35,42 +35,13 @@ export default function Approval() {
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto px-9 py-4">
           <div className="flex items-center justify-between">
-            <Tabs
-              aria-label="Tabs variants"
-              variant={"underlined"}
-              color="primary"
-            >
-              <Tab key="pending" title="Pending" />
-              <Tab key="approves" title="Approved" />
-              <Tab key="declined" title="Declined" />
-            </Tabs>
+            <h2 className="text-2xl font-semibold text-gray-800">Approval</h2>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="mx-auto px-9 py-6">
-        {/* <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div>
-              <Select
-                placeholder="active object"
-                options={[{ label: "Active object", value: "" }]}
-              />
-            </div>
-          </div>
-          <div className="relative">
-            <LuSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by owner or title"
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-80"
-            />
-          </div>
-        </div> */}
-
-        {/* <ProjectTableHeader /> */}
-
         <ProjectTable
           projects={projects}
           isError={isError}

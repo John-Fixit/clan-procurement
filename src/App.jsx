@@ -43,9 +43,17 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="okrs" element={<OKRDashboard />} />
           <Route path="vendor" element={<Vendor />} />
-          <Route path="project" element={<Projects />} />
-          <Route path="project/procurement" element={<AllProcurement />} />
-          <Route path="project/request" element={<Projects />} />
+          <Route path="project/job-order" element={<AllProcurement />} />
+          <Route
+            path="project/local-purchase-order"
+            element={<AllProcurement />}
+          />
+
+          <Route path="request/job-order" element={<Projects />} />
+          <Route
+            path="request/local-purchase-order"
+            element={<Projects role="local-purchase" />}
+          />
           <Route path="approval" element={<Approval />} />
           <Route path="report" element={<Report />} />
           <Route path="setting" element={<Setting />} />

@@ -112,7 +112,7 @@ const ProjectDetail = () => {
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
         sideTabs={sideTabs}
-        is_approval={is_approval}
+        is_approval={is_approval && projectDetail?.data?.IS_APPROVED === 0}
         handleApprove={() => handleApprove(projectDetail)}
         handleReject={() => handleReject(projectDetail)}
       />

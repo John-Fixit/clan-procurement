@@ -78,14 +78,35 @@ const Sidebar = () => {
       relativePath: "/project",
       sub_menu: [
         {
-          path: "/project/procurement",
-          label: "Procurement",
+          path: "/project/job-order",
+          label: "Job Order",
           icon: HiOutlineShoppingBag,
           activeIcon: HiShoppingBag,
         },
         {
-          path: "/project/request",
-          label: "Request",
+          path: "/project/local-purchase-order",
+          label: "Local Purchase",
+          icon: MdOutlineRequestQuote,
+          activeIcon: MdRequestQuote,
+        },
+      ],
+    },
+    {
+      path: "/request",
+      label: "Request",
+      icon: MdOutlineRequestQuote,
+      activeIcon: MdRequestQuote,
+      relativePath: "/request",
+      sub_menu: [
+        {
+          path: "/request/job-order",
+          label: "Job Order",
+          icon: HiOutlineShoppingBag,
+          activeIcon: HiShoppingBag,
+        },
+        {
+          path: "/request/local-purchase-order",
+          label: "Local Purchase Order",
           icon: MdOutlineRequestQuote,
           activeIcon: MdRequestQuote,
         },
@@ -216,7 +237,7 @@ const Sidebar = () => {
                               menu: item,
                             });
                           }}
-                          className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left transition-all  cursor-pointer ${
+                          className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
                             isDropActive
                               ? " text-indigo-600 font-medium"
                               : "text-gray-700 hover:bg-gray-50"
@@ -256,7 +277,7 @@ const Sidebar = () => {
                                 <li key={item.path}>
                                   <button
                                     onClick={() => routeNavigate(item.path)}
-                                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left transition-all text-sm ${
+                                    className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-left transition-all text-sm cursor-pointer ${
                                       isActive
                                         ? "bg-indigo-50 text-indigo-600 font-medium"
                                         : "text-gray-600 hover:bg-gray-50"

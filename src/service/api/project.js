@@ -12,22 +12,27 @@ export const useCreateProject = (procurementId) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`get_projects`],
+        queryKey: [`get_projects_1`],
       });
       queryClient.invalidateQueries({
-        queryKey: [`get_staff_projects`],
+        queryKey: [
+          `get_staff_projects_0`,
+          `get_staff_projects_1`,
+          `get_staff_projects_-1`,
+        ],
       });
     },
   });
 };
 
-export const useGetProject = (status) => {
+export const useGetProject = (status, order_type) => {
   return useQuery({
-    queryKey: [`get_projects`, status],
+    queryKey: [`get_projects_${status}_${order_type}`],
     queryFn: async () => {
       const res = await API.get(`procurement/get-procurements`, {
         params: {
           status,
+          order_type,
         },
       });
       return res.data?.data?.data;
@@ -71,7 +76,7 @@ export const useGetProduct = () => {
 };
 export const useGetProjectRequest = (staffId, status) => {
   return useQuery({
-    queryKey: [`get_projects_request`, staffId, status],
+    queryKey: [`get_projects_request_${status}`],
     queryFn: async () => {
       const res = await API.get(
         `procurement/pending-approvals/${staffId}/${status}`
@@ -102,7 +107,7 @@ export const useApproveProject = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`get_projects_request`],
+        queryKey: [`get_projects_request_0`],
       });
     },
   });

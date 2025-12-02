@@ -21,7 +21,7 @@ const ApprovalHistory = ({ details }) => {
               {details?.approvers?.map((appHis, i) => {
                 // Determine status based on SN and current approval SN
                 let REQUEST_STATUS;
-                if (appHis.sn < currentApprovalSN) {
+                if (appHis.sn <= currentApprovalSN) {
                   REQUEST_STATUS = "Approved"; // Previous approvers are considered approved
                 } else if (appHis.sn === currentApprovalSN) {
                   REQUEST_STATUS = "Pending"; // Current approver is pending

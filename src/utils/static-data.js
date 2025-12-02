@@ -18,3 +18,11 @@ export const roles = [
     color: "bg-green-100 text-green-700",
   },
 ];
+
+export const projectTypeList = [
+  { label: "Job Order", value: "1" },
+  {
+    label: "Local Purchase Order",
+    value: "2",
+  },
+];

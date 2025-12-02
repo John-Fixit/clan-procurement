@@ -12,6 +12,7 @@ import useDrawerStore from "../../../hooks/useDrawerStore";
 import { uploadFileData } from "../../../utils/uploadFile";
 import useCurrentUser from "../../../hooks/useCurrentUser";
 import ProjectNote from "./ProjectNote";
+import { findProjectType } from "../../../utils/findProjectType";
 
 const newItemRow = {
   date: "",
@@ -70,7 +71,7 @@ const CreateProject = () => {
 
   const {
     closeDrawer,
-    data: { projectDetail },
+    data: { projectDetail, defaultProjectType },
   } = useDrawerStore();
 
   const projectDetailData = projectDetail?.data || {};
@@ -86,7 +87,8 @@ const CreateProject = () => {
 
   const hook_form_props = useForm({
     defaultValues: {
-      project_type: projectDetailData?.ORDER_TYPE || "Job Order",
+      project_type:
+        projectDetailData?.ORDER_TYPE || defaultProjectType || "Job Order",
       projectNote: projectDetailData?.NOTE,
       completion_date: projectDetailData?.RECEIVED_DATE || "",
       date_issued: projectDetailData?.DATE_AWARDED,
@@ -175,34 +177,6 @@ const CreateProject = () => {
     }
 
     return result;
-
-    // const uploadPromises = documents.map(async (doc) => {
-    //   // Skip if already has URL (already uploaded) or no file selected
-    //   if (doc.uploaded_url || !doc.originFileObj) {
-    //     return doc;
-    //   }
-
-    //   try {
-    //     // Upload the file
-    //     const uploadResult = await uploadFileData(
-    //       doc?.originFileObj,
-    //       userData?.token
-    //     );
-
-    //     // Return document with uploaded file URL
-    //     return {
-    //       uploaded_url: uploadResult?.file_url,
-    //     };
-    //     // eslint-disable-next-line no-unused-vars
-    //   } catch (error) {
-    //     return {
-    //       ...doc,
-    //       status: "failed",
-    //     };
-    //   }
-    // });
-
-    // return await Promise.all(uploadPromises);
   };
 
   const handleSubmit = async () => {
@@ -233,7 +207,7 @@ const CreateProject = () => {
       const items = values?.purchase_order_items?.map((item) => {
         const errors = validateProducts(item);
         if (
-          values?.project_type === "Local Purchase Order" &&
+          findProjectType(values?.project_type)?.value === "2" &&
           Object.keys(errors).length > 0
         ) {
           const combinedMessage = Object.values(errors).join("\n");
@@ -253,7 +227,7 @@ const CreateProject = () => {
 
       if (items?.[0]) {
         const json = {
-          order_type: values?.project_type,
+          order_type: findProjectType(values?.project_type)?.label,
           order_no: values?.order_number,
           vendor_id: values?.vendor?.value,
           date_supplied: values?.date_supplied,
@@ -281,7 +255,7 @@ const CreateProject = () => {
             ?.filter(Boolean),
           approval_request: values?.approvers?.map((appr, index) => ({
             designation: appr?.DESIGNATION,
-            staff_id: index + 1, //appr?.STAFF_ID, //1
+            staff_id: appr?.STAFF_ID, //1
             staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
             sn: index + 1,
             is_approved: 0,

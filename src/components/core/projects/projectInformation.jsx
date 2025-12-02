@@ -10,6 +10,8 @@ import { FaUser } from "react-icons/fa";
 import { useGetTax } from "../../../service/api/setting";
 import { useGetVendor } from "../../../service/api/vendor";
 import { useMemo } from "react";
+import { projectTypeList } from "../../../utils/static-data";
+import { findProjectType } from "../../../utils/findProjectType";
 
 const ProjectInformation = (props) => {
   const { control, watch, handleNext } = props;
@@ -96,14 +98,14 @@ const ProjectInformation = (props) => {
       <main className="">
         <div className="mb-5">
           <h2 className="font-outfit  text-2xl font-semibold text-primary">
-            Project Detail
+            {findProjectType(project_type)?.label} Information
           </h2>
           <p className="font-outfit text-gray-500 text-sm">
             Fill in the details below to add a new project
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-6">
-          <div>
+          {/* <div>
             <label htmlFor="" className="font-outfit">
               Project Type
             </label>
@@ -113,13 +115,7 @@ const ProjectInformation = (props) => {
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Select
-                    options={[
-                      {
-                        label: "Local Purchase Order",
-                        value: "Local Purchase Order",
-                      },
-                      { label: "Job Order", value: "Job Order" },
-                    ]}
+                    options={projectTypeList}
                     {...field}
                     onChange={(value) => field.onChange(value)}
                     size="large"
@@ -135,7 +131,7 @@ const ProjectInformation = (props) => {
                 </>
               )}
             />
-          </div>
+          </div> */}
           <div>
             <label htmlFor="" className="font-outfit mb-2">
               Order Number
@@ -158,7 +154,7 @@ const ProjectInformation = (props) => {
               )}
             />
           </div>
-          {project_type?.toLowerCase() == "Job Order"?.toLowerCase() ? (
+          {findProjectType(project_type)?.value === "1" ? (
             <JobOrderForm
               control={control}
               departments={departments}
@@ -168,8 +164,7 @@ const ProjectInformation = (props) => {
               vendorsList={vendorsList}
             />
           ) : (
-            project_type?.toLowerCase() ===
-              "Local Purchase Order"?.toLowerCase() && (
+            findProjectType(project_type).value === "2" && (
               <PurchaseOrderForm
                 control={control}
                 departments={departments}

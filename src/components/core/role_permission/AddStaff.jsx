@@ -3,7 +3,14 @@ import { useState } from "react";
 import { filePrefix } from "../../../utils/file-prefix";
 import useCurrentUser from "../../../hooks/useCurrentUser";
 import { useGetAllStaff } from "../../../service/api/general";
-import { Checkbox, CheckboxGroup, cn, User } from "@heroui/react";
+import {
+  Avatar,
+  Checkbox,
+  CheckboxGroup,
+  cn,
+  Switch,
+  User,
+} from "@heroui/react";
 import { FaUser } from "react-icons/fa";
 import Button from "../../shared/ui/Button";
 import { roles } from "../../../utils/static-data";
@@ -11,6 +18,7 @@ import { catchErrFunc } from "../../../utils/catchErrFunc";
 import { useAddStaff } from "../../../service/api/setting";
 import { successToast } from "../../../utils/toastPopUps";
 import useDrawerStore from "../../../hooks/useDrawerStore";
+import { preProfileLink } from "../../../utils/pre-profile-link";
 
 const AddStaff = () => {
   const { userData } = useCurrentUser();
@@ -24,8 +32,9 @@ const AddStaff = () => {
   const { data: get_staff, isPending: isLoadingStaff } = useGetAllStaff(
     userData?.data?.COMPANY_ID
   );
-  const { mutateAsync: mutateAddStaff, isPending: isSubmitting } =
-    useAddStaff();
+  const { mutateAsync: mutateAddStaff, isPending: isSubmitting } = useAddStaff(
+    roleDetail?.STAFF_ID
+  );
 
   const staffList = get_staff?.map((item) => {
     return {
@@ -71,10 +80,13 @@ const AddStaff = () => {
     };
   });
 
-  const userRole = roleDetail?.roles?.map((rol) => rol?.label) || [];
+  const userRole =
+    roleDetail?.roles?.map((rol) => rol?.value && rol?.label) || [];
+
   const [formData, setFormData] = useState({
     staff: roleDetail?.STAFF_ID || [],
     role: userRole,
+    is_active: isUpdateRole ? roleDetail?.IS_ACTIVE : true,
   });
 
   const isDisabled =
@@ -83,7 +95,13 @@ const AddStaff = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    const updateJson = {
+      is_admin: formData?.role?.includes("admin") ? true : false,
+      is_enroller: formData?.role?.includes("is_enroller") ? true : false,
+      is_approver: formData?.role?.includes("is_approver") ? true : false,
+      date_created: new Date().toISOString(),
+      is_active: formData?.is_active,
+    };
     const json = {
       is_admin: formData?.role?.includes("admin") ? true : false,
       is_enroller: formData?.role?.includes("is_enroller") ? true : false,
@@ -107,7 +125,7 @@ const AddStaff = () => {
           })),
     };
     try {
-      const res = await mutateAddStaff(json);
+      const res = await mutateAddStaff(isUpdateRole ? updateJson : json);
       successToast(res?.data?.message);
       closeDrawer();
     } catch (err) {
@@ -128,51 +146,60 @@ const AddStaff = () => {
         {/* Modal Body */}
         <form className="p-6 space-y-6" onSubmit={handleSubmit}>
           {/* Basic Information */}
-          <div>
-            <h3 className="text-base font-mediu text-gray-900 mb-2 font-primary tracking-wide">
-              Select Staff
-            </h3>
-            <div>
-              <Select
-                mode={isUpdateRole ? false : "multiple"}
-                style={{ width: "100%" }}
-                placeholder="Search by name, email, or role..."
-                value={
-                  isUpdateRole
-                    ? formData?.staff
-                    : formData?.staff?.map((a) => a.value)
-                }
-                onChange={(value, option) => {
-                  setFormData({ ...formData, staff: option });
-                }}
-                loading={isLoadingStaff}
-                options={staffList}
-                size="large"
-                labelInValue
-                maxTagCount="responsive"
-                showSearch={{
-                  filterOption: (input, option) => {
-                    const approver = staffList.find(
-                      (a) => a.STAFF_ID === option.value
-                    );
-                    if (!approver) return false;
-                    const searchLower = input.toLowerCase();
-                    return (
-                      `${approver?.FIRST_NAME} ${approver?.LAST_NAME}`
-                        .toLowerCase()
-                        .includes(searchLower) ||
-                      approver?.DESIGNATION?.toLowerCase().includes(
-                        searchLower
-                      ) ||
-                      approver?.STAFF_NUMBER?.toLowerCase().includes(
-                        searchLower
-                      )
-                    );
-                  },
-                }}
-              />
+          {isUpdateRole ? (
+            <div className="border border-gray-300 rounded-lg p-4 flex gap-2 items-center">
+              <div>
+                <Avatar src={preProfileLink(roleDetail?.STAFF)} />
+              </div>
+              <p className="text-lg">{roleDetail?.STAFF}</p>
             </div>
-          </div>
+          ) : (
+            <div>
+              <h3 className="text-base font-mediu text-gray-900 mb-2 font-primary tracking-wide">
+                Select Staff
+              </h3>
+              <div>
+                <Select
+                  mode={isUpdateRole ? false : "multiple"}
+                  style={{ width: "100%" }}
+                  placeholder="Search by name, email, or role..."
+                  value={
+                    isUpdateRole
+                      ? formData?.staff
+                      : formData?.staff?.map((a) => a.value)
+                  }
+                  onChange={(value, option) => {
+                    setFormData({ ...formData, staff: option });
+                  }}
+                  loading={isLoadingStaff}
+                  options={staffList}
+                  size="large"
+                  labelInValue
+                  maxTagCount="responsive"
+                  showSearch={{
+                    filterOption: (input, option) => {
+                      const approver = staffList.find(
+                        (a) => a.STAFF_ID === option.value
+                      );
+                      if (!approver) return false;
+                      const searchLower = input.toLowerCase();
+                      return (
+                        `${approver?.FIRST_NAME} ${approver?.LAST_NAME}`
+                          .toLowerCase()
+                          .includes(searchLower) ||
+                        approver?.DESIGNATION?.toLowerCase().includes(
+                          searchLower
+                        ) ||
+                        approver?.STAFF_NUMBER?.toLowerCase().includes(
+                          searchLower
+                        )
+                      );
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Role Selection */}
           <div>
@@ -215,6 +242,16 @@ const AddStaff = () => {
                 ))}
               </CheckboxGroup>
             </div>
+          </div>
+
+          <div className="border border-gray-300 rounded-lg p-3 bg-blue-50 flex justify-between items-center">
+            <p>Staff Status</p>
+            <Switch
+              isSelected={formData?.is_active}
+              onChange={(e) =>
+                setFormData({ ...formData, is_active: e.target.checked })
+              }
+            />
           </div>
 
           {/* Form Actions */}

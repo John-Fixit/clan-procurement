@@ -6,8 +6,9 @@ import { useMemo, useState } from "react";
 import StarLoader from "../loaders/StarLoader";
 import { Result } from "antd";
 import useDrawerStore from "../../../hooks/useDrawerStore";
-import { Pagination } from "@heroui/react";
+import { Avatar, Pagination } from "@heroui/react";
 import { catchErrFunc } from "../../../utils/catchErrFunc";
+import { preProfileLink } from "../../../utils/pre-profile-link";
 
 const ProjectTable = ({
   projects,
@@ -17,6 +18,7 @@ const ProjectTable = ({
   setSelectedStatus,
   selectedStatus,
   visible_status,
+  canEdit,
 }) => {
   const { openDrawer } = useDrawerStore();
 
@@ -30,7 +32,7 @@ const ProjectTable = ({
     useGetProjectByMutation();
 
   const handleGetVendorDetail = async (project, action) => {
-    setSelectedProject({ id: project?.ID, action });
+    setSelectedProject({ id: project?.ID || project?.PROCUREMENT_ID, action });
     try {
       const projectDetail = await mutateGetProjectDetail(
         project?.ID || project?.PROCUREMENT_ID
@@ -134,6 +136,11 @@ const ProjectTable = ({
               <thead className="border-b border-gray-200 bg-gray-50">
                 <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                   <th className="px-6 py-3 text-left">
+                    <div className="flex items-center">
+                      Vendor <LuChevronDown className="ml-1 w-3 h-3" />
+                    </div>
+                  </th>
+                  <th className="px-6 py-3 text-left">
                     <div className="flex items-center space-x-2">
                       <div className="flex items-center">Order Type</div>
                       <button className="text-gray-400 hover:text-gray-600">
@@ -164,11 +171,7 @@ const ProjectTable = ({
                       Date Issued <LuChevronDown className="ml-1 w-3 h-3" />
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left">
-                    <div className="flex items-center">
-                      Vendor <LuChevronDown className="ml-1 w-3 h-3" />
-                    </div>
-                  </th>
+
                   <th className="px-6 py-3 text-left">
                     <div className="flex items-center">
                       Recipient <LuChevronDown className="ml-1 w-3 h-3" />
@@ -216,8 +219,19 @@ const ProjectTable = ({
                       key={index + "___project"}
                       className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                     >
+                      <td className="px-6 py-3 flex items-center gap-1">
+                        <div>
+                          <Avatar
+                            src={preProfileLink(project?.VENDOR_NAME)}
+                            size="sm"
+                          />
+                        </div>
+                        <div className="font-outfit text-gray-700 font-medium text-sm">
+                          {project?.VENDOR_NAME}
+                        </div>
+                      </td>
                       <td className="px-6 py-3">
-                        <div className="flex items-center space-x-2 font-primary">
+                        <div className="font-outfit text-gray-500 text-sm">
                           <span>{project?.ORDER_TYPE}</span>
                         </div>
                       </td>
@@ -231,11 +245,7 @@ const ProjectTable = ({
                           {project?.DATE_AWARDED}
                         </span>
                       </td>
-                      <td className="px-6 py-3">
-                        <div className="font-outfit text-gray-500 text-sm">
-                          {project?.VENDOR_NAME}
-                        </div>
-                      </td>
+
                       <td className="px-6 py-3">
                         <span className="font-outfit text-gray-500 text-sm">
                           {project?.DEPARTMENT_SUPPLIED}
@@ -244,11 +254,12 @@ const ProjectTable = ({
                       <td className="px-6 py-3">
                         <div className="flex space-x-1 items-center">
                           {isPendingDetail &&
-                          selectedProject?.id === project?.ID &&
+                          selectedProject?.id ===
+                            (project?.ID || project?.PROCUREMENT_ID) &&
                           selectedProject?.action === "EDIT" ? (
                             <StarLoader size={18} />
                           ) : (
-                            selectedStatus === "pending" && (
+                            canEdit && (
                               <ActionIcons
                                 variant={"EDIT"}
                                 action={() =>
@@ -258,7 +269,8 @@ const ProjectTable = ({
                             )
                           )}
                           {isPendingDetail &&
-                          selectedProject?.id === project?.ID &&
+                          selectedProject?.id ===
+                            (project?.ID || project?.PROCUREMENT_ID) &&
                           selectedProject?.action === "VIEW" ? (
                             <StarLoader size={18} />
                           ) : (

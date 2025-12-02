@@ -166,9 +166,9 @@ const RolePermissionSetting = () => {
 
   const { mutateAsync: mutateDeleteStaff } = useDeleteStaff();
 
-  const confirmDelete = async (roleId) => {
+  const confirmDelete = async (staffId) => {
     try {
-      const res = await mutateDeleteStaff(roleId);
+      const res = await mutateDeleteStaff(staffId);
       successToast(res?.data?.message);
     } catch (err) {
       catchErrFunc(err);
@@ -176,7 +176,7 @@ const RolePermissionSetting = () => {
   };
 
   const handleDelete = (staff) => {
-    modal.confirm({ ...config, onOk: () => confirmDelete(staff?.ROLE_ID) });
+    modal.confirm({ ...config, onOk: () => confirmDelete(staff?.STAFF_ID) });
   };
   ///====================
 
@@ -185,8 +185,7 @@ const RolePermissionSetting = () => {
     setSelectedRow(row);
     try {
       const json = {
-        status,
-        staffId: row?.ROLE_ID,
+        staffId: row?.STAFF_ID,
       };
       await toggleStaffStatus(json);
     } catch (err) {
