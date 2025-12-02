@@ -21,7 +21,7 @@ const HomeLayout = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navigation Bar */}
-        <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+        <header className="bg-gray-50 border-b border-gray-200 px-5 md:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* <h2 className="text-2xl font-semibold text-gray-800">
               {navItems.find((item) => item.path === location.pathname)
@@ -37,15 +37,15 @@ const HomeLayout = () => {
               Upgrade now
             </button> */}
             <Button isIconOnly size="sm" variant="light">
-              <FaBell size={20} />
+              <FaBell size={22} className="text-gray-400" />
             </Button>
 
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            {/* <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <span>❓</span>
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <span>👤</span>
-            </button>
+            </button> */}
 
             <Avatar
               className="w-10 h-10 cursor-pointer"

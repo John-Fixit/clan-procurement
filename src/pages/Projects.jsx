@@ -43,7 +43,7 @@ export default function Projects() {
     <div className="min-h-screen bg-gray-50">
       {/* Header Navigation */}
       <div className="bg-white border-b border-gray-200">
-        <div className="mx-auto px-9 py-4">
+        <div className="mx-auto px-6 md:px-9 py-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-gray-800 capitalize">
               {pageName || "Project"}

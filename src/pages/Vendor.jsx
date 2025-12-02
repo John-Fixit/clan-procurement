@@ -172,7 +172,7 @@ export default function Vendor() {
     <div className="min-h-screen bg-gray-50">
       {/* Header Navigation */}
       <div className="bg-white border-b border-gray-200">
-        <div className="mx-auto px-9 py-4">
+        <div className="mx-auto px-6 md:px-9 py-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-gray-800">Vendor</h2>
             <div className="flex items-center space-x-3">
@@ -195,7 +195,7 @@ export default function Vendor() {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto px-9 py-6">
+      <div className="mx-auto px-6 md:px-9 py-6">
         {/* Progress Overview */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">

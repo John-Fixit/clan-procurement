@@ -168,13 +168,11 @@ const Sidebar = () => {
       <aside
         className={clsx(
           "bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300 ease-in-out",
-          // Mobile and Tablet (< 1024px): Fixed positioning, slides over content
+
           "fixed lg:relative inset-y-0 left-0 z-50",
-          // Responsive width and visibility
           sidebarOpen
-            ? "translate-x-0 w-64"
+            ? "translate-x-0 w-72"
             : "-translate-x-full lg:translate-x-0 lg:w-16",
-          // Shadow on mobile/tablet when open
           "lg:shadow-none",
           sidebarOpen && "shadow-2xl lg:shadow-none"
         )}
@@ -183,7 +181,7 @@ const Sidebar = () => {
         <div
           className={clsx(
             "border-b border-gray-200 transition-all duration-300",
-            sidebarOpen ? "p-6" : "lg:px-2 lg:py-5 p-6"
+            sidebarOpen ? "p-6 py-5" : "lg:px-2 lg:py-5 p-6"
           )}
         >
           <div className="flex items-center gap-2">
