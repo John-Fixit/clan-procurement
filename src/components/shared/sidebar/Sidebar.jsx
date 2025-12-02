@@ -205,12 +205,17 @@ const Sidebar = () => {
                     {item?.sub_menu?.length ? (
                       <>
                         <button
-                          onClick={() =>
+                          onClick={() => {
+                            let prevLabel = dropDownTargetState?.menu?.label;
+
                             setDropdownTargetState({
-                              state: !dropDownTargetState?.state,
+                              state:
+                                prevLabel === item?.label
+                                  ? !dropDownTargetState?.state
+                                  : true,
                               menu: item,
-                            })
-                          }
+                            });
+                          }}
                           className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-left transition-all  cursor-pointer ${
                             isDropActive
                               ? " text-indigo-600 font-medium"

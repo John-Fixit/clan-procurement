@@ -12,7 +12,8 @@ import {
 } from "../service/api/setting";
 import { successToast } from "../utils/toastPopUps";
 import { format } from "date-fns";
-import { Modal as AntModal } from "antd";
+import { Modal as AntModal, Result } from "antd";
+import StarLoader from "../components/core/loaders/StarLoader";
 
 const DocumentSetting = () => {
   const [showForm, setShowForm] = useState({ state: false, type: "" });
@@ -197,7 +198,11 @@ const CreateDocument = ({ onClose, data }) => {
 };
 
 const DocumentManager = ({ handleAddRecord }) => {
-  const { data: get_documents } = useGetDocument();
+  const {
+    data: get_documents,
+    isPending: isLoading,
+    isError,
+  } = useGetDocument();
 
   const documents = useMemo(
     () =>
@@ -285,40 +290,71 @@ const DocumentManager = ({ handleAddRecord }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {documents?.map((doc) => (
-                  <tr
-                    key={doc.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-900/30 transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-start gap-3">
-                        <div>
-                          <p className="text-gray-700 dark:text-white font-primary text-[14px]">
-                            {doc.name}
-                          </p>
+                {documents?.length === 0 ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <div className="flex items-center justify-center h-44">
+                        <div className="w-full h-full flex flex-col items-center justify-center">
+                          {isLoading ? (
+                            <div className="flex justify-center items-center">
+                              <StarLoader />
+                            </div>
+                          ) : isError ? (
+                            <Result
+                              status={"error"}
+                              title="An unexpected error occurred"
+                              classNames={{
+                                title: "text-gray-500! text-base!",
+                              }}
+                            />
+                          ) : (
+                            // Empty State
+                            <div className="flex flex-col items-center justify-center w-full h-full">
+                              <div className="text-gray-500 text-sm font-medium">
+                                No Document found
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center text-gray-600 dark:text-white font-primary text-[14px]">
-                        {doc?.renewable ? "Yes" : "No"}
-                      </div>
-                    </td>
-                    <td className="">
-                      <div className="flex items-center  justify-center">
-                        <ActionIcons
-                          variant={"EDIT"}
-                          action={() => handleAddRecord("document", doc)}
-                        />
-
-                        <ActionIcons
-                          variant={"DELETE"}
-                          action={() => handleDelete(doc)}
-                        />
-                      </div>
-                    </td>
                   </tr>
-                ))}
+                ) : (
+                  documents?.map((doc) => (
+                    <tr
+                      key={doc.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-900/30 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-start gap-3">
+                          <div>
+                            <p className="text-gray-700 dark:text-white font-primary text-[14px]">
+                              {doc.name}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center text-gray-600 dark:text-white font-primary text-[14px]">
+                          {doc?.renewable ? "Yes" : "No"}
+                        </div>
+                      </td>
+                      <td className="">
+                        <div className="flex items-center  justify-center">
+                          <ActionIcons
+                            variant={"EDIT"}
+                            action={() => handleAddRecord("document", doc)}
+                          />
+
+                          <ActionIcons
+                            variant={"DELETE"}
+                            action={() => handleDelete(doc)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

@@ -4,16 +4,18 @@ import ActionIcons from "../components/shared/ActionIcons";
 import { Checkbox, Modal, ModalContent, Switch } from "@heroui/react";
 import { useMemo, useState } from "react";
 import { BiX } from "react-icons/bi";
-import { Input } from "antd";
+import { Input, Result } from "antd";
 import { catchErrFunc } from "../utils/catchErrFunc";
 import { successToast } from "../utils/toastPopUps";
 import { useAddTax, useDeleteTax, useGetTax } from "../service/api/setting";
 import { Modal as AntModal } from "antd";
+import clsx from "clsx";
+import StarLoader from "../components/core/loaders/StarLoader";
 
 const Taxe = () => {
   const [showForm, setShowForm] = useState({ state: false, type: "" });
 
-  const { data: get_tax } = useGetTax();
+  const { data: get_tax, isPending: isLoading, isError } = useGetTax();
 
   const taxes = useMemo(
     () =>
@@ -22,7 +24,7 @@ const Taxe = () => {
         name: tax.TAX_NAME,
         rate: Number(tax.PERCENTAGE),
         ...tax,
-      })),
+      })) || [],
     [get_tax]
   );
   const handleAddRecord = (type, data) => {
@@ -96,7 +98,7 @@ const Taxe = () => {
               </div>
               <div className="flex overflow-hiddex">
                 <table className="flex-1">
-                  <thead className="border-b bg-gray-50 border-gray-200 dark:border-gray-800">
+                  <thead className="border-b bg-gray-100 border-gray-200 dark:border-gray-800">
                     <tr>
                       <th className="px-4 py-3 text-left text-gray-500w-2/5 text-sm font-medium leading-normal">
                         Tax Name
@@ -111,32 +113,66 @@ const Taxe = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {taxes?.map((tax, index) => (
-                      <tr
-                        key={index + "tax__" + tax?.ID}
-                        className="border-b border-gray-200 dark:border-gray-800"
-                      >
-                        <td className="h-16 px-4 py-2 w-2/5 text-gray-900 dark:text-white text-sm font-normal leading-normal font-primary">
-                          {tax?.TAX_NAME}
-                        </td>
-                        <td className="h-16 px-4 py-2 w-1/5 text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal font-primary">
-                          {Number(tax?.PERCENTAGE)}
-                        </td>
-                        <td className="h-16 px-4 py-2 w-1/5 text-sm font-bold leading-normal tracking-[0.015em]">
-                          <div className="flex items-center gap-4">
-                            <ActionIcons
-                              variant={"EDIT"}
-                              action={() => handleAddRecord("tax", tax)}
-                            />
-
-                            <ActionIcons
-                              variant={"DELETE"}
-                              action={() => handleDelete(tax)}
-                            />
+                    {taxes?.length === 0 ? (
+                      <tr>
+                        <td colSpan={6}>
+                          <div className="flex items-center justify-center h-44">
+                            <div className="w-full h-full flex flex-col items-center justify-center">
+                              {isLoading ? (
+                                <div className="flex justify-center items-center">
+                                  <StarLoader />
+                                </div>
+                              ) : isError ? (
+                                <Result
+                                  status={"error"}
+                                  title="An unexpected error occurred"
+                                  classNames={{
+                                    title: "text-gray-500! text-base!",
+                                  }}
+                                />
+                              ) : (
+                                // Empty State
+                                <div className="flex flex-col items-center justify-center w-full h-full">
+                                  <div className="text-gray-500 text-sm font-medium">
+                                    No Tax found
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      taxes?.map((tax, index) => (
+                        <tr
+                          key={index + "tax__" + tax?.ID}
+                          className={clsx(
+                            "border-b border-gray-200 dark:border-gray-800",
+                            index % 2 && "bg-gray-50 dark:bg-gray-800"
+                          )}
+                        >
+                          <td className="h-16 px-4 py-2 w-2/5 text-gray-900 dark:text-white text-sm font-normal leading-normal font-primary capitalize">
+                            {tax?.TAX_NAME}
+                          </td>
+                          <td className="h-16 px-4 py-2 w-1/5 text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal font-primary">
+                            {Number(tax?.PERCENTAGE)}
+                          </td>
+                          <td className="h-16 px-4 py-2 w-1/5 text-sm font-bold leading-normal tracking-[0.015em]">
+                            <div className="flex items-center gap-4">
+                              <ActionIcons
+                                variant={"EDIT"}
+                                action={() => handleAddRecord("tax", tax)}
+                              />
+
+                              <ActionIcons
+                                variant={"DELETE"}
+                                action={() => handleDelete(tax)}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

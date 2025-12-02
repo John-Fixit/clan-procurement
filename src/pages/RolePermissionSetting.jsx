@@ -485,6 +485,7 @@ const RolePermissionSetting = () => {
                                 onChange={(e) =>
                                   handleToggle(e.target.checked, staff)
                                 }
+                                size="sm"
                               />
                               <ActionIcons
                                 variant={"EDIT"}
