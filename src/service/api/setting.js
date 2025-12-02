@@ -85,7 +85,7 @@ export const useAddStaff = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload) => {
-      return await API.post(`/staff/add-staff`, payload);
+      return await API.post(`privilege/create-role-priviledges`, payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -99,7 +99,7 @@ export const useGetRole_Permission = () => {
   return useQuery({
     queryKey: ["get_role_permission"],
     queryFn: async () => {
-      const res = await API.get(`/role/get-documents`);
+      const res = await API.get(`privilege/get-role-priviledges`);
       return res.data?.data?.data;
     },
   });
@@ -121,8 +121,8 @@ export const useToggleStaffStatus = () => {
 export const useDeleteStaff = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload) => {
-      return await API.delete(`/staff/delete/${payload?.taxId}`);
+    mutationFn: async (roleId) => {
+      return await API.delete(`/staff/delete/${roleId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

@@ -10,21 +10,44 @@ import clsx from "clsx";
 import { LuChevronDown } from "react-icons/lu";
 import ActionIcons from "../components/shared/ActionIcons";
 import Button from "../components/shared/ui/Button";
-import { Input, Select, Switch } from "antd";
+import { Input, Result, Select } from "antd";
 import useDrawerStore from "../hooks/useDrawerStore";
-import { Avatar } from "@heroui/react";
+import { Avatar, Switch } from "@heroui/react";
 import { preProfileLink } from "../utils/pre-profile-link";
 import { roles } from "../utils/static-data";
-import { useDeleteStaff, useToggleStaffStatus } from "../service/api/setting";
+import {
+  useDeleteStaff,
+  useGetRole_Permission,
+  useToggleStaffStatus,
+} from "../service/api/setting";
 import { catchErrFunc } from "../utils/catchErrFunc";
 import { successToast } from "../utils/toastPopUps";
 import { Modal as AntModal } from "antd";
+import StarLoader from "../components/core/loaders/StarLoader";
+import { format } from "date-fns";
+
+const getRoleInfo = (passedRoles) => {
+  //This is to get the role info from the passed roles
+  const activeRole = passedRoles?.filter((r) => r.value);
+  const dRole = [];
+  for (let i = 0; i < activeRole.length; i++) {
+    const findRole = roles?.find((r) => r.value === activeRole[i].label);
+    dRole.push(findRole);
+  }
+  return dRole;
+};
 
 const RolePermissionSetting = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
 
   const { openDrawer } = useDrawerStore();
+
+  const {
+    data: get_role_permission,
+    isPending: isLoadingRolePermission,
+    isError,
+  } = useGetRole_Permission();
 
   // Sample staff data
   const [staffList] = useState([
@@ -68,34 +91,40 @@ const RolePermissionSetting = () => {
     });
   };
 
-  const getRoleInfo = (roleValue) => {
-    return roles.find((r) => r.value === roleValue);
-  };
+  const role_permission = get_role_permission?.map((item) => {
+    const is_admin = {
+      value: item?.IS_ADMIN,
+      label: "is_admin",
+    };
+    const is_enroller = {
+      value: item?.IS_ENROLLER,
+      label: "is_enroller",
+    };
+    const is_approver = {
+      value: item?.IS_APPROVER,
+      label: "is_approver",
+    };
 
-  const filteredStaff = staffList.filter(
+    const roles = [is_admin, is_enroller, is_approver];
+
+    return {
+      ...item,
+      roles,
+    };
+  });
+
+  const filteredStaff = role_permission?.filter(
     (staff) =>
-      staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      staff.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      selectedRole === "" ||
-      staff.role === selectedRole
+      staff?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      staff?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      selectedRole === ""
+    // ||
+    // staff?.role === selectedRole
   );
 
   const [selectedRow, setSelectedRow] = useState(null);
   const { mutateAsync: toggleStaffStatus, isPending: isLoadingToggle } =
     useToggleStaffStatus();
-  const handleToggle = async (status, row) => {
-    setSelectedRow(row);
-    try {
-      const json = {
-        status,
-        staffId: row.id,
-      };
-      const res = await toggleStaffStatus(json);
-      console.log(res);
-    } catch (err) {
-      catchErrFunc(err);
-    }
-  };
 
   //=============Delete staff ===========
   const [modal, contextHolder] = AntModal.useModal();
@@ -112,12 +141,9 @@ const RolePermissionSetting = () => {
 
   const { mutateAsync: mutateDeleteStaff } = useDeleteStaff();
 
-  const confirmDelete = async (staffId) => {
-    const json = {
-      staffId,
-    };
+  const confirmDelete = async (roleId) => {
     try {
-      const res = await mutateDeleteStaff(json);
+      const res = await mutateDeleteStaff(roleId);
       successToast(res?.data?.message);
     } catch (err) {
       catchErrFunc(err);
@@ -125,10 +151,33 @@ const RolePermissionSetting = () => {
   };
 
   const handleDelete = (staff) => {
-    modal.confirm({ ...config, onOk: () => confirmDelete(staff.id) });
+    console.log(staff);
+    modal.confirm({ ...config, onOk: () => confirmDelete(staff?.ROLE_ID) });
   };
-
   ///====================
+
+  //Toggle staff status
+  const handleToggle = async (status, row) => {
+    setSelectedRow(row);
+    try {
+      const json = {
+        status,
+        staffId: row?.ROLE_ID,
+      };
+      const res = await toggleStaffStatus(json);
+      console.log(res);
+    } catch (err) {
+      catchErrFunc(err);
+    }
+  };
+  //
+
+  const handleOpenEditBox = (role) => {
+    openDrawer({
+      viewName: "add-staff-role-permission",
+      roleDetail: role,
+    });
+  };
 
   return (
     <>
@@ -164,7 +213,7 @@ const RolePermissionSetting = () => {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Users</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {staffList.filter((s) => s.status === "active").length}
+                  {staffList.filter((s) => s.IS_ACTIVE).length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -269,7 +318,7 @@ const RolePermissionSetting = () => {
 
                     <th className="px-6 py-3 text-left">
                       <div className="flex items-center">
-                        Email <LuChevronDown className="ml-1 w-3 h-3" />
+                        Date Added <LuChevronDown className="ml-1 w-3 h-3" />
                       </div>
                     </th>
                     <th className="px-6 py-3 text-left">
@@ -289,78 +338,125 @@ const RolePermissionSetting = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredStaff.map((staff) => {
-                    const roleInfo = getRoleInfo(staff.role);
-                    return (
-                      <tr
-                        key={staff.id}
-                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-6 py-3">
-                          <div className="flex items-center gap-3">
-                            <div>
-                              <Avatar
-                                size="sm"
-                                src={preProfileLink(staff.name)}
+                  {filteredStaff?.length === 0 ? (
+                    <tr>
+                      <td colSpan={6}>
+                        <div className="flex items-center justify-center h-44">
+                          <div className="w-full h-full flex flex-col items-center justify-center">
+                            {isLoadingRolePermission ? (
+                              <div className="flex justify-center items-center">
+                                <StarLoader />
+                              </div>
+                            ) : isError ? (
+                              <Result
+                                status={"error"}
+                                title="An unexpected error occurred"
+                                classNames={{
+                                  title: "text-gray-500! text-base!",
+                                }}
+                              />
+                            ) : (
+                              // Empty State
+                              <div className="flex flex-col items-center justify-center w-full h-full">
+                                <div className="text-gray-500 text-sm font-medium">
+                                  No Staff found
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredStaff?.map((staff, index) => {
+                      const roleInfo = getRoleInfo(staff?.roles);
+                      return (
+                        <tr
+                          key={staff?.ROLE_ID + "___" + index}
+                          className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="px-6 py-3">
+                            <div className="flex items-center gap-3">
+                              <div>
+                                <Avatar
+                                  size="sm"
+                                  src={preProfileLink(
+                                    staff?.STAFF || staff?.CREATOR_NAME
+                                  )}
+                                />
+                              </div>
+                              <div>
+                                <p className="text-sm font-outfit text-gray-500 whitespace-nowrap">
+                                  {staff?.STAFF}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-3">
+                            <p className="text-sm font-outfit font-light text-gray-500 whitespace-nowrap">
+                              {staff?.DATE_CREATED
+                                ? format(staff?.DATE_CREATED, "MMM dd, yyyy")
+                                : "-"}
+                            </p>
+                          </td>
+                          <td className="px-6 py-3 max-w-120">
+                            <div className="flex flex-wrap gap-2 items-center">
+                              {roleInfo?.map((role, index) => (
+                                <span
+                                  key={index + role?.value + "___role"}
+                                  className={clsx(
+                                    "px-3 py-1 rounded-full text-sm font-outfit text-gray-500 whitespace-nowrap",
+                                    role?.color
+                                  )}
+                                >
+                                  {role?.label}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-6 py-3">
+                            {staff?.IS_ACTIVE ? (
+                              <span className="flex items-center gap-2 text-green-600">
+                                <FaCheckCircle />
+                                <span className="text-sm font-outfit whitespace-nowrap">
+                                  Active
+                                </span>
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-2 text-red-700">
+                                <FaTimesCircle />
+                                <span className="text-sm font-outfit whitespace-nowrap">
+                                  Inactive
+                                </span>
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-3">
+                            <div className="flex items-center gap-1">
+                              <Switch
+                                thumbIcon={
+                                  selectedRow?.ROLE_ID === staff?.ROLE_ID &&
+                                  isLoadingToggle ? (
+                                    <StarLoader size={14} />
+                                  ) : null
+                                }
+                                isSelected={staff?.IS_ACTIVE}
+                                onValueChange={(e) => handleToggle(e, staff)}
+                              />
+                              <ActionIcons
+                                variant={"EDIT"}
+                                action={() => handleOpenEditBox(staff)}
+                              />
+                              <ActionIcons
+                                variant={"DELETE"}
+                                action={() => handleDelete(staff)}
                               />
                             </div>
-                            <div>
-                              <p className="text-sm font-outfit text-gray-500 whitespace-nowrap">
-                                {staff.name}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-3">
-                          <p className="text-sm font-outfit font-light text-gray-500 whitespace-nowrap">
-                            {staff.email}
-                          </p>
-                        </td>
-                        <td className="px-6 py-3">
-                          <span
-                            className={clsx(
-                              "px-3 py-1 rounded-full text-sm font-outfit text-gray-500 whitespace-nowrap",
-                              roleInfo?.color
-                            )}
-                          >
-                            {roleInfo?.label}
-                          </span>
-                        </td>
-                        <td className="px-6 py-3">
-                          {staff.status === "active" ? (
-                            <span className="flex items-center gap-2 text-green-600">
-                              <FaCheckCircle />
-                              <span className="text-sm font-outfit whitespace-nowrap">
-                                Active
-                              </span>
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-2 text-gray-500">
-                              <FaTimesCircle />
-                              <span className="text-sm font-outfit whitespace-nowrap">
-                                Inactive
-                              </span>
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-3">
-                          <div className="flex items-center gap-1">
-                            <Switch
-                              loading={
-                                selectedRow?.id === staff?.id && isLoadingToggle
-                              }
-                              onChange={(e) => handleToggle(e, staff)}
-                            />
-                            <ActionIcons variant={"EDIT"} />
-                            <ActionIcons
-                              variant={"DELETE"}
-                              action={() => handleDelete(staff)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>

@@ -15,7 +15,11 @@ import useDrawerStore from "../../../hooks/useDrawerStore";
 const AddStaff = () => {
   const { userData } = useCurrentUser();
 
-  const { closeDrawer } = useDrawerStore();
+  const { data, closeDrawer } = useDrawerStore();
+
+  const roleDetail = data?.roleDetail;
+
+  const isUpdateRole = roleDetail ? true : false;
 
   const { data: get_staff, isPending: isLoadingStaff } = useGetAllStaff(
     userData?.data?.COMPANY_ID
@@ -67,15 +71,41 @@ const AddStaff = () => {
     };
   });
 
+  const userRole = roleDetail?.roles?.map((rol) => rol?.label) || [];
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    role: "",
-    permissions: [],
+    staff: roleDetail?.STAFF_ID || [],
+    role: userRole,
   });
 
-  const handleSubmit = async () => {
-    const json = {};
+  const isDisabled =
+    formData?.staff?.length === 0 || formData?.role?.length === 0;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log(formData);
+    const json = {
+      is_admin: formData?.role?.includes("admin") ? true : false,
+      is_enroller: formData?.role?.includes("is_enroller") ? true : false,
+      is_approver: formData?.role?.includes("is_approver") ? true : false,
+      date_created: new Date().toISOString(),
+      is_active: true,
+      creator_id: userData?.data?.STAFF_ID,
+      creator_name:
+        userData?.data?.FIRST_NAME + " " + userData?.data?.LAST_NAME,
+      staff_details: isUpdateRole
+        ? [
+            {
+              staff_name:
+                formData?.staff?.FIRST_NAME + " " + formData?.staff?.LAST_NAME,
+              staff_id: formData?.staff?.STAFF_ID,
+            },
+          ]
+        : formData?.staff?.map((staff) => ({
+            staff_name: staff?.FIRST_NAME + " " + staff?.LAST_NAME,
+            staff_id: staff?.STAFF_ID,
+          })),
+    };
     try {
       const res = await mutateAddStaff(json);
       successToast(res?.data?.message);
@@ -91,12 +121,12 @@ const AddStaff = () => {
         {/* Modal Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
           <h2 className="text-xl font-primary font-bold text-gray-900">
-            Add New Staff Member
+            {isUpdateRole ? "Update" : "Add New"} Staff Member
           </h2>
         </div>
 
         {/* Modal Body */}
-        <form className="p-6 space-y-6">
+        <form className="p-6 space-y-6" onSubmit={handleSubmit}>
           {/* Basic Information */}
           <div>
             <h3 className="text-base font-mediu text-gray-900 mb-2 font-primary tracking-wide">
@@ -104,13 +134,17 @@ const AddStaff = () => {
             </h3>
             <div>
               <Select
-                mode="multiple"
+                mode={isUpdateRole ? false : "multiple"}
                 style={{ width: "100%" }}
                 placeholder="Search by name, email, or role..."
-                // value={selectedApprovers.map((a) => a.value)}
-                // onChange={(value, option) => {
-                //   setValue("approvers", option);
-                // }}
+                value={
+                  isUpdateRole
+                    ? formData?.staff
+                    : formData?.staff?.map((a) => a.value)
+                }
+                onChange={(value, option) => {
+                  setFormData({ ...formData, staff: option });
+                }}
                 loading={isLoadingStaff}
                 options={staffList}
                 size="large"
@@ -152,7 +186,9 @@ const AddStaff = () => {
                   wrapper: "gap-6 grid grid-cols-2",
                 }}
                 value={formData.role}
-                onChange={(val) => setFormData({ ...formData, role: val })}
+                onValueChange={(val) => {
+                  setFormData({ ...formData, role: val });
+                }}
                 orientation="horizontal"
               >
                 {roles.map((role) => (
@@ -185,7 +221,7 @@ const AddStaff = () => {
           <div className="flex justify-between gap-3 pt-4 border-t border-gray-200">
             <button
               type="button"
-              //   onClick={() => setIsModalOpen(false)}
+              onClick={closeDrawer}
               className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
             >
               Cancel
@@ -193,10 +229,10 @@ const AddStaff = () => {
             <Button
               type="submit"
               className="px-6 py-2.5 bg-primary hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
-              onPress={handleSubmit}
               isLoading={isSubmitting}
+              isDisabled={isDisabled}
             >
-              Add Staff Member
+              {isUpdateRole ? "Update" : "Add"} Staff Member
             </Button>
           </div>
         </form>
