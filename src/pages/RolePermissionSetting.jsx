@@ -288,8 +288,9 @@ const RolePermissionSetting = () => {
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-4 flex-1 w-full">
               <div className="flex flex-wrap items-center gap-2">
-                {statusOption?.map((status) => (
+                {statusOption?.map((status, index) => (
                   <button
+                    key={index + "__status"}
                     className={clsx(
                       "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700  flex items-center whitespace-nowrap cursor-pointer",
                       status?.value === selectedRole ? status.activeColor : ""

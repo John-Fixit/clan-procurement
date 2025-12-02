@@ -6,6 +6,7 @@ import { useGetStaffProject } from "../service/api/project";
 import { useMemo, useState } from "react";
 import useCurrentUser from "../hooks/useCurrentUser";
 import { useLocation } from "react-router-dom";
+import { findProjectType } from "../utils/findProjectType";
 
 export default function Projects() {
   const { openDrawer } = useDrawerStore();
@@ -19,6 +20,8 @@ export default function Projects() {
   const lastPathText = location.split("/").at(-1);
 
   const pageName = lastPathText?.replaceAll("-", " ");
+
+  const projectType = findProjectType(pageName).label;
 
   const isRequest = location.includes("/request");
 
@@ -34,7 +37,8 @@ export default function Projects() {
       : selectedStatus === "declined"
       ? -1
       : null,
-    userData?.data?.STAFF_ID
+    userData?.data?.STAFF_ID,
+    projectType
   );
 
   const projects = useMemo(() => get_projects || [], [get_projects]);

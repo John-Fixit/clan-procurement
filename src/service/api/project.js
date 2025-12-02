@@ -12,14 +12,10 @@ export const useCreateProject = (procurementId) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [`get_projects_1`],
+        queryKey: [`get_staff_projects_0_Job Order`],
       });
       queryClient.invalidateQueries({
-        queryKey: [
-          `get_staff_projects_0`,
-          `get_staff_projects_1`,
-          `get_staff_projects_-1`,
-        ],
+        queryKey: [`get_staff_projects_0_Local Purchase Order`],
       });
     },
   });
@@ -39,12 +35,12 @@ export const useGetProject = (status, order_type) => {
     },
   });
 };
-export const useGetStaffProject = (status, staffId) => {
+export const useGetStaffProject = (status, staffId, projectType) => {
   return useQuery({
-    queryKey: [`get_staff_projects`, staffId, status],
+    queryKey: [`get_staff_projects_${status}_${projectType}`],
     queryFn: async () => {
       const res = await API.get(
-        `procurement/staff-procurements/${staffId}/${status}`
+        `procurement/staff-procurements/${staffId}/${status}/${projectType}`
       );
       return res.data?.data?.data;
     },
@@ -108,6 +104,9 @@ export const useApproveProject = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [`get_projects_request_0`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`get_projects_request_1`],
       });
     },
   });

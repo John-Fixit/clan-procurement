@@ -53,7 +53,7 @@ const ProjectTableHeader = ({
                   ></span>
                   <span className="inline">
                     {loading?.[status?.value] ? (
-                      <StarLoader size={18} />
+                      <StarLoader size={14} />
                     ) : (
                       statusCount?.[status?.value]
                     )}{" "}
