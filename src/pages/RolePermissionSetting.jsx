@@ -26,6 +26,33 @@ import { Modal as AntModal } from "antd";
 import StarLoader from "../components/core/loaders/StarLoader";
 import { format } from "date-fns";
 
+const statusOption = [
+  {
+    label: "All",
+    value: "",
+    statusColor: "bg-gray-500",
+    activeColor: "bg-blue-100",
+  },
+  {
+    label: "Admin",
+    value: "is_admin",
+    statusColor: "bg-purple-500",
+    activeColor: "bg-blue-100",
+  },
+  {
+    label: "Approving Officer",
+    value: "is_approver",
+    statusColor: "bg-blue-500",
+    activeColor: "bg-blue-100",
+  },
+  {
+    label: "Enrollment Officer",
+    value: "is_enroller",
+    statusColor: "bg-green-500",
+    activeColor: "bg-blue-100",
+  },
+];
+
 const getRoleInfo = (passedRoles) => {
   //This is to get the role info from the passed roles
   const activeRole = passedRoles?.filter((r) => r.value);
@@ -202,7 +229,7 @@ const RolePermissionSetting = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg  p-6 border border-gray-200">
+          <div className="bg-white rounded-lg px-6 py-3 border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Staff</p>
@@ -216,7 +243,7 @@ const RolePermissionSetting = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg  p-6 border border-gray-200">
+          <div className="bg-white rounded-lg px-6 py-3 border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Users</p>
@@ -230,7 +257,7 @@ const RolePermissionSetting = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg  p-6 border border-gray-200">
+          <div className="bg-white rounded-lg px-6 py-3 border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Roles</p>
@@ -249,6 +276,25 @@ const RolePermissionSetting = () => {
         <div className="bg-white rounded-lg  border border-gray-200 p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-4 flex-1 w-full">
+              <div className="flex flex-wrap items-center gap-2">
+                {statusOption?.map((status) => (
+                  <button
+                    className={clsx(
+                      "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700  flex items-center whitespace-nowrap cursor-pointer",
+                      status?.value === selectedRole ? status.activeColor : ""
+                    )}
+                    onClick={() => setSelectedRole(status?.value)}
+                  >
+                    <span
+                      className={clsx(
+                        "w-2 h-2 rounded-full mr-2 shrink-0",
+                        status?.statusColor
+                      )}
+                    ></span>
+                    <span className="inline">{status?.label}</span>
+                  </button>
+                ))}
+              </div>
               {/* Search */}
               <div className="relative w-1/4">
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -259,18 +305,6 @@ const RolePermissionSetting = () => {
                   size="large"
                 />
               </div>
-
-              {/* Role Filter */}
-              <Select
-                value={selectedRole}
-                onChange={(value) => setSelectedRole(value)}
-                options={roles}
-                classNames={{
-                  root: "min-w-44",
-                }}
-                placeholder="Filter by role"
-                allowClear
-              />
             </div>
 
             {/* Add Staff Button */}
