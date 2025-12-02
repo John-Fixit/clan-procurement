@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FaUserPlus,
   FaSearch,
@@ -12,7 +12,7 @@ import ActionIcons from "../components/shared/ActionIcons";
 import Button from "../components/shared/ui/Button";
 import { Input, Result, Select } from "antd";
 import useDrawerStore from "../hooks/useDrawerStore";
-import { Avatar, Switch } from "@heroui/react";
+import { Avatar, Pagination, Switch } from "@heroui/react";
 import { preProfileLink } from "../utils/pre-profile-link";
 import { roles } from "../utils/static-data";
 import {
@@ -49,42 +49,6 @@ const RolePermissionSetting = () => {
     isError,
   } = useGetRole_Permission();
 
-  // Sample staff data
-  const [staffList] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@company.com",
-      role: "admin",
-      status: "active",
-      avatar: "JD",
-    },
-    {
-      id: 2,
-      name: "Sarah Johnson",
-      email: "sarah.j@company.com",
-      role: "approving_officer",
-      status: "active",
-      avatar: "SJ",
-    },
-    {
-      id: 3,
-      name: "Michael Chen",
-      email: "m.chen@company.com",
-      role: "enrollment_officer",
-      status: "active",
-      avatar: "MC",
-    },
-    {
-      id: 4,
-      name: "Emily Williams",
-      email: "emily.w@company.com",
-      role: "procurement_officer",
-      status: "inactive",
-      avatar: "EW",
-    },
-  ]);
-
   const handleAddStaff = () => {
     openDrawer({
       viewName: "add-staff-role-permission",
@@ -106,22 +70,56 @@ const RolePermissionSetting = () => {
     };
 
     const roles = [is_admin, is_enroller, is_approver];
-
     return {
       ...item,
       roles,
     };
   });
 
-  const filteredStaff = role_permission?.filter(
-    (staff) =>
-      staff?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      staff?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      selectedRole === ""
-    // ||
-    // staff?.role === selectedRole
-  );
+  const roleFilteredByRoleData = useMemo(() => {
+    if (!selectedRole) return role_permission;
+    return role_permission?.filter((rol) => {
+      const mappedRoles = rol?.roles?.map((r) => r?.value && r?.label);
+      return mappedRoles?.includes(selectedRole);
+    });
+  }, [role_permission, selectedRole]);
 
+  const hasSearchFilter = Boolean(searchQuery?.trim());
+
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+
+  const filteredRoles = useMemo(() => {
+    let prevData = roleFilteredByRoleData?.length
+      ? [...roleFilteredByRoleData]
+      : [];
+
+    if (hasSearchFilter) {
+      const value = searchQuery?.trim()?.toLowerCase();
+
+      const updatedData = roleFilteredByRoleData?.filter((item) => {
+        const matches = [item?.STAFF?.toLowerCase()].some((field) =>
+          field?.includes(value)
+        );
+
+        return matches;
+      });
+
+      prevData = updatedData.length ? updatedData : [];
+    }
+
+    return prevData;
+  }, [hasSearchFilter, searchQuery, roleFilteredByRoleData]);
+
+  const totalPage = Math.ceil(filteredRoles?.length / pageSize);
+
+  const handlePageChange = (page) => {
+    setPage(page);
+  };
+
+  const tableData = useMemo(() => {
+    return filteredRoles?.slice((page - 1) * pageSize, page * pageSize);
+  }, [filteredRoles, page, pageSize]);
   const [selectedRow, setSelectedRow] = useState(null);
   const { mutateAsync: toggleStaffStatus, isPending: isLoadingToggle } =
     useToggleStaffStatus();
@@ -151,7 +149,6 @@ const RolePermissionSetting = () => {
   };
 
   const handleDelete = (staff) => {
-    console.log(staff);
     modal.confirm({ ...config, onOk: () => confirmDelete(staff?.ROLE_ID) });
   };
   ///====================
@@ -164,8 +161,7 @@ const RolePermissionSetting = () => {
         status,
         staffId: row?.ROLE_ID,
       };
-      const res = await toggleStaffStatus(json);
-      console.log(res);
+      await toggleStaffStatus(json);
     } catch (err) {
       catchErrFunc(err);
     }
@@ -178,6 +174,18 @@ const RolePermissionSetting = () => {
       roleDetail: role,
     });
   };
+
+  const roleStatistics = useMemo(() => {
+    const totalStaff = get_role_permission?.length;
+    const activeStaff = get_role_permission?.filter((s) => s.IS_ACTIVE).length;
+    const allRoles = roles?.length;
+
+    return {
+      totalStaff,
+      activeStaff,
+      allRoles,
+    };
+  }, [get_role_permission]);
 
   return (
     <>
@@ -199,7 +207,7 @@ const RolePermissionSetting = () => {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Staff</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {staffList.length}
+                  {roleStatistics?.totalStaff}
                 </p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -213,7 +221,7 @@ const RolePermissionSetting = () => {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Users</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {staffList.filter((s) => s.IS_ACTIVE).length}
+                  {roleStatistics?.activeStaff}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -227,7 +235,7 @@ const RolePermissionSetting = () => {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Roles</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {roles.length}
+                  {roleStatistics?.allRoles}
                 </p>
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -245,7 +253,7 @@ const RolePermissionSetting = () => {
               <div className="relative w-1/4">
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
-                  placeholder="Search by name or email..."
+                  placeholder="Search by staff name"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   size="large"
@@ -261,6 +269,7 @@ const RolePermissionSetting = () => {
                   root: "min-w-44",
                 }}
                 placeholder="Filter by role"
+                allowClear
               />
             </div>
 
@@ -338,7 +347,7 @@ const RolePermissionSetting = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredStaff?.length === 0 ? (
+                  {tableData?.length === 0 ? (
                     <tr>
                       <td colSpan={6}>
                         <div className="flex items-center justify-center h-44">
@@ -368,7 +377,7 @@ const RolePermissionSetting = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredStaff?.map((staff, index) => {
+                    tableData?.map((staff, index) => {
                       const roleInfo = getRoleInfo(staff?.roles);
                       return (
                         <tr
@@ -380,9 +389,7 @@ const RolePermissionSetting = () => {
                               <div>
                                 <Avatar
                                   size="sm"
-                                  src={preProfileLink(
-                                    staff?.STAFF || staff?.CREATOR_NAME
-                                  )}
+                                  src={preProfileLink(staff?.STAFF)}
                                 />
                               </div>
                               <div>
@@ -441,7 +448,9 @@ const RolePermissionSetting = () => {
                                   ) : null
                                 }
                                 isSelected={staff?.IS_ACTIVE}
-                                onValueChange={(e) => handleToggle(e, staff)}
+                                onChange={(e) =>
+                                  handleToggle(e.target.checked, staff)
+                                }
                               />
                               <ActionIcons
                                 variant={"EDIT"}
@@ -459,6 +468,14 @@ const RolePermissionSetting = () => {
                   )}
                 </tbody>
               </table>
+            </div>
+            <div className="my-4 flex justify-end mx-6">
+              <Pagination
+                showControls
+                page={page}
+                total={totalPage}
+                onChange={handlePageChange}
+              />
             </div>
           </div>
         </div>
