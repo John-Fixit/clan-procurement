@@ -9,7 +9,7 @@ export const roles = [
     value: "is_approver",
     label: "Approving Officer",
     description: "Can approve and reject procurement requests",
-    color: "bg-blue-100 text-blue-700",
+    color: "bg-blue-100 text-blue-500",
   },
   {
     value: "is_enroller",

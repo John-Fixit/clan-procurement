@@ -457,7 +457,7 @@ const RolePermissionSetting = () => {
                                 <span
                                   key={index + role?.value + "___role"}
                                   className={clsx(
-                                    "px-3 py-1 rounded-full text-sm font-outfit text-gray-500 whitespace-nowrap",
+                                    "px-3 py-1 rounded-full text-sm font-outfit whitespace-nowrap",
                                     role?.color
                                   )}
                                 >

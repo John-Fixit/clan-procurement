@@ -96,14 +96,14 @@ const AddStaff = () => {
     e.preventDefault();
 
     const updateJson = {
-      is_admin: formData?.role?.includes("admin") ? true : false,
+      is_admin: formData?.role?.includes("is_admin") ? true : false,
       is_enroller: formData?.role?.includes("is_enroller") ? true : false,
       is_approver: formData?.role?.includes("is_approver") ? true : false,
       date_created: new Date().toISOString(),
       is_active: formData?.is_active,
     };
     const json = {
-      is_admin: formData?.role?.includes("admin") ? true : false,
+      is_admin: formData?.role?.includes("is_admin") ? true : false,
       is_enroller: formData?.role?.includes("is_enroller") ? true : false,
       is_approver: formData?.role?.includes("is_approver") ? true : false,
       date_created: new Date().toISOString(),
@@ -244,7 +244,7 @@ const AddStaff = () => {
             </div>
           </div>
 
-          <div className="border border-gray-300 rounded-lg p-3 bg-blue-50 flex justify-between items-center">
+          <div className="border border-blue-100 rounded-lg p-3 bg-blue-50 flex justify-between items-center">
             <p>Staff Status</p>
             <Switch
               isSelected={formData?.is_active}
