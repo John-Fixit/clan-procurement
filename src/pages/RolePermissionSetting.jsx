@@ -232,9 +232,13 @@ const RolePermissionSetting = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Staff</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {roleStatistics?.totalStaff}
-                </p>
+                {isLoadingRolePermission ? (
+                  <StarLoader size={14} />
+                ) : (
+                  <p className="text-2xl font-bold text-gray-900">
+                    {roleStatistics?.totalStaff}
+                  </p>
+                )}
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <MdAdminPanelSettings className="text-2xl text-purple-600" />
@@ -246,9 +250,13 @@ const RolePermissionSetting = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Users</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {roleStatistics?.activeStaff}
-                </p>
+                {isLoadingRolePermission ? (
+                  <StarLoader size={14} />
+                ) : (
+                  <p className="text-2xl font-bold text-gray-900">
+                    {roleStatistics?.activeStaff}
+                  </p>
+                )}
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <FaCheckCircle className="text-2xl text-green-600" />
@@ -260,9 +268,13 @@ const RolePermissionSetting = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Roles</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {roleStatistics?.allRoles}
-                </p>
+                {isLoadingRolePermission ? (
+                  <StarLoader size={14} />
+                ) : (
+                  <p className="text-2xl font-bold text-gray-900">
+                    {roleStatistics?.allRoles}
+                  </p>
+                )}
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                 <MdAdminPanelSettings className="text-2xl text-orange-600" />
