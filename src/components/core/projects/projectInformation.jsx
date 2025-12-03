@@ -10,7 +10,6 @@ import { FaUser } from "react-icons/fa";
 import { useGetTax } from "../../../service/api/setting";
 import { useGetVendor } from "../../../service/api/vendor";
 import { useMemo } from "react";
-import { projectTypeList } from "../../../utils/static-data";
 import { findProjectType } from "../../../utils/findProjectType";
 
 const ProjectInformation = (props) => {

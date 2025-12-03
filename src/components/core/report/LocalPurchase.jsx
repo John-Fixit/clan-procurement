@@ -159,7 +159,7 @@ const DUMMY_DATA = [
   },
 ];
 
-export default function LocalPurchase({ dateRange, orderType, searchQuery }) {
+export default function LocalPurchase({ dateRange, orderType }) {
   const [isLoading] = useState(false);
   const [isError] = useState(false);
 
