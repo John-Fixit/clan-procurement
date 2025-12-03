@@ -9,10 +9,13 @@ import {
   FiFolder,
   FiPhone,
   FiMail,
+  FiCheckCircle,
+  FiClock,
 } from "react-icons/fi";
 import Button from "../../../shared/ui/Button";
 import JoborderTemplate from "../../templates/job-order/JobOrderTemplate";
 import LocalPurchaseOrder from "../../templates/local-purchase-order/LocalPurchaseOrder";
+import { Chip } from "@heroui/react";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
@@ -82,7 +85,9 @@ export default function JobOrderDetail({ details }) {
                     >
                       View Template
                     </Button>
-                    {/* <Chip
+                  </div>
+                  {jobOrder.IS_APPROVED ? (
+                    <Chip
                       color={
                         jobOrder.IS_APPROVED
                           ? "success"
@@ -91,6 +96,7 @@ export default function JobOrderDetail({ details }) {
                           : "warning"
                       }
                       variant="solid"
+                      className="text-white mt-1"
                     >
                       <div className="flex gap-1">
                         {jobOrder.IS_APPROVED ? (
@@ -104,30 +110,13 @@ export default function JobOrderDetail({ details }) {
                             : "Pending Approval"}
                         </span>
                       </div>
-                    </Chip> */}
-                  </div>
-                  {/* <div
-                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full ${
-                  jobOrder.IS_APPROVED
-                    ? "bg-green-500"
-                    : jobOrder?.IS_APPROVED === -1
-                    ? "bg-red-100 text-red-500"
-                    : "bg-[#b08548] text-[#f5a525]"
-                }`}
-              >
-                {jobOrder.IS_APPROVED ? (
-                  <FiCheckCircle className="w-5 h-5" />
-                ) : (
-                  <FiClock className="w-5 h-5" />
-                )}
-                <span className="font-semibold">
-                  {jobOrder.IS_APPROVED ? "Approved" : "Pending Approval"}
-                </span>
-              </div> */}
-                  <p className="text-sm mt-3 opacity-90">
-                    Approval Stage: {jobOrder.CURRENT_APPROVAL_SN} of{" "}
-                    {jobOrder.MAX_SN}
-                  </p>
+                    </Chip>
+                  ) : (
+                    <p className="text-sm mt-3 opacity-90">
+                      Approval Stage: {jobOrder.CURRENT_APPROVAL_SN} of{" "}
+                      {jobOrder.MAX_SN}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -234,7 +223,7 @@ export default function JobOrderDetail({ details }) {
                 <DetailItem
                   icon={FiUser}
                   label="Received By"
-                  value={` ${jobOrder.RECEIVED_BY || "N/A"}`}
+                  value={jobOrder.RECEIVED_BY}
                 />
                 <DetailItem
                   icon={FiFileText}

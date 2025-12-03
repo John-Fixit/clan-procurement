@@ -7,10 +7,23 @@ import {
 } from "react-icons/lu";
 import { FiCheckSquare } from "react-icons/fi";
 import useCurrentUser from "../hooks/useCurrentUser";
+import ProcurementBarChart from "../components/core/dashboard/ProcurementBarChart";
+import { Avatar } from "@heroui/react";
+import { preProfileLink } from "../utils/pre-profile-link";
+import { formatNumberWithComma } from "../utils/formatCurrencyNumber";
+import ProcurementPiechart from "../components/core/dashboard/ProcurementPiechart";
 
 export default function Dashboard() {
   const { userData } = useCurrentUser();
   const profileData = userData?.data;
+
+  const vendorList = [
+    { VENDOR_NAME: "John Fixit", PROJECT_AMOUNT: 1000, NO_OF_PROJECTS: 5 },
+    { VENDOR_NAME: "Ivan Fixit", PROJECT_AMOUNT: 2000, NO_OF_PROJECTS: 3 },
+    { VENDOR_NAME: "Elisha Joshephn", PROJECT_AMOUNT: 3000, NO_OF_PROJECTS: 2 },
+    { VENDOR_NAME: "Faith Idaosa", PROJECT_AMOUNT: 4000, NO_OF_PROJECTS: 1 },
+    { VENDOR_NAME: "Samuel Thomson", PROJECT_AMOUNT: 5000, NO_OF_PROJECTS: 5 },
+  ];
   return (
     <div className="min-h-screen bg-gray-50 p-8 space-y-6">
       {/* <NewObjectiveModal /> */}
@@ -38,20 +51,14 @@ export default function Dashboard() {
         {/* Left Column - Spans 2 columns */}
         <div className="lg:col-span-2 space-y-6 h-full">
           {/* Top Banner Section */}
-          <div className="bg-white rounded-lg border border-gray-200 p-8 h-48">
-            <div className="space-y-3">
-              <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-3 bg-gray-200 rounded w-full"></div>
-              <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-              <div className="h-3 bg-gray-200 rounded w-full"></div>
-              <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-            </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-8 h48">
+            <ProcurementBarChart />
           </div>
 
           {/* Objectives and Tasks Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* My Active Objectives */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <LuTrendingUp className="w-5 h-5 text-pink-500" />
@@ -155,7 +162,8 @@ export default function Dashboard() {
               <button className="text-blue-600 text-sm font-medium mt-4 hover:text-blue-700">
                 View all →
               </button>
-            </div>
+            </div> */}
+            <ProcurementPiechart />
 
             {/* My Tasks */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -213,46 +221,50 @@ export default function Dashboard() {
         <div className="lg:col-span-1 h-full">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center gap-2 mb-6">
-              <LuAward className="w-5 h-5 text-pink-500" />
+              <div className="p-2 bg-pink-50 rounded-lg">
+                <LuAward className="w-5 h-5 text-pink-600" />
+              </div>
               <h2 className="text-lg font-semibold text-gray-800">
-                My latest recognition
+                Top 5 Vendors
               </h2>
             </div>
+            <div className="space-y-3">
+              {vendorList.map((vendor, index) => (
+                <div
+                  className="group border rounded-xl border-gray-200 bg-gradient-to-br from-gray-50 to-white hover:shadow-md hover:border-pink-200 transition-all duration-200"
+                  key={index}
+                >
+                  <div className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <Avatar src={preProfileLink(vendor.VENDOR_NAME)} />
+                      </div>
+                      <div className="text-gray-700 text-sm font-medium font-primary">
+                        {vendor.VENDOR_NAME}
+                        <p>
+                          <span className="text-gray-400 ">
+                            {vendor?.NO_OF_PROJECTS} projects
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-gray-500 text-sm">
+                      <p className="font-medium text-gray-700">Amount</p>
+                      <p>{formatNumberWithComma(vendor.PROJECT_AMOUNT)}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-            <div className="flex flex-col items-center justify-center py-12">
+            {/* <div className="flex flex-col items-center justify-center py-12">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <LuAward className="w-8 h-8 text-gray-300" />
               </div>
               <p className="text-gray-500 text-sm text-center mb-6">
-                No recent recognition received.
+                No Vendors
               </p>
-              <button className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                See how it works
-              </button>
-            </div>
-
-            <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-              View all →
-            </button>
+            </div> */}
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import Approval from "./pages/Approval";
 import RolePermissionSetting from "./pages/RolePermissionSetting";
 import ProtectedRoute from "./components/protected-route";
 import AllProcurement from "./pages/AllProcurement";
+import ProcurementReport from "./pages/Report";
 
 function App() {
   const RedirectToHome = () => {
@@ -55,7 +56,7 @@ function App() {
             element={<Projects role="local-purchase" />}
           />
           <Route path="approval" element={<Approval />} />
-          <Route path="report" element={<Report />} />
+          <Route path="report" element={<ProcurementReport />} />
           <Route path="setting" element={<Setting />} />
           <Route path="setting/tax" element={<Taxes />} />
           <Route path="setting/document" element={<DocumentSetting />} />
