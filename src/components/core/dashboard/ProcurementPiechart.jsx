@@ -40,8 +40,8 @@ const ProcurementPiechart = () => {
         </h2>
       </div>
 
-      <div className="flex flex-col items-center py-4">
-        <ResponsiveContainer width="100%" height={280}>
+      <div className="flex flex-col items-center py-4 relative border border-red-500">
+        <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
               data={data}
@@ -67,10 +67,7 @@ const ProcurementPiechart = () => {
           </PieChart>
         </ResponsiveContainer>
 
-        <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center"
-          style={{ marginTop: "100px" }}
-        >
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
           <div className="text-3xl font-bold text-gray-800">
             {totalProcurements}
           </div>
@@ -78,7 +75,7 @@ const ProcurementPiechart = () => {
         </div>
       </div>
 
-      <div className="space-y-3 mt-6">
+      <div className="space-y-3 mt6">
         <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-100">
           <div className="flex items-center gap-3">
             <div className="w-4 h-4 rounded-full bg-orange-400"></div>
@@ -111,13 +108,6 @@ const ProcurementPiechart = () => {
           <span className="text-lg font-semibold text-gray-800">
             {totalLocalPurchase}
           </span>
-        </div>
-      </div>
-
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Reporting Period</span>
-          <span className="font-medium text-gray-800">Last 6 Months</span>
         </div>
       </div>
     </div>

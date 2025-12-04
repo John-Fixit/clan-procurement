@@ -179,6 +179,8 @@ const CreateProject = () => {
     return result;
   };
 
+  console.log(getValues("project_type"));
+
   const handleSubmit = async () => {
     const isValid = await trigger();
     if (!isValid) {
@@ -282,7 +284,7 @@ const CreateProject = () => {
         <ProjectInformation {...hook_form_props} handleNext={handleNext} />
       ),
     },
-    project_type === "Local Purchase Order" && {
+    findProjectType(project_type).value === "2" && {
       title: "Items",
       content: (
         <PurchaseOrderItems
