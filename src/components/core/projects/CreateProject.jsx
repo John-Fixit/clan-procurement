@@ -155,7 +155,6 @@ const CreateProject = () => {
 
   const uploadPendingFiles = async (documents) => {
     const result = [];
-
     for (const doc of documents) {
       if (doc?.uploaded_url || !doc?.originFileObj) {
         result.push(doc);
@@ -175,11 +174,8 @@ const CreateProject = () => {
         }
       }
     }
-
     return result;
   };
-
-  console.log(getValues("project_type"));
 
   const handleSubmit = async () => {
     const isValid = await trigger();
@@ -228,6 +224,10 @@ const CreateProject = () => {
       });
 
       if (items?.[0]) {
+        // calculate total amount of local purchase order items
+        const totalItemAmount = items?.reduce((acc, item) => {
+          return acc + Number(item?.unit_price) * Number(item?.quantity);
+        }, 0);
         const json = {
           order_type: findProjectType(values?.project_type)?.label,
           order_no: values?.order_number,
@@ -246,7 +246,10 @@ const CreateProject = () => {
           tax_id: values?.tax?.ID,
           tax_value: values?.tax?.PERCENTAGE,
           note: values?.projectNote,
-          job_amount: values?.sum_amount,
+          job_amount:
+            findProjectType(values?.project_type)?.value === "2"
+              ? totalItemAmount
+              : values?.sum_amount,
           creator_id: userData?.data?.STAFF_ID,
           creator_name:
             userData?.data?.FIRST_NAME + " " + userData?.data?.LAST_NAME,
@@ -257,7 +260,7 @@ const CreateProject = () => {
             ?.filter(Boolean),
           approval_request: values?.approvers?.map((appr, index) => ({
             designation: appr?.DESIGNATION,
-            staff_id: appr?.STAFF_ID, //1
+            staff_id: 1, //appr?.STAFF_ID, //1
             staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
             sn: index + 1,
             is_approved: 0,

@@ -75,10 +75,10 @@ export default function JobOrderDetail({ details }) {
                 <div>
                   <h1 className="text-3xl font-bold">{jobOrder.ORDER_TYPE}</h1>
                 </div>
-                <div className="text-right">
+                <div className="flex gap-2 items-center flex-row-reverse">
                   <div>
                     <Button
-                      className="bg-white text-sm"
+                      className="bg-amber-400 font-primary font-medium text-white text-sm"
                       size="sm"
                       radius="sm"
                       onPress={handleViewTemplate}
@@ -112,7 +112,7 @@ export default function JobOrderDetail({ details }) {
                       </div>
                     </Chip>
                   ) : (
-                    <p className="text-sm mt-3 opacity-90">
+                    <p className="text-sm opacity-90">
                       Approval Stage: {jobOrder.CURRENT_APPROVAL_SN} of{" "}
                       {jobOrder.MAX_SN}
                     </p>

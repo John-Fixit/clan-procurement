@@ -7,10 +7,53 @@ import { LuDownload } from "react-icons/lu";
 const { RangePicker } = DatePicker;
 
 const orderTypeOptions = [
-  { label: "Job Order", value: "Job Order" },
-  { label: "Local Purchase Order", value: "Local Purchase Order" },
+  { label: "Purchase Request", value: "Job Order" },
+  { label: "Vendor Performance", value: "Local Purchase Order" },
+  { label: "Purchase Order Status", value: "Local Purchase Order" },
+  { label: "Spend Analysis", value: "Local Purchase Order" },
+  { label: "Inventory & Stock Reorder", value: "Local Purchase Order" },
 ];
 
+const tableHeaders = {
+  "Purchase Request": [
+    {
+      title: "Order No",
+      dataIndex: "ORDER_NO",
+      key: "ORDER_NO",
+    },
+    {
+      title: "Department",
+      dataIndex: "DEPARTMENT_SUPPLIED",
+      key: "DEPARTMENT_SUPPLIED",
+    },
+    {
+      title: "VENDOR",
+      dataIndex: "VENDOR_NAME",
+      key: "VENDOR_NAME",
+    },
+    {
+      title: "Date Awarded",
+      dataIndex: "DATE_AWARDER",
+      key: "DATE_AWARDER",
+    },
+    {
+      title: "Date Supplied",
+      dataIndex: "DATE_SUPPLIED",
+      key: "DATE_SUPPLIED",
+    },
+    {
+      title: "Total Amount",
+      dataIndex: "JOB_AMOUNT",
+      key: "DATE_SUPPLIED",
+      isMoney: true,
+    },
+    {
+      title: "Status",
+      dataIndex: "IS_APPROVED",
+      key: "IS_APPROVED",
+    },
+  ],
+};
 export default function ProcurementReport() {
   const [dateRange, setDateRange] = useState(null);
   const [orderType, setOrderType] = useState("Job Order");
@@ -55,7 +98,7 @@ export default function ProcurementReport() {
               {/* Order Type Select */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Order Type
+                  Report Type
                 </label>
                 <Select
                   value={orderType}

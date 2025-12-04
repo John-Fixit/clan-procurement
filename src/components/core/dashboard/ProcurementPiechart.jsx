@@ -8,11 +8,15 @@ import {
   Tooltip,
 } from "recharts";
 import { LuTrendingUp } from "react-icons/lu";
+import { useGetProcOverview } from "../../../service/api/dashboard";
 
 const ProcurementPiechart = () => {
   // Sample data for last 6 months - replace with your actual data
-  const totalJobOrder = 356;
-  const totalLocalPurchase = 268;
+
+  const { data: procOverview } = useGetProcOverview();
+  console.log(procOverview);
+  const totalJobOrder = procOverview?.[0]?.total_job_type;
+  const totalLocalPurchase = procOverview?.[0]?.total_local_purchase_order;
 
   const data = [
     { name: "Job Order", value: totalJobOrder },
@@ -40,7 +44,7 @@ const ProcurementPiechart = () => {
         </h2>
       </div>
 
-      <div className="flex flex-col items-center py-4 relative border border-red-500">
+      <div className="flex flex-col items-center py-4 relative">
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
