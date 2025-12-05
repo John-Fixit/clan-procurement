@@ -164,7 +164,7 @@ const tableHeaders = {
     },
     {
       title: "Unit Price",
-      key: "UNIT_PRICE",
+      key: "JOB_AMOUNT",
       isMoney: true,
     },
     {
