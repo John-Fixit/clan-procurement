@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import JobOrderReportTable from "../components/core/report/JobOrderReportTable";
 import LocalPurchase from "../components/core/report/LocalPurchase";
-import { DatePicker, Input, Result, Select } from "antd";
+import { Button, DatePicker, Dropdown, Input, Result, Select } from "antd";
 import { LuDownload } from "react-icons/lu";
 import { useGetReport } from "../service/api/report";
 import { format } from "date-fns";
@@ -10,8 +10,22 @@ import clsx from "clsx";
 import { formatNumberWithComma } from "../utils/formatCurrencyNumber";
 import StarLoader from "../components/core/loaders/StarLoader";
 import { Pagination } from "@heroui/react";
+import { IoChevronDownOutline } from "react-icons/io5";
+import { exportTableToPDF } from "../utils/exportTableToPdf";
+import { exportReportAsExcel } from "../utils/exportReportAsExcel";
 
 const { RangePicker } = DatePicker;
+
+const exportMenuItem = [
+  {
+    label: "Export as Excel",
+    key: "excel",
+  },
+  {
+    label: "Export as PDF",
+    key: "pdf",
+  },
+];
 
 const orderTypeOptions = [
   { label: "Purchase Request", value: "PR_SUMMARY" },
@@ -54,9 +68,13 @@ const tableHeaders = {
       key: "DATE_SUPPLIED",
     },
     {
+      title: "Tax Amount",
+      key: "TAX_AMOUNT",
+      isMoney: true,
+    },
+    {
       title: "Total Amount",
-      dataIndex: "JOB_AMOUNT",
-      key: "JOB_AMOUNT",
+      key: "TOTAL_AMOUNT",
       isMoney: true,
     },
     // {
@@ -108,14 +126,13 @@ const tableHeaders = {
       key: "DATE_SUPPLIED",
     },
     {
-      title: "Tax",
-      key: "TAX_VALUE",
-      percentage: true,
+      title: "Tax Amount",
+      key: "TAX_AMOUNT",
+      isMoney: true,
     },
     {
       title: "Total Amount",
-      key: "JOB_AMOUNT",
-      align: "text-center",
+      key: "TOTAL_AMOUNT",
       isMoney: true,
     },
   ],
@@ -138,7 +155,7 @@ const tableHeaders = {
   INVENTORY_REORDER: [
     {
       title: "Product",
-      key: "PRODUCT",
+      key: "PRODUCT_NAME",
     },
     {
       title: "Quantity",
@@ -151,14 +168,13 @@ const tableHeaders = {
       isMoney: true,
     },
     {
-      title: "Tax Value",
-      key: "TAX_VALUE",
-      align: "text-center",
-      percentage: true,
+      title: "Tax Amount",
+      key: "TAX_AMOUNT",
+      isMoney: true,
     },
     {
       title: "Total Amount",
-      key: "JOB_AMOUNT",
+      key: "TOTAL_AMOUNT",
       isMoney: true,
     },
     {
@@ -197,12 +213,27 @@ export default function ProcurementReport() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
   const filteredReports = useMemo(() => {
-    let prevData = get_report_data?.length ? [...get_report_data] : [];
+    const mappedData = get_report_data?.map((item) => {
+      const taxAmount =
+        (
+          (parseFloat(item?.TAX_VALUE || 0.1) / 100) *
+          Number(item?.JOB_AMOUNT || 0)
+        )?.toFixed(2) || 0;
+      const totalAmount = Number(item?.JOB_AMOUNT || 0) + Number(taxAmount);
+      const mappedItem = {
+        ...item,
+        TAX_AMOUNT: taxAmount,
+        TOTAL_AMOUNT: totalAmount.toFixed(2),
+      };
+      return mappedItem;
+    });
+
+    let prevData = mappedData?.length ? [...mappedData] : [];
 
     if (hasSearchFilter) {
       const value = searchQuery?.trim()?.toLowerCase();
 
-      const updatedData = get_report_data?.filter((item) => {
+      const updatedData = mappedData?.filter((item) => {
         const matches = [
           item?.ORDER_TYPE?.toLowerCase(),
           item?.ORDER_NO?.toLowerCase(),
@@ -220,8 +251,10 @@ export default function ProcurementReport() {
     }
 
     return prevData;
-  }, [hasSearchFilter, get_report_data, searchQuery]);
+  }, [get_report_data, hasSearchFilter, searchQuery]);
   const totalPage = Math.ceil(filteredReports?.length / pageSize);
+
+  console.log(filteredReports);
 
   const handlePageChange = (page) => {
     setPage(page);
@@ -229,6 +262,41 @@ export default function ProcurementReport() {
   const tableData = useMemo(() => {
     return filteredReports?.slice((page - 1) * pageSize, page * pageSize);
   }, [filteredReports, page, pageSize]);
+
+  const handleExport = (param) => {
+    const exportType = param?.key;
+
+    if (exportType === "pdf") {
+      // export to pdf logic
+      exportTableToPDF({
+        title: `${findReportTypeLabel(orderType)} Report`,
+        headers: tableHeader,
+        data: filteredReports,
+        fileName: `${findReportTypeLabel(
+          orderType
+        )}_Report${new Date().getTime()}.pdf`,
+      });
+    } else if (exportType === "excel") {
+      // export to excel logic
+      exportReportAsExcel({
+        excelData: filteredReports,
+        headers: tableHeader?.map((h) => h.title),
+        headerKeys: tableHeader.map((h) => h.key),
+        title: `${findReportTypeLabel(orderType)} Report`,
+        subtitle1: "",
+        subtitle2: "",
+        totalColumns: [6, 7],
+        fileName: `${findReportTypeLabel(
+          orderType
+        )}_Report${new Date().getTime()}.xlsx`,
+      });
+    }
+  };
+
+  const menuProps = {
+    items: exportMenuItem,
+    onClick: handleExport,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -297,13 +365,12 @@ export default function ProcurementReport() {
                 />
               </div>
             </div>
-            {/* <button
-              // onClick={handleExport}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            >
-              <LuDownload className="w-4 h-4" />
-              Export Report
-            </button> */}
+            <Dropdown menu={menuProps}>
+              <Button>
+                Export As
+                <IoChevronDownOutline />
+              </Button>
+            </Dropdown>
           </div>
         </div>
 
@@ -363,26 +430,28 @@ export default function ProcurementReport() {
                       index % 2 && "bg-gray-100"
                     )}
                   >
-                    {tableHeader?.map((header) => (
-                      <td
-                        key={header.key}
-                        className={clsx(
-                          "px-6 py-2 text-sm",
-                          header.align || "text-left"
-                        )}
-                      >
-                        {header.isMoney ? (
-                          <div className={"text-right"}>
-                            {formatNumberWithComma(row[header.key])}
-                          </div>
-                        ) : header?.percentage ? (
-                          Number(row[header.key])
-                        ) : (
-                          row[header.key]
-                        )}
-                        {header.percentage && "%"}
-                      </td>
-                    ))}
+                    {tableHeader?.map((header) => {
+                      return (
+                        <td
+                          key={header.key}
+                          className={clsx(
+                            "px-6 py-2 text-sm",
+                            header.align || "text-left"
+                          )}
+                        >
+                          {header.isMoney ? (
+                            <div className={"text-right"}>
+                              {formatNumberWithComma(row[header.key])}
+                            </div>
+                          ) : header?.percentage ? (
+                            Number(row[header.key])
+                          ) : (
+                            row[header.key]
+                          )}
+                          {header.percentage && "%"}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
