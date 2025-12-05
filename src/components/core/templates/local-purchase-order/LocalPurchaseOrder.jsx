@@ -1,11 +1,16 @@
 import clsx from "clsx";
 import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
 import { format } from "date-fns";
+import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 
 const LocalPurchaseOrder = ({ details }) => {
   const purchaseOrder = details?.data || {};
 
   const items = details?.procurement_items;
+
+  const grand_total = items?.reduce((acc, curr) => {
+    return acc + Number(curr?.unit_price) * Number(curr?.quantity);
+  }, 0);
 
   return (
     <main>
@@ -139,7 +144,40 @@ const LocalPurchaseOrder = ({ details }) => {
 
             <tbody className="divide-y-2 divide-black">
               {/* Empty rows for manual entry */}
-              {[...Array(15)].map((_, index) => (
+              {items?.map((item, index) => (
+                <tr key={index + crypto.randomUUID()}>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black text-center h-8">
+                    {item?.product_name}
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black">
+                    {item?.date}
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black">
+                    {item?.quantity}
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black">
+                    {item?.description}
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black">
+                    {item?.mode_of_charge}
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black">
+                    {formatNumberWithComma(Number(item?.unit_price))}
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black">
+                    00
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black">
+                    {formatNumberWithComma(
+                      Number(item?.unit_price) * Number(item?.quantity)
+                    )}
+                  </td>
+                  <td className="py-3 px-2 font-light text-gray-900 border-black">
+                    00
+                  </td>
+                </tr>
+              ))}
+              {[...Array(3)].map((_, index) => (
                 <tr key={index}>
                   <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black text-center h-8"></td>
                   <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
@@ -167,7 +205,7 @@ const LocalPurchaseOrder = ({ details }) => {
                     "py-2.5 px-2 text-gray-700 border-r-1.5 border-b-4 border-double border-black text-center"
                   )}
                 >
-                  ₦
+                  ₦ {formatNumberWithComma(grand_total)}
                 </td>
                 <td
                   className={clsx(

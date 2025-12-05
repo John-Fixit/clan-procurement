@@ -254,10 +254,10 @@ const PurchaseOrderItems = (props) => {
                 />
               </div>
 
-              {/* Vote of Charge */}
+              {/* Mode of Charge */}
               <div>
                 <label className="block text-sm text-gray-700 mb-1 font-outfit">
-                  Vote of Charge
+                  Mode of Charge
                 </label>
                 <Input
                   type="text"

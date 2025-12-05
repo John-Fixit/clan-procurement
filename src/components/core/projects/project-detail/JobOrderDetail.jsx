@@ -16,6 +16,7 @@ import Button from "../../../shared/ui/Button";
 import JoborderTemplate from "../../templates/job-order/JobOrderTemplate";
 import LocalPurchaseOrder from "../../templates/local-purchase-order/LocalPurchaseOrder";
 import { Chip } from "@heroui/react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
@@ -57,7 +58,7 @@ export default function JobOrderDetail({ details }) {
               color="primary"
               onPress={handleCloseViewTemplate}
             >
-              Close Template
+              <FaRegEyeSlash /> Close Template
             </Button>
           </div>
           {jobOrder.ORDER_TYPE === "Local Purchase Order" ? (
@@ -83,7 +84,7 @@ export default function JobOrderDetail({ details }) {
                       radius="sm"
                       onPress={handleViewTemplate}
                     >
-                      View Template
+                      <FaRegEye /> View Template
                     </Button>
                   </div>
                   {jobOrder.IS_APPROVED ? (
