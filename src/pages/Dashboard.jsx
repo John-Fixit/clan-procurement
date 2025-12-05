@@ -12,18 +12,28 @@ import { Avatar } from "@heroui/react";
 import { preProfileLink } from "../utils/pre-profile-link";
 import { formatNumberWithComma } from "../utils/formatCurrencyNumber";
 import ProcurementPiechart from "../components/core/dashboard/ProcurementPiechart";
+import { useGetReport } from "../service/api/report";
+import dayjs from "dayjs";
+import StarLoader from "../components/core/loaders/StarLoader";
 
 export default function Dashboard() {
   const { userData } = useCurrentUser();
   const profileData = userData?.data;
 
-  const vendorList = [
-    { VENDOR_NAME: "John Fixit", PROJECT_AMOUNT: 1000, NO_OF_PROJECTS: 5 },
-    { VENDOR_NAME: "Ivan Fixit", PROJECT_AMOUNT: 2000, NO_OF_PROJECTS: 3 },
-    { VENDOR_NAME: "Elisha Joshephn", PROJECT_AMOUNT: 3000, NO_OF_PROJECTS: 2 },
-    { VENDOR_NAME: "Faith Idaosa", PROJECT_AMOUNT: 4000, NO_OF_PROJECTS: 1 },
-    { VENDOR_NAME: "Samuel Thomson", PROJECT_AMOUNT: 5000, NO_OF_PROJECTS: 5 },
-  ];
+  // const vendorList = [
+  //   { VENDOR_NAME: "John Fixit", PROJECT_AMOUNT: 1000, NO_OF_PROJECTS: 5 },
+  //   { VENDOR_NAME: "Ivan Fixit", PROJECT_AMOUNT: 2000, NO_OF_PROJECTS: 3 },
+  //   { VENDOR_NAME: "Elisha Joshephn", PROJECT_AMOUNT: 3000, NO_OF_PROJECTS: 2 },
+  //   { VENDOR_NAME: "Faith Idaosa", PROJECT_AMOUNT: 4000, NO_OF_PROJECTS: 1 },
+  //   { VENDOR_NAME: "Samuel Thomson", PROJECT_AMOUNT: 5000, NO_OF_PROJECTS: 5 },
+  // ];
+
+  const { data: get_report_data, isPending: isLoaingVendor } = useGetReport({
+    report_type: "VENDOR_PERFORMANCE",
+    start_date: dayjs().startOf("month").format("YYYY-MM-DD"),
+    end_date: dayjs().endOf("month").format("YYYY-MM-DD"),
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 p-8 space-y-6">
       {/* <NewObjectiveModal /> */}
@@ -229,32 +239,42 @@ export default function Dashboard() {
               </h2>
             </div>
             <div className="space-y-3">
-              {vendorList.map((vendor, index) => (
-                <div
-                  className="group border rounded-xl border-gray-200 bg-gradient-to-br from-gray-50 to-white hover:shadow-md hover:border-pink-200 transition-all duration-200"
-                  key={index}
-                >
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex items-center gap-2">
-                      <div>
-                        <Avatar src={preProfileLink(vendor.VENDOR_NAME)} />
+              {isLoaingVendor ? (
+                <div>
+                  <StarLoader />
+                </div>
+              ) : (
+                get_report_data?.map((vendor, index) => (
+                  <div
+                    className="group border rounded-xl border-gray-200 bg-linear-to-br from-gray-50 to-white hover:shadow-md hover:border-pink-200 transition-all duration-200"
+                    key={index}
+                  >
+                    <div className="flex items-center justify-between p-4">
+                      <div className="flex items-center gap-2">
+                        <div>
+                          <Avatar src={preProfileLink(vendor.VENDOR_NAME)} />
+                        </div>
+                        <div className="text-gray-700 text-sm font-medium font-primary">
+                          {vendor.VENDOR_NAME}
+                          <p>
+                            <span className="text-gray-400 ">
+                              {vendor?.vendor_frequency} projects
+                            </span>
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-gray-700 text-sm font-medium font-primary">
-                        {vendor.VENDOR_NAME}
+                      <div className="text-gray-500 text-sm">
+                        <p className="font-medium text-gray-700">Amount</p>
                         <p>
-                          <span className="text-gray-400 ">
-                            {vendor?.NO_OF_PROJECTS} projects
-                          </span>
+                          {formatNumberWithComma(
+                            Number(vendor.performance_percentage) * 13000
+                          )}
                         </p>
                       </div>
                     </div>
-                    <div className="text-gray-500 text-sm">
-                      <p className="font-medium text-gray-700">Amount</p>
-                      <p>{formatNumberWithComma(vendor.PROJECT_AMOUNT)}</p>
-                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             {/* <div className="flex flex-col items-center justify-center py-12">
