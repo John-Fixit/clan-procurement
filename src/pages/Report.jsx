@@ -122,16 +122,16 @@ const tableHeaders = {
   SPEND_ANALYSIS: [
     {
       title: "Department",
-      key: "DEPARTMENT_SUPPLIED",
+      key: "department",
     },
     {
       title: "Total Amount",
-      key: "JOB_AMOUNT",
+      key: "total_spend",
       isMoney: true,
     },
     {
       title: "Percentage of total",
-      key: "percentage_of_total",
+      key: "percentage",
       percentage: true,
     },
   ],
@@ -323,10 +323,11 @@ export default function ProcurementReport() {
                       key={header.key}
                       className={clsx(
                         "px-6 py-2 text-sm",
-                        header.align || "text-left"
+                        header.align ??
+                          (header.isMoney ? "text-right" : "text-left")
                       )}
                     >
-                      <div className="flex items-center">{header.title}</div>
+                      <div className="fle items-center">{header.title}</div>
                     </th>
                   ))}
                 </tr>
