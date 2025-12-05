@@ -6,6 +6,7 @@ import { Avatar, Button } from "@heroui/react";
 import { FaBars, FaBell } from "react-icons/fa";
 import useSidebarStore from "../../hooks/use-sidebar-store";
 import { preProfileLink } from "../../utils/pre-profile-link";
+import NotificationDropdown from "../../components/shared/NotificationDropdown";
 
 const HomeLayout = () => {
   const { userData } = useCurrentUser();
@@ -33,12 +34,7 @@ const HomeLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* <button className="px-4 py-2 bg-linear-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">
-              Upgrade now
-            </button> */}
-            <Button isIconOnly size="sm" variant="light">
-              <FaBell size={22} className="text-gray-400" />
-            </Button>
+            <NotificationDropdown />
 
             {/* <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <span>❓</span>
