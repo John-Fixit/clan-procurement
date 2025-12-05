@@ -210,6 +210,7 @@ export default function ProcurementReport() {
           item?.DEPARTMENT_SUPPLIED?.toLowerCase(),
           item?.JOB_AMOUNT?.toLowerCase(),
           item?.BUSINESS?.toLowerCase(),
+          item?.department?.toLowerCase(),
         ].some((field) => field?.includes(value));
 
         return matches; //|| fullNameMatches;
