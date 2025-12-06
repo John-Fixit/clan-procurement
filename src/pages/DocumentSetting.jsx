@@ -38,7 +38,7 @@ const DocumentSetting = () => {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-4">
+          <div className="">
             <DocumentManager handleAddRecord={handleAddRecord} />
           </div>
         </div>

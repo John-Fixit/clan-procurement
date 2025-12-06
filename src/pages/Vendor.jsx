@@ -378,7 +378,7 @@ export default function Vendor() {
                         </td>
                         <td className="px-6 py-4">
                           <span className="font-outfit text-gray-500 text-sm">
-                            {vendor?.BUSINESS}jljjnl
+                            {vendor?.BUSINESS}
                           </span>
                         </td>
                         <td className="px-6 py-4">

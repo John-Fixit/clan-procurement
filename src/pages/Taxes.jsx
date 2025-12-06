@@ -78,7 +78,7 @@ const Taxe = () => {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-4">
+          <div className="">
             <div className="flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white">
               <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
                 <h2 className="text-gray-900 dark:text-white text-lg font-semibold leading-tight tracking-[-0.015em]">
