@@ -36,12 +36,9 @@ const COLORS = [
   "#81C784", // Green
   "#E57373", // Red
 ];
+const RADIAN = Math.PI / 180;
 const DepartmentChart = () => {
   const { data: get_department } = useGetAnnualDepartment();
-  console.log("department data", get_department);
-  // Color palette that matches your image
-
-  // Format the data for Recharts
   const chartData =
     get_department?.map((item) => ({
       name: item.department,
@@ -53,15 +50,40 @@ const DepartmentChart = () => {
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
   // Custom label to show department names
-  const renderCustomLabel = (entry) => {
-    const percent = ((entry.value / total) * 100).toFixed(1);
-    // Only show label if percentage is above 2% to avoid clutter
-    if (parseFloat(percent) > 2) {
-      return `${percent}%`;
+  const renderCustomLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+  }) => {
+    if (
+      cx == null ||
+      cy == null ||
+      innerRadius == null ||
+      outerRadius == null
+    ) {
+      return null;
     }
-    return "";
-  };
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const ncx = Number(cx);
+    const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+    const ncy = Number(cy);
+    const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
 
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="black"
+        textAnchor={"center"}
+        dominantBaseline="central"
+      >
+        {`${((percent ?? 1) * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
   // Custom legend
   const renderLegend = (props) => {
     const { payload } = props;
@@ -70,7 +92,7 @@ const DepartmentChart = () => {
         {payload.map((entry, index) => (
           <div key={`legend-${index}`} className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded-sm shrink-0"
+              className="w-4 h-4 rounded-sm shrink-0 text-gray-700"
               style={{ backgroundColor: entry.color }}
             />
             <span
