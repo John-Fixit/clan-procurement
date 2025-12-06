@@ -8,98 +8,56 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useGetAnnualProcurement } from "../../../service/api/dashboard";
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+const buildMonthlyData = (annualProcurement) => {
+  // Step 1: create empty 12 months
+  const base = MONTHS.map((m, i) => ({
+    month: m,
+    jobOrderAmount: 0,
+    localPurchaseAmount: 0,
+    jobOrderCount: 0,
+    localPurchaseCount: 0,
+    total_procurements: 0,
+    month_number: i + 1,
+  }));
+
+  // Step 2: fill in values from API response
+  annualProcurement?.forEach((item) => {
+    const index = item.month_number - 1;
+    base[index] = {
+      ...base[index],
+      jobOrderAmount: Number(item.total_job_orders_amount || 0),
+      localPurchaseAmount: Number(item.total_local_purchase_amount || 0),
+      total_procurements: Number(item.total_procurements || 0),
+    };
+  });
+
+  return base;
+};
 
 const ProcurementBarChart = () => {
-  // Sample data - replace with your actual data
-  const monthlyData = [
-    {
-      month: "Jan",
-      jobOrderAmount: 125000,
-      localPurchaseAmount: 98000,
-      jobOrderCount: 45,
-      localPurchaseCount: 32,
-    },
-    {
-      month: "Feb",
-      jobOrderAmount: 148000,
-      localPurchaseAmount: 112000,
-      jobOrderCount: 52,
-      localPurchaseCount: 38,
-    },
-    {
-      month: "Mar",
-      jobOrderAmount: 110000,
-      localPurchaseAmount: 95000,
-      jobOrderCount: 38,
-      localPurchaseCount: 28,
-    },
-    {
-      month: "Apr",
-      jobOrderAmount: 175000,
-      localPurchaseAmount: 128000,
-      jobOrderCount: 61,
-      localPurchaseCount: 42,
-    },
-    {
-      month: "May",
-      jobOrderAmount: 162000,
-      localPurchaseAmount: 105000,
-      jobOrderCount: 55,
-      localPurchaseCount: 35,
-    },
-    {
-      month: "Jun",
-      jobOrderAmount: 138000,
-      localPurchaseAmount: 118000,
-      jobOrderCount: 48,
-      localPurchaseCount: 40,
-    },
-    {
-      month: "Jul",
-      jobOrderAmount: 195000,
-      localPurchaseAmount: 142000,
-      jobOrderCount: 70,
-      localPurchaseCount: 48,
-    },
-    {
-      month: "Aug",
-      jobOrderAmount: 180000,
-      localPurchaseAmount: 135000,
-      jobOrderCount: 63,
-      localPurchaseCount: 45,
-    },
-    {
-      month: "Sep",
-      jobOrderAmount: 167000,
-      localPurchaseAmount: 122000,
-      jobOrderCount: 58,
-      localPurchaseCount: 41,
-    },
-    {
-      month: "Oct",
-      jobOrderAmount: 188000,
-      localPurchaseAmount: 145000,
-      jobOrderCount: 66,
-      localPurchaseCount: 49,
-    },
-    {
-      month: "Nov",
-      jobOrderAmount: 205000,
-      localPurchaseAmount: 158000,
-      jobOrderCount: 72,
-      localPurchaseCount: 52,
-    },
-    {
-      month: "Dec",
-      jobOrderAmount: 192000,
-      localPurchaseAmount: 148000,
-      jobOrderCount: 68,
-      localPurchaseCount: 50,
-    },
-  ];
+  const { data: annualProcurement } = useGetAnnualProcurement();
+
+  const monthlyData = buildMonthlyData(annualProcurement);
 
   const formatAmount = (value) => {
-    return `N${value / 1000}k`;
+    return `₦${value / 1000}k`;
   };
 
   return (
@@ -119,7 +77,7 @@ const ProcurementBarChart = () => {
                 border: "1px solid #e5e7eb",
               }}
               isAnimationActive={true}
-              formatter={(value, n) => [`N${value.toLocaleString()}`, `:${n}`]}
+              formatter={(value, n) => [`₦${value.toLocaleString()}`, `:${n}`]}
             />
             <Legend />
             <Bar
@@ -137,39 +95,6 @@ const ProcurementBarChart = () => {
           </BarChart>
         </ResponsiveContainer>
       </div>
-
-      {/* Total Number by Procurement Type */}
-      {/* <div>
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">
-          Total Number of Procurements by Type
-        </h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={monthlyData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="month" stroke="#6b7280" />
-            <YAxis stroke="#6b7280" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid #e5e7eb",
-              }}
-            />
-            <Legend />
-            <Bar
-              dataKey="jobOrderCount"
-              fill="#4ade80"
-              name="Job Order"
-              radius={[8, 8, 0, 0]}
-            />
-            <Bar
-              dataKey="localPurchaseCount"
-              fill="#c084fc"
-              name="Local Purchase Order"
-              radius={[8, 8, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div> */}
     </div>
   );
 };

@@ -11,6 +11,10 @@ import {
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { preProfileLink } from "../../utils/pre-profile-link";
 import { format } from "date-fns";
+import { useGetProjectByMutation } from "../../service/api/project";
+import useDrawerStore from "../../hooks/useDrawerStore";
+import { catchErrFunc } from "../../utils/catchErrFunc";
+import StarLoader from "../core/loaders/StarLoader";
 const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { userData } = useCurrentUser();
@@ -18,9 +22,15 @@ const NotificationDropdown = () => {
     userData?.data?.STAFF_ID
   );
 
+  const { openDrawer } = useDrawerStore();
+
+  const { mutateAsync: mutateGetProjectDetail, isPending: isPendingDetail } =
+    useGetProjectByMutation();
+
   const navigate = useNavigate();
 
-  const { mutate: updateNotification } = useUpdateNotification();
+  const { mutate: updateNotification, isPending: isUpdating } =
+    useUpdateNotification();
 
   const notificationData =
     get_notifications?.filter((notf) => !notf?.IS_READ) || [];
@@ -29,9 +39,43 @@ const NotificationDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleTreatNotification = (notification) => {
+  const handleTreatNotification = async (notification) => {
+    console.log("notification clicked", notification?.PROCUREMENT_ID);
     updateNotification(notification?.ID);
+    await getVendorDetail(notification);
+    setIsOpen(false);
     navigate("/approval");
+  };
+
+  const getVendorDetail = async (notification) => {
+    try {
+      const projectDetail = await mutateGetProjectDetail(
+        notification?.PROCUREMENT_ID
+      );
+
+      const support_documents = projectDetail?.support_documents;
+
+      const details = {
+        ...projectDetail,
+        data: {
+          ...projectDetail,
+        },
+        procurement_items: projectDetail?.procurement_items,
+        approvers: projectDetail?.approval_request,
+        notes: [],
+        support_documents,
+      };
+
+      openDrawer({
+        viewName: "project-detail",
+        drawerSize:
+          details?.RODER_TYPE === "Local Purchase Order" ? "1200" : null,
+        projectDetail: details,
+        is_approval: true,
+      });
+    } catch (err) {
+      catchErrFunc(err);
+    }
   };
 
   return (
@@ -73,7 +117,12 @@ const NotificationDropdown = () => {
               Notifications
             </h3>
           </div>
-          <div className="bg-white/50 dark:bg-card-dark rounded-b-lg shadow-sm">
+          <div className="bg-white/50 dark:bg-card-dark rounded-b-lg shadow-sm relative">
+            {isPendingDetail && isUpdating && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50 opacity-30 w-full h-full z-50">
+                <StarLoader />
+              </div>
+            )}
             <ul className="divide-y divide-primary/20 dark:divide-border-dark">
               {notificationData?.length === 0 ? (
                 <li className="flex items-center justify-center py-6 px-6">

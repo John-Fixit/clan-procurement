@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ApprovalHistory from "../../../shared/approval-history/ApprovalHistory";
-import JoborderTemplate from "../../templates/job-order/JobOrderTemplate";
 import useDrawerStore from "../../../../hooks/useDrawerStore";
 import ReusableTabDrawerLayout from "../../../shared/reusable-tab-drawer-layout";
 import JobOrderDetail from "./JobOrderDetail";
@@ -9,8 +8,6 @@ import { Modal as AntModal } from "antd";
 import { catchErrFunc } from "../../../../utils/catchErrFunc";
 import { useApproveProject } from "../../../../service/api/project";
 import { successToast } from "../../../../utils/toastPopUps";
-import PurchaseOrderItems from "../purchaseOrderItems";
-import LocalPurchaseOrder from "../../templates/local-purchase-order/LocalPurchaseOrder";
 import LocalPurchaseItemsView from "./LocalPurchaseItemsView";
 
 const ProjectDetail = () => {
@@ -20,6 +17,8 @@ const ProjectDetail = () => {
     data: { projectDetail, is_approval },
     closeDrawer,
   } = useDrawerStore();
+
+  console.log("projectDetail", projectDetail);
 
   const sideTabs = [
     {
@@ -69,6 +68,9 @@ const ProjectDetail = () => {
     const json = {
       approval_id: request?.APPROVAL_ID,
       is_approved: 1,
+      procurement_id: projectDetail?.PROCUREMENT_ID,
+      sn: projectDetail?.SN,
+      max_sn: projectDetail?.MAX_SN,
     };
     modal.confirm({ ...config, onOk: () => handleConfirmApprove(json) });
   };

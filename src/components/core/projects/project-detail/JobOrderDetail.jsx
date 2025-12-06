@@ -167,14 +167,14 @@ export default function JobOrderDetail({ details }) {
                   <DetailItem
                     icon={FiDollarSign}
                     label="Tax Rate"
-                    value={`${jobOrder.TAX_VALUE || 0}%`}
+                    value={`${Number(jobOrder.TAX_VALUE) || 0}%`}
                   />
                   <DetailItem
                     icon={FiDollarSign}
                     label="Tax Amount"
                     value={formatCurrency(
                       (parseFloat(jobOrder.JOB_AMOUNT || 0) *
-                        parseFloat(jobOrder.TAX_VALUE || 0)) /
+                        parseFloat(Number(jobOrder.TAX_VALUE) || 0)) /
                         100
                     )}
                   />
@@ -187,7 +187,7 @@ export default function JobOrderDetail({ details }) {
                         {formatCurrency(
                           parseFloat(jobOrder.JOB_AMOUNT || 0) +
                             (parseFloat(jobOrder.JOB_AMOUNT || 0) *
-                              parseFloat(jobOrder.TAX_VALUE || 0)) /
+                              parseFloat(Number(jobOrder.TAX_VALUE) || 0)) /
                               100
                         )}
                       </span>
