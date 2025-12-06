@@ -87,7 +87,7 @@ const DepartmentChart = () => {
 
   return (
     <div className="w-full bg-white rounded-lg p-6">
-      <ResponsiveContainer width="100%" height={500}>
+      <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
             data={chartData}

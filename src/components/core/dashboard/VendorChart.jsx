@@ -116,7 +116,7 @@ const VendorChart = () => {
     <div className="w-full bg-white rounded-lg">
       <ResponsiveContainer
         width="100%"
-        height={500}
+        height={300}
         style={{
           aspectRatio: 1,
         }}
