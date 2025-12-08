@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  LuAward,
-  LuClipboardList,
-  LuMessageSquare,
-  LuTrendingUp,
-} from "react-icons/lu";
+import { LuAward } from "react-icons/lu";
 import { FiCheckSquare } from "react-icons/fi";
 import useCurrentUser from "../hooks/useCurrentUser";
 import ProcurementBarChart from "../components/core/dashboard/ProcurementBarChart";
@@ -12,21 +7,25 @@ import { Avatar } from "@heroui/react";
 import { preProfileLink } from "../utils/pre-profile-link";
 import { formatNumberWithComma } from "../utils/formatCurrencyNumber";
 import ProcurementPiechart from "../components/core/dashboard/ProcurementPiechart";
-import { useGetReport } from "../service/api/report";
-import dayjs from "dayjs";
 import StarLoader from "../components/core/loaders/StarLoader";
 import DepartmentChart from "../components/core/dashboard/DepartmentChart";
 import VendorChart from "../components/core/dashboard/VendorChart";
+import { useGetAnnualVendor } from "../service/api/dashboard";
 
 export default function Dashboard() {
   const { userData } = useCurrentUser();
   const profileData = userData?.data;
 
-  const { data: get_report_data, isPending: isLoaingVendor } = useGetReport({
-    report_type: "VENDOR_PERFORMANCE",
-    start_date: dayjs().startOf("month").format("YYYY-MM-DD"),
-    end_date: dayjs().endOf("month").format("YYYY-MM-DD"),
-  });
+  const { data: get_report_data, isPending: isLoadingVendor } =
+    useGetAnnualVendor();
+
+  const top5Vendors = get_report_data
+    ?.sort((a, b) => Number(b.total_amount) - Number(a.total_amount))
+    ?.map((vendor) => ({
+      ...vendor,
+      total_amount: Number(vendor?.total_amount),
+    }))
+    .slice(0, 5);
 
   return (
     <div className="min-h-screen bg-gray-50 p-8 space-y-6">
@@ -58,16 +57,16 @@ export default function Dashboard() {
               </h2>
             </div>
             <div className="space-y-3">
-              {isLoaingVendor ? (
+              {isLoadingVendor ? (
                 <div className="h-32 flex items-center justify-center">
                   <StarLoader />
                 </div>
-              ) : get_report_data?.length === 0 ? (
+              ) : top5Vendors?.length === 0 ? (
                 <div className="h-32 flex items-center justify-center text-gray-500">
                   <p>No Data Found</p>
                 </div>
               ) : (
-                get_report_data?.map((vendor, index) => (
+                top5Vendors?.map((vendor, index) => (
                   <div
                     className="group border rounded-xl border-gray-200 bg-linear-to-br from-gray-50 to-white hover:shadow-md hover:border-pink-200 transition-all duration-200"
                     key={index}
@@ -81,7 +80,7 @@ export default function Dashboard() {
                           {vendor.VENDOR_NAME}
                           <p>
                             <span className="text-gray-400 ">
-                              {vendor?.vendor_frequency} projects
+                              {vendor?.frequency} projects
                             </span>
                           </p>
                         </div>
@@ -89,9 +88,7 @@ export default function Dashboard() {
                       <div className="text-gray-500 text-sm">
                         <p className="font-medium text-gray-700">Amount</p>
                         <p>
-                          {formatNumberWithComma(
-                            Number(vendor.performance_percentage) * 13000
-                          )}
+                          {formatNumberWithComma(Number(vendor.total_amount))}
                         </p>
                       </div>
                     </div>

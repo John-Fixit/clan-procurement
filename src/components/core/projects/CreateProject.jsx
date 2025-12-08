@@ -260,7 +260,7 @@ const CreateProject = () => {
             ?.filter(Boolean),
           approval_request: values?.approvers?.map((appr, index) => ({
             designation: appr?.DESIGNATION,
-            staff_id: appr?.STAFF_ID, //1
+            staff_id: appr?.STAFF_ID,
             staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
             sn: index + 1,
             is_approved: 0,

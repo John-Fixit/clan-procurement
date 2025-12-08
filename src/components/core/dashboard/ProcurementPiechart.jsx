@@ -67,7 +67,7 @@ const ProcurementPiechart = () => {
                 data={data}
                 cx="50%"
                 cy="50%"
-                innerRadius={70}
+                innerRadius={50}
                 outerRadius={100}
                 paddingAngle={2}
                 dataKey="value"
@@ -88,12 +88,12 @@ const ProcurementPiechart = () => {
           </ResponsiveContainer>
         )}
 
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+        {/* <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
           <div className="text-3xl font-bold text-gray-800">
             {totalProcurements}
           </div>
           <div className="text-sm text-gray-500">Total</div>
-        </div>
+        </div> */}
       </div>
 
       {isPending ? (

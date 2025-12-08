@@ -12,7 +12,7 @@ import { useGetAnnualDepartment } from "../../../service/api/dashboard";
 const COLORS = [
   "#FFE5B4", // Peach/Light Orange
   "#FFB6C1", // Light Pink
-  "#FFEFD5", // Papaya Whip
+  // "#FFEFD5", // Papaya Whip
   "#B4E7CE", // Mint Green
   "#E6B8AF", // Light Coral
   "#FFD700", // Gold
@@ -20,7 +20,6 @@ const COLORS = [
   "#F7CAC9", // Rose
   "#DEB887", // Burlywood
   "#AFEEEE", // Pale Turquoise
-  "#FFB6B9", // Pastel Pink
   "#C5E1A5", // Light Green
   "#F6A5C0", // Pink
   "#FFF59D", // Light Yellow
@@ -72,6 +71,8 @@ const DepartmentChart = () => {
     const ncy = Number(cy);
     const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
 
+    const percentageValue = Math.max((percent ?? 0) * 100, 0.01);
+
     return (
       <text
         x={x}
@@ -80,10 +81,22 @@ const DepartmentChart = () => {
         textAnchor={"center"}
         dominantBaseline="central"
       >
-        {`${((percent ?? 1) * 100).toFixed(0)}%`}
+        {`${percentageValue.toFixed(2)}%`}
       </text>
     );
   };
+
+  // const renderCustomLabel = (entry) => {
+  //   console.log(entry)
+  //   const percent = ((entry.value / total) * 100).toFixed(1);
+  //   const percentageValue = Math.max((percent ?? 0) * 100, 0.01);
+  //   // Only show label if percentage is above 2% to avoid clutter
+  //   // if (parseFloat(percent) > 2) {
+  //   console.log(percentageValue);
+  //   return `${percent}%`;
+  //   // }
+  //   // return "";
+  // };
   // Custom legend
   const renderLegend = (props) => {
     const { payload } = props;
@@ -117,8 +130,8 @@ const DepartmentChart = () => {
             cy="50%"
             labelLine={false}
             label={renderCustomLabel}
-            innerRadius="60%"
-            outerRadius="80%"
+            innerRadius="30%"
+            // outerRadius="80%"
             fill="#8884d8"
             dataKey="value"
             paddingAngle={2}

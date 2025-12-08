@@ -64,7 +64,7 @@ const ProcurementBarChart = () => {
     <div className="">
       <div className="mb-8">
         <h3 className="text-lg font-semibold text-gray-700 mb-4">
-          Total Amount by Procurement Type
+          Annual Procurement Overview
         </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={monthlyData}>
@@ -76,21 +76,21 @@ const ProcurementBarChart = () => {
                 backgroundColor: "#fff",
                 border: "1px solid #e5e7eb",
               }}
-              isAnimationActive={true}
-              formatter={(value, n) => [`₦${value.toLocaleString()}`, `:${n}`]}
+              // isAnimationActive={true}
+              formatter={(value, n) => [`₦${value.toLocaleString()}`, `${n}`]}
             />
             <Legend />
             <Bar
               dataKey="jobOrderAmount"
               fill="#fb923c"
               name="Job Order"
-              radius={[8, 8, 0, 0]}
+              radius={[5, 5, 0, 0]}
             />
             <Bar
               dataKey="localPurchaseAmount"
               fill="#60a5fa"
               name="Local Purchase Order"
-              radius={[8, 8, 0, 0]}
+              radius={[5, 5, 0, 0]}
             />
           </BarChart>
         </ResponsiveContainer>

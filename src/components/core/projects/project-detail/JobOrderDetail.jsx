@@ -4,7 +4,6 @@ import {
   FiUser,
   FiCalendar,
   FiMapPin,
-  FiDollarSign,
   FiPackage,
   FiFolder,
   FiPhone,
@@ -17,6 +16,7 @@ import JoborderTemplate from "../../templates/job-order/JobOrderTemplate";
 import LocalPurchaseOrder from "../../templates/local-purchase-order/LocalPurchaseOrder";
 import { Chip } from "@heroui/react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { PiMoneyWavyLight } from "react-icons/pi";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
@@ -160,17 +160,17 @@ export default function JobOrderDetail({ details }) {
                 <Section title="Financial Details">
                   <div className="grid grid-cols-2 gap-6"></div>
                   <DetailItem
-                    icon={FiDollarSign}
+                    icon={PiMoneyWavyLight}
                     label="Job Amount"
                     value={formatCurrency(jobOrder.JOB_AMOUNT || 0)}
                   />
                   <DetailItem
-                    icon={FiDollarSign}
+                    icon={PiMoneyWavyLight}
                     label="Tax Rate"
                     value={`${Number(jobOrder.TAX_VALUE) || 0}%`}
                   />
                   <DetailItem
-                    icon={FiDollarSign}
+                    icon={PiMoneyWavyLight}
                     label="Tax Amount"
                     value={formatCurrency(
                       (parseFloat(jobOrder.JOB_AMOUNT || 0) *
