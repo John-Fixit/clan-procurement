@@ -1,12 +1,17 @@
 // src/layout/home-layout/HomeLayout.jsx
 import { Outlet } from "react-router-dom";
 import useCurrentUser from "../../hooks/useCurrentUser";
-import Sidebar from "../../components/shared/sidebar/Sidebar";
+import Sidebar, {
+  LogoutPopover,
+} from "../../components/shared/sidebar/Sidebar";
 import { Avatar, Button } from "@heroui/react";
 import { FaBars, FaBell } from "react-icons/fa";
 import useSidebarStore from "../../hooks/use-sidebar-store";
 import { preProfileLink } from "../../utils/pre-profile-link";
 import NotificationDropdown from "../../components/shared/NotificationDropdown";
+import { Dropdown } from "antd";
+import clsx from "clsx";
+import { CiLogout } from "react-icons/ci";
 
 const HomeLayout = () => {
   const { userData } = useCurrentUser();
@@ -14,6 +19,40 @@ const HomeLayout = () => {
   const profileData = userData?.data;
 
   const { toggleSidebar } = useSidebarStore();
+  const menuProps = {
+    items: [
+      {
+        label: (
+          <p>
+            {userData?.data?.FIRST_NAME} {userData?.data?.LAST_NAME}
+          </p>
+        ),
+        key: "user",
+      },
+      {
+        type: "divider",
+      },
+      {
+        label: (
+          <LogoutPopover>
+            <button
+              className={clsx(
+                "w-full flex items-center gap-3 rounded-lg text-left text-gray-700 transition-all cursor-pointer"
+              )}
+            >
+              <CiLogout className="text-lg shrink-0" />
+              <span className={clsx("text-sm transition-opacity duration-300")}>
+                Logout
+              </span>
+            </button>
+          </LogoutPopover>
+        ),
+        key: "logout",
+        danger: true,
+      },
+    ],
+    onClick: () => {},
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -43,12 +82,14 @@ const HomeLayout = () => {
               <span>👤</span>
             </button> */}
 
-            <Avatar
-              className="w-10 h-10 cursor-pointer"
-              src={preProfileLink(
-                `${profileData?.FIRST_NAME} ${profileData?.LAST_NAME}`
-              )}
-            />
+            <Dropdown menu={menuProps}>
+              <Avatar
+                className="w-10 h-10 cursor-pointer"
+                src={preProfileLink(
+                  `${profileData?.FIRST_NAME} ${profileData?.LAST_NAME}`
+                )}
+              />
+            </Dropdown>
           </div>
         </header>
 

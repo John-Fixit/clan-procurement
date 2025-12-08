@@ -7,6 +7,7 @@ import { IoChevronBackOutline, IoChevronForwardSharp } from "react-icons/io5";
 import { LuTrash2 } from "react-icons/lu";
 import { useCreateProduct, useGetProduct } from "../../../service/api/project";
 import { useGetTax } from "../../../service/api/setting";
+import { catchErrFunc } from "../../../utils/catchErrFunc";
 
 const PurchaseOrderItems = (props) => {
   const {
@@ -90,7 +91,6 @@ const PurchaseOrderItems = (props) => {
     append(itemWithDefaults);
   };
 
-  console.log(watchFieldValues);
   return (
     <div className="w-full space-y-4">
       {/* Header */}
@@ -358,7 +358,7 @@ const AddProductModal = ({
         onClose();
       }
     } catch (error) {
-      console.log(error);
+      catchErrFunc(error);
     }
   };
   return (

@@ -68,6 +68,11 @@ const tableHeaders = {
       key: "DATE_SUPPLIED",
     },
     {
+      title: "Job Amount",
+      key: "JOB_AMOUNT",
+      isMoney: true,
+    },
+    {
       title: "Tax Amount",
       key: "TAX_AMOUNT",
       isMoney: true,
@@ -124,6 +129,11 @@ const tableHeaders = {
     {
       title: "Date Supplied",
       key: "DATE_SUPPLIED",
+    },
+    {
+      title: "Job Amount",
+      key: "JOB_AMOUNT",
+      isMoney: true,
     },
     {
       title: "Tax Amount",
@@ -216,7 +226,7 @@ export default function ProcurementReport() {
     const mappedData = get_report_data?.map((item) => {
       const taxAmount =
         (
-          (parseFloat(item?.TAX_VALUE || 0.1) / 100) *
+          (parseFloat(item?.TAX_VALUE || 0) / 100) *
           Number(item?.JOB_AMOUNT || 0)
         )?.toFixed(2) || 0;
       const totalAmount = Number(item?.JOB_AMOUNT || 0) + Number(taxAmount);

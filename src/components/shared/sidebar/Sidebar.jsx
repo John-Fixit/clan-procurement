@@ -36,6 +36,7 @@ import Button from "../ui/Button";
 import useCurrentUser from "../../../hooks/useCurrentUser";
 import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi2";
 import { AiFillMoneyCollect, AiOutlineMoneyCollect } from "react-icons/ai";
+import ncaaLogo from "../../../assets/images/ncaa_logo.png";
 
 const Sidebar = () => {
   const currentPath = useLocation().pathname;
@@ -185,7 +186,8 @@ const Sidebar = () => {
           )}
         >
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-pink-500 rounded shrink-0"></div>
+            {/* <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-pink-500 rounded shrink-0"></div> */}
+            <img src={ncaaLogo} alt="NCAA Logo" width={40} height={40} />
             <h1
               className={clsx(
                 "text-xl font-bold text-gray-800 transition-opacity duration-300",
@@ -361,7 +363,7 @@ const Sidebar = () => {
 
 export default Sidebar;
 
-const LogoutPopover = ({ children }) => {
+export const LogoutPopover = ({ children }) => {
   const { removeCurrentUser } = useCurrentUser();
   const navigate = useNavigate();
   const handleLogout = () => {

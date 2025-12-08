@@ -158,7 +158,7 @@ const NotificationDropdown = () => {
                 ))
               )}
             </ul>
-            {notificationData?.length > 7 && (
+            {notificationData?.length > 8 && (
               <div className="p-4 text-center">
                 <Link
                   to={"/approval"}

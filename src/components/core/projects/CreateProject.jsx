@@ -170,7 +170,7 @@ const CreateProject = () => {
             uploaded_url: uploadResult?.file_url,
           });
         } catch (err) {
-          console.log(err);
+          catchErrFunc(err);
         }
       }
     }

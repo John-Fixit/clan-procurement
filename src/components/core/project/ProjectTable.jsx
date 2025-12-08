@@ -9,6 +9,7 @@ import useDrawerStore from "../../../hooks/useDrawerStore";
 import { Avatar, Pagination } from "@heroui/react";
 import { catchErrFunc } from "../../../utils/catchErrFunc";
 import { preProfileLink } from "../../../utils/pre-profile-link";
+import { formatNumberWithComma } from "../../../utils/formatCurrencyNumber";
 
 const ProjectTable = ({
   projects,
@@ -177,6 +178,15 @@ const ProjectTable = ({
                       Recipient <LuChevronDown className="ml-1 w-3 h-3" />
                     </div>
                   </th>
+                  <th className="px-6 py-3 text-left">
+                    <div className="flex items-center">Job Amount</div>
+                  </th>
+                  <th className="px-6 py-3 text-left">
+                    <div className="flex items-center">Tax Amount</div>
+                  </th>
+                  <th className="px-6 py-3 text-left">
+                    <div className="flex items-center">Total Amount</div>
+                  </th>
 
                   <th className="px-6 py-3 text-left">
                     <div className="flex items-center">Action</div>
@@ -186,7 +196,7 @@ const ProjectTable = ({
               <tbody>
                 {projects?.length === 0 || tableData?.length === 0 ? (
                   <tr>
-                    <td colSpan={6}>
+                    <td colSpan={9}>
                       <div className="flex items-center justify-center h-44">
                         <div className="w-full h-full flex flex-col items-center justify-center">
                           {isLoadingProject ? (
@@ -247,8 +257,29 @@ const ProjectTable = ({
                       </td>
 
                       <td className="px-6 py-3">
+                        <div className="bg-gray-200 rounded-full px-3 py-1 w-fit">
+                          <span className="font-outfit text-gray-500 text-xs capitalize leading-0.5">
+                            {project?.DEPARTMENT_SUPPLIED?.toLowerCase()}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-3">
                         <span className="font-outfit text-gray-500 text-sm">
-                          {project?.DEPARTMENT_SUPPLIED}
+                          {formatNumberWithComma(Number(project?.JOB_AMOUNT))}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3">
+                        <span className="font-outfit text-gray-500 text-sm">
+                          {formatNumberWithComma(
+                            Number(project?.TAX_AMOUNT || 0)
+                          )}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3">
+                        <span className="font-outfit text-gray-500 text-sm">
+                          {formatNumberWithComma(
+                            Number(project?.TOTAL_AMOUNT || 0)
+                          )}
                         </span>
                       </td>
                       <td className="px-6 py-3">

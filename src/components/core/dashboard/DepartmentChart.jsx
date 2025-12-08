@@ -86,17 +86,6 @@ const DepartmentChart = () => {
     );
   };
 
-  // const renderCustomLabel = (entry) => {
-  //   console.log(entry)
-  //   const percent = ((entry.value / total) * 100).toFixed(1);
-  //   const percentageValue = Math.max((percent ?? 0) * 100, 0.01);
-  //   // Only show label if percentage is above 2% to avoid clutter
-  //   // if (parseFloat(percent) > 2) {
-  //   console.log(percentageValue);
-  //   return `${percent}%`;
-  //   // }
-  //   // return "";
-  // };
   // Custom legend
   const renderLegend = (props) => {
     const { payload } = props;
