@@ -213,8 +213,12 @@ const CreateProject = () => {
 
           return;
         }
+
+        const tax_amount =
+          (Number(item?.tax?.PERCENTAGE) / 100) * Number(item?.unit_price);
         return {
           product_id: item?.product_id,
+          tax_amount: tax_amount,
           tax_id: item?.tax?.value,
           unit_price: item?.unit_price,
           tax: Number(item?.tax?.PERCENTAGE),
@@ -228,6 +232,13 @@ const CreateProject = () => {
         const totalItemAmount = items?.reduce((acc, item) => {
           return acc + Number(item?.unit_price) * Number(item?.quantity);
         }, 0);
+
+        const jobOrderTaxAmount =
+          (Number(values?.tax?.PERCENTAGE) / 100) * Number(values?.sum_amount);
+        const localPurchaseTaxAmount = items?.reduce((acc, item) => {
+          return acc + Number(item?.tax_amount);
+        }, 0);
+
         const json = {
           order_type: findProjectType(values?.project_type)?.label,
           order_no: values?.order_number,
@@ -250,6 +261,10 @@ const CreateProject = () => {
             findProjectType(values?.project_type)?.value === "2"
               ? totalItemAmount
               : values?.sum_amount,
+          tax_amount:
+            findProjectType(values?.project_type)?.value === "2"
+              ? localPurchaseTaxAmount
+              : jobOrderTaxAmount,
           creator_id: userData?.data?.STAFF_ID,
           creator_name:
             userData?.data?.FIRST_NAME + " " + userData?.data?.LAST_NAME,
