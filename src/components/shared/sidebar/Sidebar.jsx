@@ -182,7 +182,7 @@ const Sidebar = () => {
         <div
           className={clsx(
             "border-b border-gray-200 transition-all duration-300",
-            sidebarOpen ? "p-6 py-5" : "lg:px-2 lg:py-5 p-6"
+            sidebarOpen ? "p-6 py-4" : "lg:px-2 lg:py-5 p-6"
           )}
         >
           <div className="flex items-center gap-2">

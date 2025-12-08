@@ -224,15 +224,17 @@ export default function ProcurementReport() {
   const [pageSize] = useState(20);
   const filteredReports = useMemo(() => {
     const mappedData = get_report_data?.map((item) => {
-      const taxAmount =
-        (
-          (parseFloat(item?.TAX_VALUE || 0) / 100) *
-          Number(item?.JOB_AMOUNT || 0)
-        )?.toFixed(2) || 0;
-      const totalAmount = Number(item?.JOB_AMOUNT || 0) + Number(taxAmount);
+      // const taxAmount =
+      //   (
+      //     (parseFloat(item?.TAX_VALUE || 0) / 100) *
+      //     Number(item?.JOB_AMOUNT || 0)
+      //   )?.toFixed(2) || 0;
+      // const totalAmount = Number(item?.JOB_AMOUNT || 0) + Number(taxAmount);
+      const totalAmount =
+        Number(item?.JOB_AMOUNT || 0) + Number(item?.TAX_AMOUNT);
       const mappedItem = {
         ...item,
-        TAX_AMOUNT: taxAmount,
+        // TAX_AMOUNT: taxAmount,
         TOTAL_AMOUNT: totalAmount.toFixed(2),
       };
       return mappedItem;
