@@ -18,8 +18,6 @@ const ProjectDetail = () => {
     closeDrawer,
   } = useDrawerStore();
 
-  console.log("projectDetail", projectDetail);
-
   const sideTabs = [
     {
       title: "Detail",

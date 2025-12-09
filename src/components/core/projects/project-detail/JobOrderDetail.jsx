@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   FiFileText,
   FiUser,
@@ -17,9 +17,14 @@ import LocalPurchaseOrder from "../../templates/local-purchase-order/LocalPurcha
 import { Chip } from "@heroui/react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { PiMoneyWavyLight } from "react-icons/pi";
+import { LuDownload } from "react-icons/lu";
+import { findProjectType } from "../../../../utils/findProjectType";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
+
+  const componentRef = useRef();
+  const jobOrderRef = useRef();
 
   const formatDate = (dateString) => {
     if (!dateString) return null;
@@ -47,11 +52,42 @@ export default function JobOrderDetail({ details }) {
     setViewTemplate(false);
   };
 
+  const handleDownload = () => {
+    if (!componentRef?.current && !jobOrderRef?.current) return;
+
+    const element =
+      findProjectType(jobOrder.ORDER_TYPE)?.value == "2"
+        ? componentRef.current
+        : jobOrderRef.current;
+
+    // Fallback approach: open a print-friendly window and let the user "Save as PDF"
+    const printWindow = window.open("", "_blank", "width=900,height=1100");
+    if (!printWindow) return;
+
+    // Clone document head to preserve styles (tailwind/build css links)
+    const headContent = document.head.innerHTML;
+
+    printWindow.document.write(`<!doctype html>
+      <html>
+        <head>${headContent}</head>
+        <body>${element.outerHTML}</body>
+      </html>`);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Wait a tick so resources load, then trigger print dialog
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 300);
+  };
+
   return (
     <>
       {viewTemplate ? (
         <div className="relative">
-          <div className="flex justify-end">
+          <div className="flex justify-between flex-row-reverse">
             <Button
               radius="sm"
               size="sm"
@@ -60,11 +96,16 @@ export default function JobOrderDetail({ details }) {
             >
               <FaRegEyeSlash /> Close Template
             </Button>
+            <div className="">
+              <Button radius="full" onPress={handleDownload} isIconOnly={true}>
+                <LuDownload size={20} />
+              </Button>
+            </div>
           </div>
-          {jobOrder.ORDER_TYPE === "Local Purchase Order" ? (
-            <LocalPurchaseOrder details={details} />
+          {findProjectType(jobOrder.ORDER_TYPE)?.value === "2" ? (
+            <LocalPurchaseOrder details={details} componentRef={componentRef} />
           ) : (
-            <JoborderTemplate details={details} />
+            <JoborderTemplate details={details} componentRef={jobOrderRef} />
           )}
         </div>
       ) : (

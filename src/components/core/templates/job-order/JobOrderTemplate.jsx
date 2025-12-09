@@ -33,7 +33,7 @@ const JoborderTemplate = ({
               P.M.B 21029, 21038, IKEJA, LAGOS.
             </h5>
             <div className="border-2 py-1 px-5 min-w-56 mt-1 bg-gray-200 text-lg uppercase">
-              JOB ORDER
+              JOB ORDER {`: ${jobOrderData?.ORDER_NO}`}
             </div>
           </div>
         </div>

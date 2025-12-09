@@ -2,8 +2,12 @@ import clsx from "clsx";
 import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
 import { format } from "date-fns";
 import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
+import { useRef } from "react";
 
-const LocalPurchaseOrder = ({ details }) => {
+const LocalPurchaseOrder = ({ details, componentRef }) => {
+  const defaultRef = useRef(null);
+  const ref = componentRef || defaultRef;
+
   const purchaseOrder = details?.data || {};
 
   const items = details?.procurement_items;
@@ -13,7 +17,7 @@ const LocalPurchaseOrder = ({ details }) => {
   }, 0);
 
   return (
-    <main>
+    <main ref={ref}>
       <div className="p-6 bg-white min-w-220 relative">
         <div className="flex justify-center gap-x-6 w-full">
           <div>
@@ -205,7 +209,7 @@ const LocalPurchaseOrder = ({ details }) => {
                     "py-2.5 px-2 text-gray-700 border-r-1.5 border-b-4 border-double border-black text-center"
                   )}
                 >
-                  ₦ {formatNumberWithComma(grand_total)}
+                  {formatNumberWithComma(grand_total)}
                 </td>
                 <td
                   className={clsx(
