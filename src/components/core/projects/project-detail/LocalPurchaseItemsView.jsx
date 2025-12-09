@@ -5,6 +5,8 @@ import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 const LocalPurchaseItemsView = ({ details }) => {
   const items = details?.procurement_items;
 
+  console.log(items);
+
   const calculateTaxValue = useCallback((unit_price, tax) => {
     const taxNumber = Number(tax || 0);
     const priceNumber = Number(unit_price || 0);
@@ -34,8 +36,9 @@ const LocalPurchaseItemsView = ({ details }) => {
                 <th className="px-4 py-2 text-start">Item</th>
                 <th className="py-2">Quantity</th>
                 <th className="py-2">Unit Price</th>
-                <th className="py-2">Tax%</th>
+                {/* <th className="py-2">Tax%</th> */}
                 <th className="py-2">Tax value</th>
+                <th className="py-2">Tax Amount</th>
                 <th className="py-2 text-start">Total</th>
                 <th className="py-2 text-start">Description</th>
               </tr>
@@ -62,9 +65,12 @@ const LocalPurchaseItemsView = ({ details }) => {
                       <td className="py-2 text-center">
                         {formatNumberWithComma(item?.unit_price)}
                       </td>
-                      <td className="py-2 text-center">{Number(item?.tax)}</td>
+                      {/* <td className="py-2 text-center">{Number(item?.tax)}</td> */}
                       <td className="py-2 text-center">
                         {formatNumberWithComma(tax_value)}
+                      </td>
+                      <td className="py-2 text-center">
+                        {formatNumberWithComma(0)}
                       </td>
                       <td className="py-2">
                         {formatNumberWithComma(totalAmount)}

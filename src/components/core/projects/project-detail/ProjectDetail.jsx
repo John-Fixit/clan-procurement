@@ -76,7 +76,6 @@ const ProjectDetail = () => {
   };
 
   const handleReject = (request) => {
-    console.log(request);
     const config = {
       title: "Confirm!",
       okText: "Yes, Reject",

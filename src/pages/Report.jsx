@@ -109,7 +109,7 @@ const tableHeaders = {
     },
     {
       title: "Performance Score",
-      key: "performance_percentage",
+      key: "procurement_percentage",
       percentage: true,
     },
   ],
@@ -273,8 +273,6 @@ export default function ProcurementReport() {
     return prevData;
   }, [get_report_data, orderType, hasSearchFilter, searchQuery]);
   const totalPage = Math.ceil(filteredReports?.length / pageSize);
-
-  console.log(filteredReports);
 
   const handlePageChange = (page) => {
     setPage(page);
@@ -464,7 +462,7 @@ export default function ProcurementReport() {
                               {formatNumberWithComma(row[header.key])}
                             </div>
                           ) : header?.percentage ? (
-                            Number(row[header.key])
+                            Number(row[header.key] || 0)
                           ) : (
                             row[header.key]
                           )}
