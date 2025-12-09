@@ -131,7 +131,6 @@ const CreateProject = () => {
         unit_price: Number(item?.unit_price),
         tax: {
           value: item?.tax_id,
-          PERCENTAGE: item?.tax,
         },
         product_id: item?.product_id,
         description: item?.description,
@@ -220,7 +219,9 @@ const CreateProject = () => {
         }
 
         const tax_amount =
-          (Number(item?.tax?.PERCENTAGE) / 100) * Number(item?.unit_price);
+          (Number(item?.tax?.PERCENTAGE) / 100) *
+          Number(item?.unit_price) *
+          Number(item?.quantity);
         return {
           product_id: item?.product_id,
           tax_amount: tax_amount,
@@ -292,7 +293,7 @@ const CreateProject = () => {
         ?.filter(Boolean),
       approval_request: values?.approvers?.map((appr, index) => ({
         designation: appr?.DESIGNATION,
-        staff_id: appr?.STAFF_ID,
+        staff_id: 1, //appr?.STAFF_ID,
         staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
         sn: index + 1,
         is_approved: 0,

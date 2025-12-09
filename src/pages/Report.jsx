@@ -30,7 +30,7 @@ const exportMenuItem = [
 const orderTypeOptions = [
   { label: "Purchase Request", value: "PR_SUMMARY" },
   { label: "Vendor Performance", value: "VENDOR_PERFORMANCE" },
-  { label: "Purchase Order Status", value: "PO_STATUS" },
+  // { label: "Purchase Order Status", value: "PO_STATUS" },
   { label: "Deparment Spend Analysis", value: "SPEND_ANALYSIS" },
   { label: "Inventory & Stock Reorder", value: "INVENTORY_REORDER" },
 ];
@@ -230,8 +230,11 @@ export default function ProcurementReport() {
       //     Number(item?.JOB_AMOUNT || 0)
       //   )?.toFixed(2) || 0;
       // const totalAmount = Number(item?.JOB_AMOUNT || 0) + Number(taxAmount);
+      const itemUnitPriceWithQty =
+        Number(item?.JOB_AMOUNT) * Number(item?.QUANTITY);
+      // const itemTaxPriceQithQuantity
       const totalAmount =
-        Number(item?.JOB_AMOUNT || 0) + Number(item?.TAX_AMOUNT);
+        Number(itemUnitPriceWithQty || 0) + Number(item?.TAX_AMOUNT);
       const mappedItem = {
         ...item,
         // TAX_AMOUNT: taxAmount,
