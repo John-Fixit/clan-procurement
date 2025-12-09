@@ -224,98 +224,100 @@ const ProjectTable = ({
                     </td>
                   </tr>
                 ) : (
-                  tableData?.map((project, index) => (
-                    <tr
-                      key={index + "___project"}
-                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-3 flex items-center gap-1">
-                        <div>
-                          <Avatar
-                            src={preProfileLink(project?.VENDOR_NAME)}
-                            size="sm"
-                          />
-                        </div>
-                        <div className="font-outfit text-gray-700 font-medium text-sm">
-                          {project?.VENDOR_NAME}
-                        </div>
-                      </td>
-                      <td className="px-6 py-3">
-                        <div className="font-outfit text-gray-500 text-sm">
-                          <span>{project?.ORDER_TYPE}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-3">
-                        <h3 className="text-sm font-outfit text-gray-500 whitespace-nowrap">
-                          {project?.ORDER_NO}
-                        </h3>
-                      </td>
-                      <td className="px-6 py-3">
-                        <span className="font-outfit text-gray-500 text-sm">
-                          {project?.DATE_AWARDED}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-3">
-                        <div className="bg-gray-200 rounded-full px-3 py-1 w-fit">
-                          <span className="font-outfit text-gray-500 text-xs capitalize leading-0.5">
-                            {project?.DEPARTMENT_SUPPLIED?.toLowerCase()}
+                  tableData?.map((project, index) => {
+                    const totalAmount =
+                      Number(project?.TAX_AMOUNT) + Number(project?.JOB_AMOUNT);
+                    return (
+                      <tr
+                        key={index + "___project"}
+                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-6 py-3 flex items-center gap-1">
+                          <div>
+                            <Avatar
+                              src={preProfileLink(project?.VENDOR_NAME)}
+                              size="sm"
+                            />
+                          </div>
+                          <div className="font-outfit text-gray-700 font-medium text-sm">
+                            {project?.VENDOR_NAME}
+                          </div>
+                        </td>
+                        <td className="px-6 py-3">
+                          <div className="font-outfit text-gray-500 text-sm">
+                            <span>{project?.ORDER_TYPE}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-3">
+                          <h3 className="text-sm font-outfit text-gray-500 whitespace-nowrap">
+                            {project?.ORDER_NO}
+                          </h3>
+                        </td>
+                        <td className="px-6 py-3">
+                          <span className="font-outfit text-gray-500 text-sm">
+                            {project?.DATE_AWARDED}
                           </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-3">
-                        <span className="font-outfit text-gray-500 text-sm">
-                          {formatNumberWithComma(Number(project?.JOB_AMOUNT))}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3">
-                        <span className="font-outfit text-gray-500 text-sm">
-                          {formatNumberWithComma(
-                            Number(project?.TAX_AMOUNT || 0)
-                          )}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3">
-                        <span className="font-outfit text-gray-500 text-sm">
-                          {formatNumberWithComma(
-                            Number(project?.TOTAL_AMOUNT || 0)
-                          )}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3">
-                        <div className="flex space-x-1 items-center">
-                          {isPendingDetail &&
-                          selectedProject?.id ===
-                            (project?.ID || project?.PROCUREMENT_ID) &&
-                          selectedProject?.action === "EDIT" ? (
-                            <StarLoader size={18} />
-                          ) : (
-                            canEdit && (
+                        </td>
+
+                        <td className="px-6 py-3">
+                          <div className="bg-gray-200 rounded-full px-3 py-1 w-fit">
+                            <p className="font-outfit text-gray-500 text-xs capitalize">
+                              {project?.DEPARTMENT_SUPPLIED?.toLowerCase()}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-6 py-3">
+                          <span className="font-outfit text-gray-500 text-sm">
+                            {formatNumberWithComma(Number(project?.JOB_AMOUNT))}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3">
+                          <span className="font-outfit text-gray-500 text-sm">
+                            {formatNumberWithComma(
+                              Number(project?.TAX_AMOUNT || 0)
+                            )}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3">
+                          <span className="font-outfit text-gray-500 text-sm">
+                            {formatNumberWithComma(Number(totalAmount || 0))}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3">
+                          <div className="flex space-x-1 items-center">
+                            {isPendingDetail &&
+                            selectedProject?.id ===
+                              (project?.ID || project?.PROCUREMENT_ID) &&
+                            selectedProject?.action === "EDIT" ? (
+                              <StarLoader size={18} />
+                            ) : (
+                              canEdit && (
+                                <ActionIcons
+                                  variant={"EDIT"}
+                                  action={() =>
+                                    handleGetVendorDetail(project, "EDIT")
+                                  }
+                                />
+                              )
+                            )}
+                            {isPendingDetail &&
+                            selectedProject?.id ===
+                              (project?.ID || project?.PROCUREMENT_ID) &&
+                            selectedProject?.action === "VIEW" ? (
+                              <StarLoader size={18} />
+                            ) : (
                               <ActionIcons
-                                variant={"EDIT"}
+                                variant={"VIEW"}
                                 action={() =>
-                                  handleGetVendorDetail(project, "EDIT")
+                                  handleGetVendorDetail(project, "VIEW")
                                 }
                               />
-                            )
-                          )}
-                          {isPendingDetail &&
-                          selectedProject?.id ===
-                            (project?.ID || project?.PROCUREMENT_ID) &&
-                          selectedProject?.action === "VIEW" ? (
-                            <StarLoader size={18} />
-                          ) : (
-                            <ActionIcons
-                              variant={"VIEW"}
-                              action={() =>
-                                handleGetVendorDetail(project, "VIEW")
-                              }
-                            />
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

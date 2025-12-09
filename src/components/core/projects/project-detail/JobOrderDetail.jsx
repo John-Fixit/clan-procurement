@@ -22,7 +22,7 @@ export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
 
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return null;
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",

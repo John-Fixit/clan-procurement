@@ -530,7 +530,7 @@ const PurchaseOrderForm = ({
           control={control}
           render={({ field, fieldState: { error } }) => (
             <Input
-              type="number"
+              // type="number"
               aria-label="sum_amount"
               variant="bordered"
               placeholder="Received note number"

@@ -129,11 +129,23 @@ const PurchaseOrderItems = (props) => {
                   Product
                 </label>
                 <Select
+                  showSearch
+                  optionFilterProp="label"
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toString()
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
                   options={[
                     ...productList,
                     {
                       label: "Others",
                       value: "other",
+                    },
+                    {
+                      label: "Ankas",
+                      value: "ank",
                     },
                   ]}
                   className="w-full"
