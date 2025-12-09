@@ -7,12 +7,12 @@ const LocalPurchaseItemsView = ({ details }) => {
 
   console.log(items);
 
-  const calculateTaxValue = useCallback((unit_price, tax) => {
-    const taxNumber = Number(tax || 0);
-    const priceNumber = Number(unit_price || 0);
-    const taxValue = priceNumber * (taxNumber / 100);
-    return taxValue;
-  }, []);
+  // const calculateTaxValue = useCallback((unit_price, tax) => {
+  //   const taxNumber = Number(tax || 0);
+  //   const priceNumber = Number(unit_price || 0);
+  //   const taxValue = priceNumber * (taxNumber / 100);
+  //   return taxValue;
+  // }, []);
 
   const calculateTotalAmount = useCallback(
     ({ unit_price, tax_value, quantity }) => {
@@ -37,7 +37,7 @@ const LocalPurchaseItemsView = ({ details }) => {
                 <th className="py-2">Quantity</th>
                 <th className="py-2">Unit Price</th>
                 {/* <th className="py-2">Tax%</th> */}
-                <th className="py-2">Tax value</th>
+                {/* <th className="py-2">Tax value</th> */}
                 <th className="py-2">Tax Amount</th>
                 <th className="py-2 text-start">Total</th>
                 <th className="py-2 text-start">Description</th>
@@ -46,13 +46,13 @@ const LocalPurchaseItemsView = ({ details }) => {
             <tbody>
               {items?.length ? (
                 items?.map((item, index) => {
-                  const tax_value = calculateTaxValue(
-                    item?.unit_price,
-                    item?.tax
-                  );
+                  // const tax_value = calculateTaxValue(
+                  //   item?.unit_price,
+                  //   item?.tax
+                  // );
                   const totalAmount = calculateTotalAmount({
                     unit_price: item?.unit_price,
-                    tax_value,
+                    tax_value: Number(item?.tax_amount),
                     quantity: item?.quantity,
                   });
                   return (
@@ -66,11 +66,11 @@ const LocalPurchaseItemsView = ({ details }) => {
                         {formatNumberWithComma(item?.unit_price)}
                       </td>
                       {/* <td className="py-2 text-center">{Number(item?.tax)}</td> */}
-                      <td className="py-2 text-center">
+                      {/* <td className="py-2 text-center">
                         {formatNumberWithComma(tax_value)}
-                      </td>
+                      </td> */}
                       <td className="py-2 text-center">
-                        {formatNumberWithComma(0)}
+                        {formatNumberWithComma(Number(item?.tax_amount))}
                       </td>
                       <td className="py-2">
                         {formatNumberWithComma(totalAmount)}

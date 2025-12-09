@@ -245,65 +245,69 @@ const CreateProject = () => {
   };
 
   const confirmCreateProject = async ({ values, items, uploadedDocuments }) => {
-    const totalItemAmount = items?.reduce((acc, item) => {
-      return acc + Number(item?.unit_price) * Number(item?.quantity);
-    }, 0);
+    try {
+      const totalItemAmount = items?.reduce((acc, item) => {
+        return acc + Number(item?.unit_price) * Number(item?.quantity);
+      }, 0);
 
-    const jobOrderTaxAmount =
-      (Number(values?.tax?.PERCENTAGE) / 100) * Number(values?.sum_amount);
-    const localPurchaseTaxAmount = items?.reduce((acc, item) => {
-      return acc + Number(item?.tax_amount);
-    }, 0);
+      const jobOrderTaxAmount =
+        (Number(values?.tax?.PERCENTAGE) / 100) * Number(values?.sum_amount);
+      const localPurchaseTaxAmount = items?.reduce((acc, item) => {
+        return acc + Number(item?.tax_amount);
+      }, 0);
 
-    const json = {
-      order_type: findProjectType(values?.project_type)?.label,
-      order_no: values?.order_number,
-      vendor_id: values?.vendor?.value,
-      date_supplied: values?.date_supplied,
-      department_supplied: values?.recipient_department,
-      date_awarded: values?.date_issued,
-      received_by: values?.received_by?.value,
-      received_date: values?.completion_date,
-      received_note_no: values?.received_note_no,
-      received_note_date: values?.received_note_date,
-      location_of_work: values?.work_location,
-      file_reference: values?.file_reference,
-      tender_reference: values?.tender_reference,
-      vendor_statement: values?.vendor_statement,
-      tax_id: values?.tax?.ID,
-      tax_value: values?.tax?.PERCENTAGE,
-      note: values?.projectNote,
-      job_amount:
-        findProjectType(values?.project_type)?.value === "2"
-          ? totalItemAmount
-          : values?.sum_amount,
-      tax_amount:
-        findProjectType(values?.project_type)?.value === "2"
-          ? localPurchaseTaxAmount
-          : jobOrderTaxAmount,
-      creator_id: userData?.data?.STAFF_ID,
-      creator_name:
-        userData?.data?.FIRST_NAME + " " + userData?.data?.LAST_NAME,
-      support_documents: uploadedDocuments
-        ?.map((supdoc) => ({
-          attachment_url: supdoc.uploaded_url,
-        }))
-        ?.filter(Boolean),
-      approval_request: values?.approvers?.map((appr, index) => ({
-        designation: appr?.DESIGNATION,
-        staff_id: appr?.STAFF_ID,
-        staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
-        sn: index + 1,
-        is_approved: 0,
-      })),
-      procurement_items:
-        findProjectType(values?.project_type)?.value === "2" ? items : null,
-    };
-    // validate required fields before proceeding
+      const json = {
+        order_type: findProjectType(values?.project_type)?.label,
+        order_no: values?.order_number,
+        vendor_id: values?.vendor?.value,
+        date_supplied: values?.date_supplied,
+        department_supplied: values?.recipient_department,
+        date_awarded: values?.date_issued,
+        received_by: values?.received_by?.value,
+        received_date: values?.completion_date,
+        received_note_no: values?.received_note_no,
+        received_note_date: values?.received_note_date,
+        location_of_work: values?.work_location,
+        file_reference: values?.file_reference,
+        tender_reference: values?.tender_reference,
+        vendor_statement: values?.vendor_statement,
+        tax_id: values?.tax?.ID,
+        tax_value: values?.tax?.PERCENTAGE,
+        note: values?.projectNote,
+        job_amount:
+          findProjectType(values?.project_type)?.value === "2"
+            ? totalItemAmount
+            : values?.sum_amount,
+        tax_amount:
+          findProjectType(values?.project_type)?.value === "2"
+            ? localPurchaseTaxAmount
+            : jobOrderTaxAmount,
+        creator_id: userData?.data?.STAFF_ID,
+        creator_name:
+          userData?.data?.FIRST_NAME + " " + userData?.data?.LAST_NAME,
+        support_documents: uploadedDocuments
+          ?.map((supdoc) => ({
+            attachment_url: supdoc.uploaded_url,
+          }))
+          ?.filter(Boolean),
+        approval_request: values?.approvers?.map((appr, index) => ({
+          designation: appr?.DESIGNATION,
+          staff_id: appr?.STAFF_ID,
+          staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
+          sn: index + 1,
+          is_approved: 0,
+        })),
+        procurement_items:
+          findProjectType(values?.project_type)?.value === "2" ? items : null,
+      };
+      // validate required fields before proceeding
 
-    const res = await mutateAddProject(json);
-    successToast(res?.data?.message);
-    closeDrawer();
+      const res = await mutateAddProject(json);
+      successToast(res?.data?.message);
+      closeDrawer();
+    } catch (err) {
+      catchErrFunc(err);
+    }
   };
 
   const sideTabs = [
