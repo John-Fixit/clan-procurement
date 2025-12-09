@@ -68,7 +68,7 @@ const ProjectDetail = () => {
     const json = {
       approval_id: request?.APPROVAL_ID,
       is_approved: 1,
-      procurement_id: projectDetail?.PROCUREMENT_ID,
+      procurement_id: projectDetail?.PROCUREMENT_ID || projectDetail?.ID,
       sn: projectDetail?.SN,
       max_sn: projectDetail?.MAX_SN,
     };

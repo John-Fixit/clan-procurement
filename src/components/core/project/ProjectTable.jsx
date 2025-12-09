@@ -260,8 +260,8 @@ const ProjectTable = ({
                         </td>
 
                         <td className="px-6 py-3">
-                          <div className="bg-gray-200 rounded-full px-3 py-1 w-fit">
-                            <p className="font-outfit text-gray-500 text-xs capitalize">
+                          <div className="bg-blue-200 rounded-full px-3 py-1 w-fit">
+                            <p className="font-outfit text-gray-500 text-xs capitalize leading-3">
                               {project?.DEPARTMENT_SUPPLIED?.toLowerCase()}
                             </p>
                           </div>
