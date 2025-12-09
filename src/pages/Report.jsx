@@ -233,12 +233,17 @@ export default function ProcurementReport() {
       const itemUnitPriceWithQty =
         Number(item?.JOB_AMOUNT) * Number(item?.QUANTITY);
       // const itemTaxPriceQithQuantity
+      const stockTotalAmount =
+        Number(itemUnitPriceWithQty || 0) + Number(item?.TAX_AMOUNT);
       const totalAmount =
         Number(itemUnitPriceWithQty || 0) + Number(item?.TAX_AMOUNT);
       const mappedItem = {
         ...item,
         // TAX_AMOUNT: taxAmount,
-        TOTAL_AMOUNT: totalAmount.toFixed(2),
+        TOTAL_AMOUNT:
+          orderType === "INVENTORY_REORDER"
+            ? stockTotalAmount
+            : totalAmount.toFixed(2),
       };
       return mappedItem;
     });
@@ -266,7 +271,7 @@ export default function ProcurementReport() {
     }
 
     return prevData;
-  }, [get_report_data, hasSearchFilter, searchQuery]);
+  }, [get_report_data, orderType, hasSearchFilter, searchQuery]);
   const totalPage = Math.ceil(filteredReports?.length / pageSize);
 
   console.log(filteredReports);

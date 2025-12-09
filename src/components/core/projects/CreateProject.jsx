@@ -148,8 +148,6 @@ const CreateProject = () => {
     trigger,
   } = hook_form_props;
 
-  console.log(getValues("purchase_order_items"));
-
   const project_type = watch("project_type");
 
   const { mutateAsync: mutateAddProject, isPending: isSubmitting } =
@@ -293,7 +291,7 @@ const CreateProject = () => {
         ?.filter(Boolean),
       approval_request: values?.approvers?.map((appr, index) => ({
         designation: appr?.DESIGNATION,
-        staff_id: 1, //appr?.STAFF_ID,
+        staff_id: appr?.STAFF_ID,
         staff: appr?.FIRST_NAME + " " + appr?.LAST_NAME,
         sn: index + 1,
         is_approved: 0,
