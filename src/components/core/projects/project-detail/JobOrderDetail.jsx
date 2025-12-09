@@ -220,18 +220,20 @@ export default function JobOrderDetail({ details }) {
                 />
               </Section>
               {/* Receiving Details */}
-              <Section title="Receiving Information">
-                <DetailItem
-                  icon={FiUser}
-                  label="Received By"
-                  value={jobOrder.RECEIVED_BY}
-                />
-                <DetailItem
-                  icon={FiFileText}
-                  label="Received Note Number"
-                  value={jobOrder.RECEIVED_NOTE_NO}
-                />
-              </Section>
+              {(jobOrder?.RECEIVED_BY || jobOrder?.RECEIVED_NOTE_NO) && (
+                <Section title="Receiving Information">
+                  <DetailItem
+                    icon={FiUser}
+                    label="Received By"
+                    value={jobOrder.RECEIVED_BY}
+                  />
+                  <DetailItem
+                    icon={FiFileText}
+                    label="Received Note Number"
+                    value={jobOrder.RECEIVED_NOTE_NO}
+                  />
+                </Section>
+              )}
             </div>
 
             {/* Dates & Timeline */}
