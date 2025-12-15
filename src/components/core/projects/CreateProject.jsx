@@ -225,7 +225,7 @@ const CreateProject = () => {
           tax_amount: tax_amount,
           tax_id: item?.tax?.value,
           unit_price: item?.unit_price,
-          tax: Number(item?.tax?.PERCENTAGE),
+          tax: Number(item?.tax?.PERCENTAGE || 0),
           quantity: item?.quantity,
           description: item?.description, //"24-inch monitor, high resolution, black"
         };
@@ -344,21 +344,23 @@ const CreateProject = () => {
           {...hook_form_props}
           handleNext={handleNext}
           handlePrev={handlePrev}
-        />
-      ),
-    },
-    {
-      title: "Approval",
-      content: (
-        <ProjectApproval
-          {...hook_form_props}
-          handleNext={handleNext}
-          handlePrev={handlePrev}
           handleSubmit={handleSubmit}
           isSubmitting={isSubmitting || isUploading}
         />
       ),
     },
+    // {
+    //   title: "Approval",
+    //   content: (
+    //     <ProjectApproval
+    //       {...hook_form_props}
+    //       handleNext={handleNext}
+    //       handlePrev={handlePrev}
+    //       handleSubmit={handleSubmit}
+    //       isSubmitting={isSubmitting || isUploading}
+    //     />
+    //   ),
+    // },
   ].filter(Boolean);
 
   return (

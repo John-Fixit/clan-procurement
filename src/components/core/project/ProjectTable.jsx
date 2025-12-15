@@ -1,15 +1,19 @@
 import { LuChevronDown } from "react-icons/lu";
 import ActionIcons from "../../shared/ActionIcons";
 import ProjectTableHeader from "./ProjectTableHeader";
-import { useGetProjectByMutation } from "../../../service/api/project";
+import {
+  useCompleteApproval,
+  useGetProjectByMutation,
+} from "../../../service/api/project";
 import { useMemo, useState } from "react";
 import StarLoader from "../loaders/StarLoader";
-import { Result } from "antd";
+import { Button, Modal, Result } from "antd";
 import useDrawerStore from "../../../hooks/useDrawerStore";
 import { Avatar, Pagination } from "@heroui/react";
 import { catchErrFunc } from "../../../utils/catchErrFunc";
 import { preProfileLink } from "../../../utils/pre-profile-link";
 import { formatNumberWithComma } from "../../../utils/formatCurrencyNumber";
+import { successToast } from "../../../utils/toastPopUps";
 
 const ProjectTable = ({
   projects,
@@ -115,8 +119,45 @@ const ProjectTable = ({
     return filteredProjects?.slice((page - 1) * pageSize, page * pageSize);
   }, [filteredProjects, page, pageSize]);
 
+  const [modal, contextHolder] = Modal.useModal();
+
+  const config = {
+    title: "Confirm!",
+    okText: "Yes, Complete",
+    content: (
+      <>
+        <p className="fot-primary">
+          Are you sure you want to move this procurement to Approved projects?
+          This action cannot be undone?
+        </p>
+      </>
+    ),
+  };
+
+  const handleTriggerCompleted = (proc) => {
+    modal.confirm({
+      ...config,
+      onOk: () => confirmTriggerComplete(proc.ID || proc?.PROCUREMENT_ID),
+    });
+  };
+
+  const { mutateAsync: mutateCompleteApproval } = useCompleteApproval();
+
+  const confirmTriggerComplete = async (procId) => {
+    const json = {
+      procurement_id: procId,
+    };
+    try {
+      const res = await mutateCompleteApproval(json);
+      successToast(res?.data?.message);
+    } catch (err) {
+      catchErrFunc(err);
+    }
+  };
+
   return (
     <>
+      {contextHolder}
       <ProjectTableHeader
         setSearQuery={setSearQuery}
         searchQuery={searchQuery}
@@ -313,6 +354,15 @@ const ProjectTable = ({
                                 }
                               />
                             )}
+                            <Button
+                              color="primary"
+                              variant="solid"
+                              className="text-white py-0 text-xs"
+                              size="small"
+                              onClick={() => handleTriggerCompleted(project)}
+                            >
+                              Complete
+                            </Button>
                           </div>
                         </td>
                       </tr>

@@ -41,10 +41,10 @@ const ProjectDetail = () => {
     //     />
     //   ),
     // },
-    {
-      title: "Approval History",
-      content: <ApprovalHistory details={projectDetail} />,
-    },
+    // {
+    //   title: "Approval History",
+    //   content: <ApprovalHistory details={projectDetail} />,
+    // },
   ].filter(Boolean);
 
   const [modal, contextHolder] = AntModal.useModal();

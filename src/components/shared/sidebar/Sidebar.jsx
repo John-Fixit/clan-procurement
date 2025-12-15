@@ -37,6 +37,7 @@ import useCurrentUser from "../../../hooks/useCurrentUser";
 import { HiOutlineShoppingBag, HiShoppingBag } from "react-icons/hi2";
 import { AiFillMoneyCollect, AiOutlineMoneyCollect } from "react-icons/ai";
 import ncaaLogo from "../../../assets/images/ncaa_logo.png";
+import { GrStatusPlaceholder, GrStatusPlaceholderSmall } from "react-icons/gr";
 
 const Sidebar = () => {
   const currentPath = useLocation().pathname;
@@ -119,12 +120,12 @@ const Sidebar = () => {
       icon: MdOutlineAnalytics,
       activeIcon: MdAnalytics,
     },
-    {
-      path: "/approval",
-      label: "Approval",
-      icon: MdApproval,
-      activeIcon: MdApproval,
-    },
+    // {
+    //   path: "/approval",
+    //   label: "Approval",
+    //   icon: MdApproval,
+    //   activeIcon: MdApproval,
+    // },
     {
       path: "/setting",
       label: "Setting",
@@ -149,6 +150,12 @@ const Sidebar = () => {
           label: "Role & Permission",
           icon: IoShieldOutline,
           activeIcon: IoShieldSharp,
+        },
+        {
+          path: "/setting/status",
+          label: "Status",
+          icon: GrStatusPlaceholder,
+          activeIcon: GrStatusPlaceholderSmall,
         },
       ],
     },

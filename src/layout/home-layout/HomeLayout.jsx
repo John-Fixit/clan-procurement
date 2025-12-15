@@ -73,7 +73,7 @@ const HomeLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <NotificationDropdown />
+            {/* <NotificationDropdown /> */}
 
             {/* <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <span>❓</span>

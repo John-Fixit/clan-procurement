@@ -6,7 +6,7 @@ import { IoChevronBackOutline, IoChevronForwardSharp } from "react-icons/io5";
 const { TextArea } = Input;
 
 const ProjectNote = (props) => {
-  const { control, handleNext, handlePrev } = props;
+  const { control, handleSubmit, isSubmitting, handlePrev } = props;
 
   return (
     <>
@@ -54,8 +54,14 @@ const ProjectNote = (props) => {
           >
             <IoChevronBackOutline /> Previous
           </Button>
-          <Button radius="sm" color="primary" onPress={handleNext}>
-            Continue <IoChevronForwardSharp />
+          <Button
+            radius="sm"
+            color="primary"
+            //  onPress={handleNext}
+            onPress={handleSubmit}
+            isLoading={isSubmitting}
+          >
+            Submit
           </Button>
         </div>
       </main>

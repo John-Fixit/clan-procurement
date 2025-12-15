@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API } from "../axiosInstance";
-import { notification } from "antd";
 
 export const useGetNotification = (staffId) => {
   return useQuery({

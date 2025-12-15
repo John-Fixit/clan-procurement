@@ -111,3 +111,22 @@ export const useApproveProject = () => {
     },
   });
 };
+export const useCompleteApproval = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload) => {
+      const res = await API.post(`procurement/complete-approval`, {
+        ...payload,
+      });
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`get_staff_projects_0_Job Order`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`get_staff_projects_0_Local Purchase Order`],
+      });
+    },
+  });
+};

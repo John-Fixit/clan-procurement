@@ -7,6 +7,7 @@ import AddStaff from "../role_permission/AddStaff";
 import VendorDetail from "../vendor/VendorDetail";
 import CreateVendor from "../vendor/create-vendor/CreateVendor";
 import ProjectDetail from "../projects/project-detail/ProjectDetail";
+import UpdateProcurementStatus from "../projects/project-detail/UpdateProcurementStatus";
 
 const GeneralDrawer = () => {
   const { isOpen, closeDrawer, data } = useDrawerStore();
@@ -15,7 +16,7 @@ const GeneralDrawer = () => {
   const { title, drawerSize } = data;
 
   const size_1200 = ["project-detail"];
-  const size_1000 = [""];
+  const size_1000 = ["update-procurement-status"];
 
   const builtSize = size_1200.includes(viewName)
     ? 1200
@@ -38,6 +39,9 @@ const GeneralDrawer = () => {
         {viewName === "add-staff-role-permission" && <AddStaff />}
         {viewName === "vendor-detail" && <VendorDetail />}
         {viewName === "project-detail" && <ProjectDetail />}
+        {viewName === "update-procurement-status" && (
+          <UpdateProcurementStatus />
+        )}
       </Drawer>
     </>
   );

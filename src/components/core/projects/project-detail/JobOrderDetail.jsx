@@ -19,9 +19,15 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { PiMoneyWavyLight } from "react-icons/pi";
 import { LuDownload } from "react-icons/lu";
 import { findProjectType } from "../../../../utils/findProjectType";
+import useDrawerStore from "../../../../hooks/useDrawerStore";
+import { useLocation } from "react-router-dom";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
+
+  const { openDrawer } = useDrawerStore();
+
+  const location = useLocation().pathname;
 
   const componentRef = useRef();
   const jobOrderRef = useRef();
@@ -83,6 +89,12 @@ export default function JobOrderDetail({ details }) {
     }, 300);
   };
 
+  const handleOpenChangeStatus = () => {
+    openDrawer({
+      viewName: "update-procurement-status",
+      projectDetail: details,
+    });
+  };
   return (
     <>
       {viewTemplate ? (
@@ -128,37 +140,48 @@ export default function JobOrderDetail({ details }) {
                       <FaRegEye /> View Template
                     </Button>
                   </div>
-                  {jobOrder.IS_APPROVED ? (
-                    <Chip
-                      color={
-                        jobOrder.IS_APPROVED
-                          ? "success"
-                          : jobOrder?.IS_APPROVED === -1
-                          ? "danger"
-                          : "warning"
-                      }
-                      variant="solid"
-                      className="text-white mt-1"
+                  {location.includes("request") && (
+                    <Button
+                      radius="sm"
+                      size="sm"
+                      onPress={handleOpenChangeStatus}
                     >
-                      <div className="flex gap-1">
-                        {jobOrder.IS_APPROVED ? (
-                          <FiCheckCircle className="w-4 h-4" />
-                        ) : (
-                          <FiClock className="w-4 h-4" />
-                        )}
-                        <span className="font-semibold">
-                          {jobOrder.IS_APPROVED
-                            ? "Approved"
-                            : "Pending Approval"}
-                        </span>
-                      </div>
-                    </Chip>
-                  ) : (
-                    <p className="text-sm opacity-90">
-                      Approval Stage: {jobOrder.CURRENT_APPROVAL_SN} of{" "}
-                      {jobOrder.MAX_SN}
-                    </p>
+                      Change Status
+                    </Button>
                   )}
+                  {!location.includes("request") &&
+                    (jobOrder.IS_APPROVED ? (
+                      <Chip
+                        color={
+                          jobOrder.IS_APPROVED
+                            ? "success"
+                            : jobOrder?.IS_APPROVED === -1
+                            ? "danger"
+                            : "warning"
+                        }
+                        variant="solid"
+                        className="text-white mt-1"
+                      >
+                        <div className="flex gap-1">
+                          {jobOrder.IS_APPROVED ? (
+                            <FiCheckCircle className="w-4 h-4" />
+                          ) : (
+                            <FiClock className="w-4 h-4" />
+                          )}
+                          <span className="font-semibold">
+                            {jobOrder.IS_APPROVED
+                              ? "Approved"
+                              : "Pending Approval"}
+                          </span>
+                        </div>
+                      </Chip>
+                    ) : (
+                      ""
+                      // <p className="text-sm opacity-90">
+                      //   Approval Stage: {jobOrder.CURRENT_APPROVAL_SN} of{" "}
+                      //   {jobOrder.MAX_SN}
+                      // </p>
+                    ))}
                 </div>
               </div>
             </div>

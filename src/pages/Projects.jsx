@@ -11,7 +11,7 @@ import { findProjectType } from "../utils/findProjectType";
 export default function Projects() {
   const { openDrawer } = useDrawerStore();
 
-  const [selectedStatus, setSelectedStatus] = useState("pending");
+  const [selectedStatus, setSelectedStatus] = useState(0);
 
   const { userData } = useCurrentUser();
 
@@ -29,17 +29,7 @@ export default function Projects() {
     data: get_projects,
     isError,
     isPending: isLoadingProject,
-  } = useGetStaffProject(
-    selectedStatus === "pending"
-      ? 0
-      : selectedStatus === "approved"
-      ? 1
-      : selectedStatus === "declined"
-      ? -1
-      : null,
-    userData?.data?.STAFF_ID,
-    projectType
-  );
+  } = useGetStaffProject(selectedStatus, userData?.data?.STAFF_ID, projectType);
 
   const projects = useMemo(() => get_projects || [], [get_projects]);
 
@@ -83,7 +73,7 @@ export default function Projects() {
           isLoadingProject={isLoadingProject}
           selectedStatus={selectedStatus}
           setSelectedStatus={setSelectedStatus}
-          canEdit={isRequest && selectedStatus === "pending"}
+          canEdit={isRequest && selectedStatus === 0}
         />
       </div>
     </div>

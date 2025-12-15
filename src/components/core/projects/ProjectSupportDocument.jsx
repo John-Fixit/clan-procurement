@@ -15,7 +15,7 @@ const { Dragger } = Upload;
 const { Text } = Typography;
 
 const ProjectSupportDocument = (props) => {
-  const { watch, setValue, handleNext, handlePrev } = props;
+  const { watch, setValue, handleNext, handlePrev, isSubmitting } = props;
 
   // Watch the documents field from react-hook-form
   const uploadedDocuments = watch("documents") || [];
@@ -206,7 +206,7 @@ const ProjectSupportDocument = (props) => {
                         size="sm"
                         danger
                         icon={<DeleteOutlined />}
-                        onClick={() => removeDocument(doc.uid)}
+                        onPress={() => removeDocument(doc.uid)}
                         title="Remove"
                       />
                     </Space>
@@ -226,7 +226,12 @@ const ProjectSupportDocument = (props) => {
         >
           <IoChevronBackOutline /> Previous
         </Button>
-        <Button radius="sm" color="primary" onPress={handleNext}>
+        <Button
+          radius="sm"
+          color="primary"
+          onPress={handleNext}
+          isLoading={isSubmitting}
+        >
           Continue <IoChevronForwardSharp />
         </Button>
       </div>

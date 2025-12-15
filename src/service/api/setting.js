@@ -35,6 +35,23 @@ export const useAddTax = () => {
     },
   });
 };
+export const useAddStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload) => {
+      const { statusId, ...json } = payload;
+      if (statusId) {
+        return await API.put(`/status/update-status/${statusId}`, json);
+      }
+      return await API.post(`/status/create-status`, json);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get_setting_status"],
+      });
+    },
+  });
+};
 export const useDeleteTax = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -44,6 +61,19 @@ export const useDeleteTax = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get_setting_tax"],
+      });
+    },
+  });
+};
+export const useDeleteStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload) => {
+      return await API.delete(`/status/delete-status/${payload?.statusId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get_setting_status"],
       });
     },
   });
@@ -67,6 +97,15 @@ export const useGetTax = () => {
     queryKey: ["get_setting_tax"],
     queryFn: async () => {
       const res = await API.get(`/tax/get-taxes`);
+      return res.data?.data?.data;
+    },
+  });
+};
+export const useGetStatus = () => {
+  return useQuery({
+    queryKey: ["get_setting_status"],
+    queryFn: async () => {
+      const res = await API.get(`/status/get-status`);
       return res.data?.data?.data;
     },
   });
