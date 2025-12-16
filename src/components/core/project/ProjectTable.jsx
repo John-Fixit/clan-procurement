@@ -354,7 +354,7 @@ const ProjectTable = ({
                                 }
                               />
                             )}
-                            {!selectedStatus === 0 && (
+                            {selectedStatus !== 0 && (
                               <Button
                                 color="primary"
                                 variant="solid"
