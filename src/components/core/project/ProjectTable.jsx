@@ -7,13 +7,14 @@ import {
 } from "../../../service/api/project";
 import { useMemo, useState } from "react";
 import StarLoader from "../loaders/StarLoader";
-import { Button, Modal, Result } from "antd";
+import { Button, Modal, Result, Switch } from "antd";
 import useDrawerStore from "../../../hooks/useDrawerStore";
 import { Avatar, Pagination } from "@heroui/react";
 import { catchErrFunc } from "../../../utils/catchErrFunc";
 import { preProfileLink } from "../../../utils/pre-profile-link";
 import { formatNumberWithComma } from "../../../utils/formatCurrencyNumber";
 import { successToast } from "../../../utils/toastPopUps";
+import { useLocation } from "react-router-dom";
 
 const ProjectTable = ({
   projects,
@@ -26,6 +27,8 @@ const ProjectTable = ({
   canEdit,
 }) => {
   const { openDrawer } = useDrawerStore();
+
+  const location = useLocation().pathname;
 
   const [selectedProject, setSelectedProject] = useState({
     id: null,
@@ -354,17 +357,29 @@ const ProjectTable = ({
                                 }
                               />
                             )}
-                            {selectedStatus !== 0 && (
-                              <Button
-                                color="primary"
-                                variant="solid"
-                                className="text-white py-0 text-xs"
-                                size="small"
-                                onClick={() => handleTriggerCompleted(project)}
-                              >
-                                Complete
-                              </Button>
-                            )}
+                            {/* {selectedStatus !== 0 &&
+                              location?.includes("request") && (
+                                <Button
+                                  color="primary"
+                                  variant="solid"
+                                  className="text-white py-0 text-xs"
+                                  size="small"
+                                  onClick={() =>
+                                    handleTriggerCompleted(project)
+                                  }
+                                >
+                                  Complete
+                                </Button>
+                              )} */}
+                            {selectedStatus !== 0 &&
+                              location?.includes("request") && (
+                                <Switch
+                                  onClick={() =>
+                                    handleTriggerCompleted(project)
+                                  }
+                                  checked={false}
+                                />
+                              )}
                           </div>
                         </td>
                       </tr>
