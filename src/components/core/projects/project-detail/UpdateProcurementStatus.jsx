@@ -95,7 +95,13 @@ const UpdateProcurementStatus = () => {
   const sideTabs = [
     {
       title: "Detail",
-      content: <ChangeStatus {...form_methods} handleNext={handleNext} />,
+      content: (
+        <ChangeStatus
+          projectDetail={projectDetail}
+          {...form_methods}
+          handleNext={handleNext}
+        />
+      ),
     },
     {
       title: "Support Documents",

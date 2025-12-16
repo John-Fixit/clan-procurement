@@ -4,11 +4,19 @@ import { BiCheck, BiUpload } from "react-icons/bi";
 import { CgChevronRight } from "react-icons/cg";
 import StarLoader from "../../loaders/StarLoader";
 import Button from "../../../shared/ui/Button";
+import { useMemo } from "react";
 
 const ChangeStatus = (props) => {
-  const { setValue, watch, handleNext } = props;
+  const { projectDetail, setValue, watch, handleNext } = props;
   const selectedStatus = watch("status");
   const { data: get_status, isPending: isLoading } = useGetStatus();
+  const statuses = useMemo(() => {
+    return (
+      get_status?.filter(
+        (status) => status.STATUS_ID !== projectDetail?.STATUS
+      ) || []
+    );
+  }, [get_status, projectDetail?.STATUS]);
   return (
     <>
       <div className="bg-white rounded-xl border border-gray-200 w-full overflow-y-auto">
@@ -31,7 +39,7 @@ const ChangeStatus = (props) => {
             <p className="text-sm text-gray-600 mb-2">Current Status</p>
             <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-lg font-medium">
               <BiCheck size={18} />
-              {/* {currentStatus} */} APPROVED
+              {projectDetail?.STATUS_NAME}
             </div>
           </div>
 
@@ -46,7 +54,7 @@ const ChangeStatus = (props) => {
                   <StarLoader />
                 </div>
               ) : (
-                get_status.map((status) => (
+                statuses.map((status) => (
                   <button
                     key={status.STATUS_ID}
                     onClick={() => setValue("status", status)}

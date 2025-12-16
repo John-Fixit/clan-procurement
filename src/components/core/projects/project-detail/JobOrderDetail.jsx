@@ -149,6 +149,7 @@ export default function JobOrderDetail({ details }) {
                       Change Status
                     </Button>
                   )}
+
                   {!location.includes("request") &&
                     (jobOrder.IS_APPROVED ? (
                       <Chip
@@ -185,6 +186,17 @@ export default function JobOrderDetail({ details }) {
                 </div>
               </div>
             </div>
+
+            {location.includes("request") && (
+              <div className="flex justify-end mb-2 items-center gap-2">
+                <p>Status:</p>
+                <p className="px-2 font-primary rounded-full bg-blue-100 text-blue-500 capitalize">
+                  <span className="text-xs">
+                    {jobOrder?.STATUS_NAME?.toLowerCase()}
+                  </span>
+                </p>
+              </div>
+            )}
 
             {/* Vendor Information */}
             <Section title="Vendor Information">
