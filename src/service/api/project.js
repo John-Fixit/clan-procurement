@@ -130,3 +130,22 @@ export const useCompleteApproval = () => {
     },
   });
 };
+export const useUpdateProjectStatus = (projectId, currentStatus) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload) => {
+      const res = await API.put(`procurement/update-status/${projectId}`, {
+        ...payload,
+      });
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`get_staff_projects_${currentStatus}_Job Order`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`get_staff_projects_${currentStatus}_Local Purchase Order`],
+      });
+    },
+  });
+};

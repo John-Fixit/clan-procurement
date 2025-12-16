@@ -232,7 +232,13 @@ const ProjectSupportDocument = (props) => {
           onPress={handleNext}
           isLoading={isSubmitting}
         >
-          Continue <IoChevronForwardSharp />
+          {isSubmitting === null ? (
+            <>
+              Continue <IoChevronForwardSharp />
+            </>
+          ) : (
+            "Submit"
+          )}
         </Button>
       </div>
     </div>

@@ -5,27 +5,32 @@ import LocalPurchaseItemsView from "./LocalPurchaseItemsView";
 import ChangeStatus from "./ChangeStatus";
 import { useForm } from "react-hook-form";
 import ProjectSupportDocument from "../ProjectSupportDocument";
-import { errorToast } from "../../../../utils/toastPopUps";
+import { errorToast, successToast } from "../../../../utils/toastPopUps";
 import { uploadFileData } from "../../../../utils/uploadFile";
 import { catchErrFunc } from "../../../../utils/catchErrFunc";
 import useCurrentUser from "../../../../hooks/useCurrentUser";
+import { useUpdateProjectStatus } from "../../../../service/api/project";
 
 const UpdateProcurementStatus = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {
     data: { projectDetail },
+    closeDrawer,
   } = useDrawerStore();
 
-  console.log(projectDetail);
-
+  const { mutateAsync: mutateUpdateProjectStatus, isPending: isLoading } =
+    useUpdateProjectStatus(
+      projectDetail?.ID || projectDetail?.PROCUREMENT_ID,
+      projectDetail?.STATUS || 0
+    );
   const [isUploading, setIsUploading] = useState(false);
 
   const form_methods = useForm();
 
   const { userData } = useCurrentUser();
 
-  const uploadPendingFiles = async (documents) => {
+  const uploadPendingFiles = async (documents, setValue) => {
     const result = [];
     for (const doc of documents) {
       if (doc?.uploaded_url || !doc?.originFileObj) {
@@ -46,6 +51,7 @@ const UpdateProcurementStatus = () => {
         }
       }
     }
+    setValue("documents", result);
     return result;
   };
 
@@ -57,12 +63,20 @@ const UpdateProcurementStatus = () => {
     }
     try {
       setIsUploading(true);
-      const uploadedDocuments = await uploadPendingFiles(documents || []);
+      const uploadedDocuments = await uploadPendingFiles(
+        documents || [],
+        form_methods.setValue
+      );
       const json = {
-        support_documents: uploadedDocuments,
-        statusId: status?.STATUS_ID,
+        support_documents: uploadedDocuments?.map((doc) => ({
+          attachment_url: doc?.uploaded_url,
+          status: status?.STATUS_ID,
+        })),
+        status: status?.STATUS_ID,
       };
-      console.log("Final Payload:", json);
+      const res = await mutateUpdateProjectStatus(json);
+      successToast(res?.data?.message);
+      closeDrawer();
     } catch (err) {
       catchErrFunc(err);
     } finally {
@@ -90,7 +104,7 @@ const UpdateProcurementStatus = () => {
           {...form_methods}
           handleNext={handleSubmit}
           handlePrev={handlePrev}
-          isSubmitting={isUploading}
+          isSubmitting={isUploading || isLoading}
         />
       ),
     },

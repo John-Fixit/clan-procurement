@@ -354,15 +354,17 @@ const ProjectTable = ({
                                 }
                               />
                             )}
-                            <Button
-                              color="primary"
-                              variant="solid"
-                              className="text-white py-0 text-xs"
-                              size="small"
-                              onClick={() => handleTriggerCompleted(project)}
-                            >
-                              Complete
-                            </Button>
+                            {!selectedStatus === 0 && (
+                              <Button
+                                color="primary"
+                                variant="solid"
+                                className="text-white py-0 text-xs"
+                                size="small"
+                                onClick={() => handleTriggerCompleted(project)}
+                              >
+                                Complete
+                              </Button>
+                            )}
                           </div>
                         </td>
                       </tr>

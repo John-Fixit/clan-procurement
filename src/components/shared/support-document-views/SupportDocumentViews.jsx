@@ -94,7 +94,12 @@ const SupportDocumentView = ({ details }) => {
                 {data?.attachment_url ? (
                   <div className="group w-full">
                     {isImageFile(data?.attachment_url) ? (
-                      <div className="relative flex gap-x-4 flex-wrap space-y-1 border-1 border-gray-300 hover:border-gray-400 rounded-lg items-center w-full p-2 py-3 h-full">
+                      <div className="relative flex gap-x-4 flex-wrap space-y-1 border-1 border-gray-300 hover:border-gray-400 rounded-lg items-center w-full p-2 h-full">
+                        <div className="absolute top-1 right-1 px-2 font-primary rounded-full bg-blue-100 text-blue-500 capitalize">
+                          <span className="text-xs">
+                            {data?.status_name?.toLowerCase()}
+                          </span>
+                        </div>
                         <img
                           alt="Image"
                           height="100"
@@ -129,8 +134,13 @@ const SupportDocumentView = ({ details }) => {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex gap-x-4 flex-wrap space-y-1 border-2 border-gray-300 hover:border-gray-400 rounded-lg items-center w-full p-2 py-3">
-                        <div className="relative w-full flex">
+                      <div className="relative flex gap-x-4 flex-wrap space-y-1 border-1 border-gray-300 hover:border-gray-400 rounded-lg items-center w-full p-2 py-4 h-full">
+                        <div className="absolute top-1 right-1 px-2 font-primary rounded-full bg-blue-100 text-blue-500 capitalize">
+                          <span className="text-xs">
+                            {data?.status_name?.toLowerCase()}
+                          </span>
+                        </div>
+                        <div className="w-full flex">
                           <div
                             className="flex gap-1 px-2 pr-4 cursor-pointer items-center flex-1 truncate"
                             onClick={() =>
@@ -176,6 +186,7 @@ const SupportDocumentView = ({ details }) => {
                               {fileName} {i + 1}
                             </span>
                           </div>
+
                           <div
                             onClick={() =>
                               downloadFile(
@@ -183,7 +194,7 @@ const SupportDocumentView = ({ details }) => {
                                 `${fileName} ${i + 1}`
                               )
                             }
-                            className="ml-auto w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 p-1 cursor-pointer gap-2"
+                            className="absolute bottom-1 right-1 group-hover:block rounded-full bg-gray-100 p-1 cursor-pointer items-center gap-2"
                           >
                             <MdOutlineFileDownload size={20} />
                           </div>

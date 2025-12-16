@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import ProjectInformation from "./projectInformation";
 import ProjectSupportDocument from "./ProjectSupportDocument";
 import ReusableTabDrawerLayout from "../../shared/reusable-tab-drawer-layout";
-import ProjectApproval from "./project-detail/ProjectApproval";
 import PurchaseOrderItems from "./purchaseOrderItems";
 import { catchErrFunc } from "../../../utils/catchErrFunc";
 import { useCreateProject } from "../../../service/api/project";
@@ -26,7 +25,7 @@ const newItemRow = {
 
 const requiredFields = {
   project_type: "project type is required",
-  approvers: "Approvals can not be empty",
+  // approvers: "Approvals can not be empty",
 };
 
 const validateRequiredField = (values) => {
