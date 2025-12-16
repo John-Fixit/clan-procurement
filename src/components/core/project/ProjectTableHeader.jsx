@@ -49,38 +49,42 @@ const ProjectTableHeader = ({
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {
             <div className="flex flex-wrap items-center gap-2">
-              {[
-                {
-                  label: "Draft",
-                  value: 0,
-                  statusColor: "bg-blue-500",
-                  activeColor: "bg-blue-100",
-                },
-                ...statusOption,
-              ]?.map((status) => (
-                <button
-                  className={clsx(
-                    "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700  flex items-center whitespace-nowrap cursor-pointer",
-                    status?.value === selectedStatus ? status.activeColor : ""
-                  )}
-                  onClick={() => setSelectedStatus(status?.value)}
-                >
-                  <span
-                    className={clsx(
-                      "w-2 h-2 rounded-full mr-2 shrink-0",
-                      status?.statusColor
-                    )}
-                  ></span>
-                  <span className="inline">
-                    {loading?.[status?.value] ? (
-                      <StarLoader size={14} />
-                    ) : (
-                      statusCount?.[status?.value]
-                    )}{" "}
-                    {status?.label}
-                  </span>
-                </button>
-              ))}
+              {selectedStatus !== undefined
+                ? [
+                    {
+                      label: "Draft",
+                      value: 0,
+                      statusColor: "bg-blue-500",
+                      activeColor: "bg-blue-100",
+                    },
+                    ...statusOption,
+                  ]?.map((status) => (
+                    <button
+                      className={clsx(
+                        "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700  flex items-center whitespace-nowrap cursor-pointer",
+                        status?.value === selectedStatus
+                          ? status.activeColor
+                          : ""
+                      )}
+                      onClick={() => setSelectedStatus(status?.value)}
+                    >
+                      <span
+                        className={clsx(
+                          "w-2 h-2 rounded-full mr-2 shrink-0",
+                          status?.statusColor
+                        )}
+                      ></span>
+                      <span className="inline">
+                        {loading?.[status?.value] ? (
+                          <StarLoader size={14} />
+                        ) : (
+                          statusCount?.[status?.value]
+                        )}{" "}
+                        {status?.label}
+                      </span>
+                    </button>
+                  ))
+                : ""}
               {isGettingStatus && <StarLoader size={18} />}
             </div>
           }
