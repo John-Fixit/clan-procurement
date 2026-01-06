@@ -18,7 +18,12 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
 
   return (
     <main ref={ref}>
-      <div className="p-6 bg-white min-w-220 relative">
+      <div className="p6 bg-white min-w-220 relative w-full h-full overflow-hidden">
+        <img
+          src={ncaaLogo}
+          alt="NCAA Logo"
+          className="absolute inset-0 m-auto w-[600px] h-[600px] object-contain opacity-15 z-0 pointer-events-none"
+        />
         <div className="flex justify-center gap-x-6 w-full">
           <div>
             <img src={ncaaLogo} alt="NCAA Logo" width={120} height={120} />
@@ -28,12 +33,12 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
               NIGERIAN CIVIL AVIATION AUTHORITY
             </h2>
             <h3 className="font-medium text-xl">(AVIATION HOUSE)</h3>
-            <h4 className="text-sm">HEADQUARTERS</h4>
-            <h4 className="text-sm">P.M.B. 21029, 21018, IKEJA, LAGOS</h4>
+            <h4 className="text-[13px]">HEADQUARTERS</h4>
+            <h4 className="text-[13px]">P.M.B. 21029, 21018, IKEJA, LAGOS</h4>
           </div>
         </div>
 
-        <div className="mt-4 border-b-2 pb-1 border-black pt-2">
+        <div className="mt-3 border-b-2 pb1 border-black pt-2">
           <div className="flex justify-between items-start">
             <h2 className="text-xl font-semibold">LOCAL PURCHASE ORDER</h2>
             <div className="flex items-baseline gap-x-2">
@@ -52,9 +57,9 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
           </div>
         </div>
 
-        <div className="mt-6 border-black pt-4">
+        <div className="mt-2 border-black pt-2">
           <div className="flex items-baseline gap-x-2 mb-4">
-            <h3 className="text-sm">To</h3>
+            <h3 className="text-[13px]">To</h3>
             <div className="border-b-1.5 border-black flex-1">
               {purchaseOrder?.DEPARTMENT_SUPPLIED}
             </div>
@@ -63,15 +68,15 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
           <div className="grid grid-cols-[1fr_auto_1fr] gap-x-4 mb-4">
             <div className="border-b-1.5 border-black"></div>
             <div className="flex items-baseline gap-x-2">
-              <h3 className="text-sm">Date:</h3>
+              <h3 className="text-[13px]">Date:</h3>
               <div className="border-b-1.5 border-black w-48">
                 {format(purchaseOrder?.DATE_AWARDED, "do 'of' MMM. yyyy")}
               </div>
             </div>
           </div>
 
-          <div className="flex items-start gap-x-2 mb-2">
-            <h3 className="text-sm">
+          <div className="flex items-start gap-x-2 mb-2 border-t-2 pt-1">
+            <h3 className="text-xs">
               Please supply/repair the following items
             </h3>
             <div className="flex-1 text-right text-xs">
@@ -80,7 +85,7 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
           </div>
 
           <div className="flex items-baseline gap-x-2 mb-6">
-            <h3 className="text-sm">DELIVERY DATE:</h3>
+            <h3 className="text-[13px]">DELIVERY DATE:</h3>
             <div className="border-b-1.5 border-black flex-1">
               {format(purchaseOrder?.DATE_SUPPLIED, "do 'of' MMM. yyyy")}
             </div>
@@ -89,22 +94,22 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
 
         {/* table */}
         <div className="overflow-x-auto border-2 border-b-0 border-black">
-          <table className="min-w-full divide-y-2 divide-black bg-white text-sm border-collapse text-left">
+          <table className="min-w-full divide-y-2 divide-black bgwhite text-[13px] border-collapse text-left">
             <thead className="ltr:text-left rtl:text-right">
               <tr>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
                   ITEM NO.
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
                   DATE
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
                   QUANTITY
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center w-64">
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center w-64">
                   DESCRIPTION
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center">
                   MODE
                   <br />
                   OF
@@ -113,34 +118,34 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
                 </th>
                 <th
                   colSpan={2}
-                  className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"
+                  className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"
                 >
                   UNIT PRICE
                 </th>
                 <th
                   colSpan={2}
-                  className="py-2 px-2 font-medium text-gray-900 text-center"
+                  className="py-1 px-2 font-medium text-gray-900 text-center"
                 >
                   Total Cost
                 </th>
               </tr>
               {/* Sub-header row for Naira and Kobo */}
               <tr>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-1 px-2 font-medium text-gray-900 border-r-1.5 border-black text-center"></th>
+                <th className="py-1 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
                   ₦
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
+                <th className="py-1 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
                   K
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
+                <th className="py-1 px-2 font-medium text-gray-900 border-1.5 border-black text-center">
                   ₦
                 </th>
-                <th className="py-2 px-2 font-medium text-gray-900 text-center border-t-1.5">
+                <th className="py-1 px-2 font-medium text-gray-900 text-center border-t-1.5">
                   K
                 </th>
               </tr>
@@ -181,7 +186,7 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
                   </td>
                 </tr>
               ))}
-              {[...Array(3)].map((_, index) => (
+              {[...Array(1)].map((_, index) => (
                 <tr key={index}>
                   <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black text-center h-8"></td>
                   <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
@@ -221,8 +226,8 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
           </table>
         </div>
 
-        <div className="mt-8 border-t-1.5 border-black pt-4">
-          <div className="text-xs italic mb-8">
+        <div className="mt-4 border-t-1.5 border-black pt-4">
+          <div className="text-xs italic mb-4">
             <p>
               I certify delivery within 24 - 48 Hrs as per moment child you
               provided or let new AA 3.1
@@ -237,29 +242,31 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
           </div>
 
           <div className="border-t-1.5 border-black pt-4">
-            <div className="flex items-baseline gap-x-2 mb-8">
-              <h3 className="text-sm">Deliver to</h3>
+            <div className="flex items-baseline gap-x-2 mb8">
+              <h3 className="text-[13px]">Deliver to</h3>
               <div className="border-b-1.5 border-black flex-1">
                 {purchaseOrder?.DEPARTMENT_SUPPLIED}
               </div>
             </div>
 
-            <div className="text-xs italic mb-6">
+            <div className="text-xs italic mb-4">
               <p>
                 I certify that the above mentioned goods have been received in
                 good order and condition and taken on charge under Stores
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-8 mb-8">
+            <div className="grid grid-cols-2 gap-x-8 mb-6">
               <div className="flex items-baseline gap-x-2">
-                <h3 className="text-sm whitespace-nowrap">Received Note No</h3>
+                <h3 className="text-[13px] whitespace-nowrap">
+                  Received Note No
+                </h3>
                 <div className="border-b-1.5 border-black flex-1">
                   {purchaseOrder?.RECEIVED_NOTE_NO}
                 </div>
               </div>
               <div className="flex items-baseline gap-x-2">
-                <h3 className="text-sm">Date</h3>
+                <h3 className="text-[13px]">Date</h3>
                 <div className="border-b-1.5 border-black flex-1">
                   {format(
                     purchaseOrder?.RECEIVED_NOTE_DATE,
@@ -269,15 +276,15 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
               </div>
             </div>
 
-            <div className="flex justify-end mb-8">
+            <div className="flex justify-end mb-">
               <div className="text-center">
                 <div className="border-b-1.5 border-black w-64 mb-1"></div>
                 <p className="text-xs italic">Storekeeper / Receiver</p>
               </div>
             </div>
 
-            <div className="flex items-baseline gap-x-2 mb-8">
-              <h3 className="text-sm">Date</h3>
+            <div className="flex items-baseline gap-x-2 mb-4">
+              <h3 className="text-[13px]">Date</h3>
               <div className="border-b-1.5 border-black flex-1"></div>
             </div>
 
