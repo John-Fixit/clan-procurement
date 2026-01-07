@@ -21,6 +21,7 @@ import { LuDownload } from "react-icons/lu";
 import { findProjectType } from "../../../../utils/findProjectType";
 import useDrawerStore from "../../../../hooks/useDrawerStore";
 import { useLocation } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
@@ -75,19 +76,56 @@ export default function JobOrderDetail({ details }) {
 
     printWindow.document.write(`<!doctype html>
       <html>
-        <head>${headContent}</head>
+        <head>${headContent}
+        <style>
+        /*Ensure print styles here if needed*/
+        @media print {
+        body {
+          margin: 0;
+        }
+    }
+        </style>
+        </head>
         <body>${element.outerHTML}</body>
       </html>`);
 
     printWindow.document.close();
-    printWindow.focus();
 
-    // Wait a tick so resources load, then trigger print dialog
+    printWindow.addEventListener("load", () => {
+      printWindow.focus();
+
+      // Wait a tick so resources load, then trigger print dialog
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    });
+
+    // Fallback timeout in case load event doesn't fire
     setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 300);
+      if (!printWindow.closed) {
+        printWindow.print();
+        printWindow.close();
+      }
+    }, 3000);
   };
+
+  // const handlePrint = useReactToPrint({
+  //   content: () => {
+  //     return findProjectType(jobOrder.ORDER_TYPE)?.value == "2"
+  //       ? componentRef.current
+  //       : jobOrderRef.current;
+  //   },
+  //   documentTitle: `${findProjectType(jobOrder.ORDER_TYPE).label}_Document}`,
+  //   onBeforePrint: () => console.log("Before print"),
+  //   onAfterPrint: () => console.log("After print"),
+  //   // Optional: Remove the iframe after printing
+  //   removeAfterPrint: true,
+  // });
+
+  // const handleDownload = () => {
+  //   handlePrint();
+  // };
 
   const handleOpenChangeStatus = () => {
     openDrawer({

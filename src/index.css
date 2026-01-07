@@ -14,6 +14,7 @@
               --color-success:#039855;
               --font-outfit: Outfit, sans-serif;
               --font-primary: Outfit, sans-serif;
+              --font-serif: Times New Roman, serif;
 
 }
 
@@ -27,3 +28,9 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
+
+ .letter-space {
+                        transform: scaleX(1.2);
+                        transform-origin: left;
+                        margin-inline-end: 12px;
+                      }
