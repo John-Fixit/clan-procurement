@@ -83,6 +83,23 @@ export default function JobOrderDetail({ details }) {
         body {
           margin: 0;
         }
+          /* Force each section to start on a new page */
+      .print\\:break-before-page {
+        page-break-before: always;
+        break-before: page;
+      }
+      
+      /* Prevent page breaks inside each section */
+      .print\\:break-after-page {
+        page-break-after: always;
+        break-after: page;
+      }
+      
+      /* Optional: avoid breaking the first page */
+      .print\\:break-before-page:first-child {
+        page-break-before: auto;
+        break-before: auto;
+      }
     }
         </style>
         </head>
@@ -110,23 +127,6 @@ export default function JobOrderDetail({ details }) {
     }, 3000);
   };
 
-  // const handlePrint = useReactToPrint({
-  //   content: () => {
-  //     return findProjectType(jobOrder.ORDER_TYPE)?.value == "2"
-  //       ? componentRef.current
-  //       : jobOrderRef.current;
-  //   },
-  //   documentTitle: `${findProjectType(jobOrder.ORDER_TYPE).label}_Document}`,
-  //   onBeforePrint: () => console.log("Before print"),
-  //   onAfterPrint: () => console.log("After print"),
-  //   // Optional: Remove the iframe after printing
-  //   removeAfterPrint: true,
-  // });
-
-  // const handleDownload = () => {
-  //   handlePrint();
-  // };
-
   const handleOpenChangeStatus = () => {
     openDrawer({
       viewName: "update-procurement-status",
@@ -153,7 +153,12 @@ export default function JobOrderDetail({ details }) {
             </div>
           </div>
           {findProjectType(jobOrder.ORDER_TYPE)?.value === "2" ? (
-            <LocalPurchaseOrder details={details} componentRef={componentRef} />
+            <>
+              <LocalPurchaseOrder
+                details={details}
+                componentRef={componentRef}
+              />
+            </>
           ) : (
             <JoborderTemplate details={details} componentRef={jobOrderRef} />
           )}
