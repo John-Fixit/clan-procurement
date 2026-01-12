@@ -26,19 +26,7 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
 
   const purchaseOrder = details?.data || {};
 
-  const items = [
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-    ...details.procurement_items,
-  ];
+  const items = [...details.procurement_items];
 
   const grand_total = items?.reduce((acc, curr) => {
     return acc + Number(curr?.unit_price) * Number(curr?.quantity);
