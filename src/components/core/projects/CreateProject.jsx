@@ -147,6 +147,8 @@ const CreateProject = () => {
     trigger,
   } = hook_form_props;
 
+  console.log(watch());
+
   const project_type = watch("project_type");
 
   const { mutateAsync: mutateAddProject, isPending: isSubmitting } =

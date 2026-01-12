@@ -1,6 +1,6 @@
 import { Button, Input, Textarea, User } from "@heroui/react";
 import { Controller } from "react-hook-form";
-import { Select, DatePicker } from "antd";
+import { Select, DatePicker, Drawer } from "antd";
 import dayjs from "dayjs";
 import { IoChevronForward } from "react-icons/io5";
 import { useGetAllStaff, useGetDepartment } from "../../../service/api/general";
@@ -9,11 +9,12 @@ import { filePrefix } from "../../../utils/file-prefix";
 import { FaUser } from "react-icons/fa";
 import { useGetTax } from "../../../service/api/setting";
 import { useGetVendor } from "../../../service/api/vendor";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { findProjectType } from "../../../utils/findProjectType";
+import CreateVendor from "../vendor/create-vendor/CreateVendor";
 
 const ProjectInformation = (props) => {
-  const { control, watch, handleNext } = props;
+  const { control, watch, setValue, handleNext } = props;
   const project_type = watch("project_type");
 
   const { userData } = useCurrentUser();
@@ -27,6 +28,15 @@ const ProjectInformation = (props) => {
   const { data: get_tax, isPending: isLoadingTx } = useGetTax();
 
   const { data: get_vendors, isPending: isLoadingVendors } = useGetVendor();
+
+  const [isOtherVendor, setIsOtherVendor] = useState(null);
+
+  const openOtherVendorDrawer = () => {
+    setIsOtherVendor(true);
+  };
+  const closeOtherVendorDrawer = () => {
+    setIsOtherVendor(false);
+  };
 
   const vendorsList = useMemo(
     () =>
@@ -161,6 +171,7 @@ const ProjectInformation = (props) => {
               isLoadingTx={isLoadingTx}
               isLoadingVendors={isLoadingVendors}
               vendorsList={vendorsList}
+              openOtherVendorDrawer={openOtherVendorDrawer}
             />
           ) : (
             findProjectType(project_type).value === "2" && (
@@ -172,6 +183,8 @@ const ProjectInformation = (props) => {
                 taxOptions={taxOptions}
                 isLoadingVendors={isLoadingVendors}
                 vendorsList={vendorsList}
+                setValue={setValue}
+                openOtherVendorDrawer={openOtherVendorDrawer}
               />
             )
           )}
@@ -183,6 +196,13 @@ const ProjectInformation = (props) => {
           </Button>
         </div>
       </main>
+
+      <Drawer open={isOtherVendor} onClose={closeOtherVendorDrawer} size={1000}>
+        <CreateVendor
+          closeExternalDrawer={closeOtherVendorDrawer}
+          setExternalValue={setValue}
+        />
+      </Drawer>
     </>
   );
 };
@@ -196,6 +216,7 @@ const JobOrderForm = ({
   isLoadingTax,
   vendorsList,
   isLoadingVendors,
+  openOtherVendorDrawer,
 }) => {
   return (
     <>
@@ -378,10 +399,23 @@ const JobOrderForm = ({
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={vendorsList}
+                options={[
+                  ...vendorsList,
+                  {
+                    value: "other",
+                    label: "Other",
+                  },
+                ]}
                 loading={isLoadingVendors}
                 labelInValue
                 {...field}
+                onChange={(val) => {
+                  if (val?.value === "other") {
+                    openOtherVendorDrawer();
+                  } else {
+                    field.onChange(val);
+                  }
+                }}
                 size="large"
                 className="w-full"
                 placeholder="Select vendor"
@@ -492,6 +526,7 @@ const PurchaseOrderForm = ({
   staffList,
   vendorsList,
   isLoadingVendors,
+  openOtherVendorDrawer,
 }) => {
   return (
     <>
@@ -660,10 +695,23 @@ const PurchaseOrderForm = ({
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={vendorsList}
+                options={[
+                  ...vendorsList,
+                  {
+                    label: "Other",
+                    value: "other",
+                  },
+                ]}
                 loading={isLoadingVendors}
                 labelInValue
                 {...field}
+                onChange={(val) => {
+                  if (val?.value === "other") {
+                    openOtherVendorDrawer();
+                  } else {
+                    field.onChange(val);
+                  }
+                }}
                 size="large"
                 className="w-full"
                 placeholder="Select vendor"

@@ -11,11 +11,13 @@ import { uploadFileData } from "../../../../utils/uploadFile";
 import useCurrentUser from "../../../../hooks/useCurrentUser";
 import useDrawerStore from "../../../../hooks/useDrawerStore";
 
-const CreateVendor = () => {
+const CreateVendor = ({ closeExternalDrawer, setExternalValue }) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
   const { closeDrawer, data } = useDrawerStore();
+
+  const viewName = useDrawerStore((state) => state.data.viewName);
 
   const vendorDetail = data?.vendorDetail;
 
@@ -148,8 +150,15 @@ const CreateVendor = () => {
 
       // Submit to backend
       const res = await mutateCreateVendor(json);
+      setExternalValue &&
+        setExternalValue("vendor", {
+          label: json?.vendor_name,
+          value: res?.data?.data?.data,
+        });
+      reset();
       successToast(res?.data?.message);
-      closeDrawer();
+      viewName === "create-vendor" && closeDrawer();
+      closeExternalDrawer && closeExternalDrawer();
     } catch (err) {
       catchErrFunc(err);
     } finally {
