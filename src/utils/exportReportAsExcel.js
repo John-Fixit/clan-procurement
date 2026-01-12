@@ -15,7 +15,6 @@ export const exportReportAsExcel = ({
   conditionalTotal = null, // NEW: Object for conditional totaling
   // Example: { filterKey: 'itemDescription', filterValues: ['STOCK CONSUMABLES', 'FIXED ASSETS NOT YET ALLOCATED'], columns: [2, 3, 4] }
 }) => {
-  console.log({ headers, headerKeys });
   if (!excelData || excelData.length === 0) {
     console.error("No data to export.");
     return;

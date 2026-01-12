@@ -40,7 +40,6 @@ const NotificationDropdown = () => {
   };
 
   const handleTreatNotification = async (notification) => {
-    console.log("notification clicked", notification?.PROCUREMENT_ID);
     updateNotification(notification?.ID);
     await getVendorDetail(notification);
     setIsOpen(false);

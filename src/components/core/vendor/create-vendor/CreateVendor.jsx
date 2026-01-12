@@ -126,8 +126,6 @@ const CreateVendor = ({ closeExternalDrawer, setExternalValue }) => {
         values.support_documents || []
       );
 
-      // console.log("Documents after upload:", uploadedDocuments);
-
       // Map the uploaded documents to the attachments format
       const attachments = uploadedDocuments
         .filter((doc) => doc.uploaded && doc.url) // Only include successfully uploaded documents

@@ -35,8 +35,6 @@ const LocalPurchaseReportTable = ({ projects, isLoading, isError }) => {
     }, 0);
   };
 
-  console.log(expandedRows);
-
   return (
     <div className="w-full">
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

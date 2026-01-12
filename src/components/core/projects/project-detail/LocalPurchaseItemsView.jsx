@@ -5,8 +5,6 @@ import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 const LocalPurchaseItemsView = ({ details }) => {
   const items = details?.procurement_items;
 
-  console.log(items);
-
   // const calculateTaxValue = useCallback((unit_price, tax) => {
   //   const taxNumber = Number(tax || 0);
   //   const priceNumber = Number(unit_price || 0);
