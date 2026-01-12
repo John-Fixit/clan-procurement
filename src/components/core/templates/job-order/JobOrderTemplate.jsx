@@ -2,6 +2,7 @@ import { useRef } from "react";
 
 import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
 import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
+import JobOrderTandC from "./JobOrderTandC";
 
 const JoborderTemplate = ({
   componentRef,
@@ -15,7 +16,7 @@ const JoborderTemplate = ({
 
   return (
     <main ref={ref}>
-      <div className="bg-white min-w-220 relative w-full h-full overflow-hidden flex flex-col gap-8 font-serif! font-normal! text-black!">
+      <div className="bg-white min-w-220 relative w-full h-full overflow-hidden flex flex-col gap-4 font-serif! font-normal! text-black!">
         <div>
           <img
             src={ncaaLogo}
@@ -23,14 +24,14 @@ const JoborderTemplate = ({
             className="absolute inset-0 m-auto w-[600px] h-[600px] object-contain opacity-15 z-0 pointer-events-none"
           />
           {/* Header Section */}
-          <div className="relative">
+          <div className="relative mb-6">
             <div className="flex justify-center gap-x-6 w-full ml-6">
               <div className="absolute top-0 left-4">
                 <img src={ncaaLogo} alt="NCAA Logo" width={110} height={110} />
               </div>
               <div className="flex flex-col items-center justify-center gap-y-0.5 mb-1 mt-4">
                 <h2
-                  className="text-[32px] tracking-wide font-semibold font-serif text-[#281867]"
+                  className="text-[32px] tracking-wide font-semibold font-serif text-[#281867] leading-8"
                   style={{
                     transform: "scaleY(1.3)",
                     transformOrigin: "center",
@@ -38,9 +39,16 @@ const JoborderTemplate = ({
                 >
                   NIGERIAN CIVIL AVIATION AUTHORITY
                 </h2>
+                <div className="ml-auto text-end">
+                  <p>
+                    Corporate Headquarters: Nnamdi Azikiwe International
+                    Airport, Domestic Wing, Abuja.
+                  </p>
+                  <p>Tel: +234 811 115 0990, +234 811 115 111</p>
+                </div>
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center">
+            {/* <div className="flex flex-col justify-center items-center">
               <h3 className="font-medium text-3xl tracking-wider font-serif text-black">
                 (AVIATION HOUSE)
               </h3>
@@ -53,11 +61,11 @@ const JoborderTemplate = ({
               <div className="border-2 py-1 px-2 mt-1 bg-gray-200 text-[16px] uppercase font-serif text-black">
                 JOB ORDER {`: No ${jobOrderData?.ORDER_NO}`}
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Form Fields */}
-          <div className="space-y-1 text-[13px] my-4">
+          <div className="space-y-1 text-[13px] my-2">
             <div className="grid grid-cols-2 gap-x-12">
               <div className="space-y-2">
                 <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-1">
@@ -203,19 +211,13 @@ const JoborderTemplate = ({
           </div>
 
           {/* Main Content */}
-          <div className="space-y-2 text-[13px] mb-4">
+          <div className="space-y-2 text-[13px] mb-3">
             <div className="flex">
               <span className="mr-2">I</span>
               <div className="flex-1 border-b-2 border-dotted border-black text-black font-light">
                 {jobOrderData?.VENDOR_NAME}
               </div>
-              <span
-                className="ml-2 font-light text-black"
-                style={{
-                  transform: "scaleX(1.2)",
-                  transformOrigin: "left",
-                }}
-              >
+              <span className="ml-2 font-light text-black letter-space">
                 (Name)
               </span>
             </div>
@@ -264,7 +266,7 @@ const JoborderTemplate = ({
               return lines?.map((line, index) => (
                 <div
                   key={index}
-                  className="border-b-2 border-dotted border-black min-h-3 py1 text-black font-light"
+                  className="border-b-2 border-dotted border-black min-h3 py1 text-black font-light"
                 >
                   {line || "\u00A0"}
                 </div>
@@ -273,7 +275,7 @@ const JoborderTemplate = ({
           </div>
 
           {/* Payment Section */}
-          <div className="mb-4">
+          <div className="mb-">
             <div className="flex items-en">
               <span className="text-[13px] mr-2 font-light text-black letter-space me-7!">
                 For which the NCAA
@@ -321,7 +323,7 @@ const JoborderTemplate = ({
           </div>
 
           {/* Certification Section */}
-          <div className="border-t-2 border-black pt-4 mb-4">
+          <div className="border-t-2 border-black pt-4 mb-">
             <p className="text-[13px] mb font-light text-black letter-space">
               I certify the contract has been satisfactory completed, inspected,
               tested and found to be in accordance with specifications above.
@@ -354,12 +356,12 @@ const JoborderTemplate = ({
             <h3 className="font-bold text-base mb-3 underline letter-space">
               BUDGET/VOTE SECTION:
             </h3>
-            <p className="text-[13px] mb-4 text-black font-light letter-space">
+            <p className="text-[13px] mb4 text-black font-light letter-space">
               I certify that funds are available under
             </p>
             <div className="space-y-6">
               <div className="flex justify-between items-start">
-                <div className="space-y-7">
+                <div className="space-y-5">
                   <div>
                     <span className="text-[13px] letter-space">Head</span>
                   </div>
@@ -371,7 +373,7 @@ const JoborderTemplate = ({
                     </div>
                   </div>
                 </div>
-                <div className="space-y-7">
+                <div className="space-y-5">
                   <div>
                     <span className="text-[13px] letter-space">Subhead</span>
                   </div>
@@ -382,7 +384,7 @@ const JoborderTemplate = ({
                     </span>
                   </div>
                 </div>
-                <div className="space-y-7">
+                <div className="space-y-5">
                   <div>
                     <span className="text-[13px] opacity-0">not vissible</span>
                     {/* just for spacing */}
@@ -409,6 +411,7 @@ const JoborderTemplate = ({
           </p>
         </div>
       </div>
+      <JobOrderTandC />
     </main>
   );
 };
