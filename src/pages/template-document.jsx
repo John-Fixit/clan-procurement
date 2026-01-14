@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { findProjectType } from "../utils/findProjectType";
 import { useParams } from "react-router-dom";
 import { useGetProjectByMutation } from "../service/api/project";
 import { Button, Result } from "antd";
 import StarLoader from "../components/core/loaders/StarLoader";
 import LocalPurchaseOrder from "../components/core/templates/local-purchase-order/LocalPurchaseOrder";
-import JoborderTemplate from "../components/core/templates/job-order/jobOrderTemplate";
+import JoborderTemplate from "../components/core/templates/job-order/JobOrderTemplate";
 
 const ViewTemplateDocument = () => {
   const docId = useParams()?.id;
