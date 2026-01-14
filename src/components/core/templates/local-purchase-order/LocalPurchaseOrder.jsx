@@ -245,7 +245,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                               {item?.date}
                             </td>
                             <td className="py-1 px-2 font-light text-gray-900 border-r-1.5 border-black">
-                              {item?.quantity}
+                              {item?.quantity} {item?.unit_of_measurement}
                             </td>
                             <td className="py-1 px-2 font-light text-gray-900 border-r-1.5 border-black">
                               {item?.description}
