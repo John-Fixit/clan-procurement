@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { findProjectType } from "../utils/findProjectType";
-import LocalPurchaseOrder from "../components/core/templates/local-purchase-order/LocalPurchaseOrder";
-import JoborderTemplate from "../components/core/templates/job-order/jobOrderTemplate";
+import LocalPurchaseOrder from "../components/core/templates/local-purchase-order/LocalPurchaseOrder.jsx";
+import JoborderTemplate from "../components/core/templates/job-order/jobOrderTemplate.jsx";
 import { useParams } from "react-router-dom";
 import { useGetProjectByMutation } from "../service/api/project";
 import { Button, Result } from "antd";
