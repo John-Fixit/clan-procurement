@@ -152,8 +152,7 @@ export default function JobOrderDetail({ details }) {
         const res = await createQrCode({
           data: `${baseUrl}/template/document/${jobOrder?.ID}`,
         });
-        console.log(res);
-        setTemplateQrCode(res?.data?.data);
+        setTemplateQrCode(res?.data);
         // setQr_link(res?.data?.data);
 
         // const file = base64ToFile(
@@ -226,6 +225,7 @@ export default function JobOrderDetail({ details }) {
                 details={{ ...details, qrCode: templateQrCode }}
                 componentRef={componentRef}
                 bgColor={templateDownloadColor}
+                qrCode={templateQrCode}
               />
             </>
           ) : (
@@ -233,6 +233,7 @@ export default function JobOrderDetail({ details }) {
               details={{ ...details, qrCode: templateQrCode }}
               componentRef={jobOrderRef}
               bgColor={templateDownloadColor}
+              qrCode={templateQrCode}
             />
           )}
         </div>

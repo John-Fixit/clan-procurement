@@ -30,8 +30,6 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
 
   const jobOrderData = details?.data || {};
 
-  console.log(details);
-
   return (
     <main className={clsx(printable ? "hidden" : "")}>
       <main ref={ref}>
