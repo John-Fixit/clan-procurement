@@ -385,7 +385,12 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                       </div>
                     </div>
 
-                    <div className="text-xs mt-4 text-center">
+                    <div
+                      className={clsx(
+                        printable ? "fixed w-full bottom-12" : "",
+                        "text-xs mt-4 text-center"
+                      )}
+                    >
                       <p>
                         <span className="font-medium">Distribution:</span> 1
                         Customer &nbsp;&nbsp; Original to be attached to the

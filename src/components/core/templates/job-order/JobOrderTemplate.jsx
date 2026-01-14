@@ -427,7 +427,12 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
             </div>
           </div>
           {/* Footer */}
-          <div className="border-t-2 border-black mt6 mt-3">
+          <div
+            className={clsx(
+              printable ? "fixed w-full bottom-14" : "",
+              "border-t-2 border-black mt6 mt-3"
+            )}
+          >
             <p className="text-xs text-center ">
               Distribution: 1 & 2 Copy (Client) 3rd Copy Finance, 4th Copy
               Purchasing
