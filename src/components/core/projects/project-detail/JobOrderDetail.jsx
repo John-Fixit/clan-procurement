@@ -14,14 +14,13 @@ import {
 import Button from "../../../shared/ui/Button";
 import JoborderTemplate from "../../templates/job-order/JobOrderTemplate";
 import LocalPurchaseOrder from "../../templates/local-purchase-order/LocalPurchaseOrder";
-import { Chip } from "@heroui/react";
+import { Chip, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { PiMoneyWavyLight } from "react-icons/pi";
 import { LuDownload } from "react-icons/lu";
 import { findProjectType } from "../../../../utils/findProjectType";
 import useDrawerStore from "../../../../hooks/useDrawerStore";
 import { useLocation } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
@@ -29,6 +28,8 @@ export default function JobOrderDetail({ details }) {
   const { openDrawer } = useDrawerStore();
 
   const location = useLocation().pathname;
+
+  const [templateDownloadColor, setTemplateDownloadColor] = useState("");
 
   const componentRef = useRef();
   const jobOrderRef = useRef();
@@ -133,6 +134,11 @@ export default function JobOrderDetail({ details }) {
       projectDetail: details,
     });
   };
+
+  const templateClrs =
+    findProjectType(jobOrder.ORDER_TYPE)?.value === "2"
+      ? ["", "bg-blue-500", "bg-green-400", "bg-pink-400"]
+      : ["", "bg-blue-400", "bg-yellow-400"];
   return (
     <>
       {viewTemplate ? (
@@ -146,10 +152,35 @@ export default function JobOrderDetail({ details }) {
             >
               <FaRegEyeSlash /> Close Template
             </Button>
+
             <div className="">
-              <Button radius="full" onPress={handleDownload} isIconOnly={true}>
-                <LuDownload size={20} />
-              </Button>
+              <Popover placement="right-end" showArrow={true} radius="sm">
+                <PopoverTrigger>
+                  <Button radius="full" isIconOnly={true}>
+                    <LuDownload size={20} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex flex-col gap-2">
+                    {templateClrs.map((clr) => (
+                      <Button
+                        radius="full"
+                        onPress={() => {
+                          setTemplateDownloadColor(clr);
+
+                          setTimeout(() => {
+                            handleDownload();
+                          }, 500);
+                        }}
+                        isIconOnly={true}
+                        className={`${clr} text-white`}
+                      >
+                        {!clr && <LuDownload size={20} />}
+                      </Button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
           {findProjectType(jobOrder.ORDER_TYPE)?.value === "2" ? (
@@ -157,10 +188,15 @@ export default function JobOrderDetail({ details }) {
               <LocalPurchaseOrder
                 details={details}
                 componentRef={componentRef}
+                bgColor={templateDownloadColor}
               />
             </>
           ) : (
-            <JoborderTemplate details={details} componentRef={jobOrderRef} />
+            <JoborderTemplate
+              details={details}
+              componentRef={jobOrderRef}
+              bgColor={templateDownloadColor}
+            />
           )}
         </div>
       ) : (

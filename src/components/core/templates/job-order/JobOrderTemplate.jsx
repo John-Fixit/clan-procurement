@@ -4,8 +4,9 @@ import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
 import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 import JobOrderTandC from "./JobOrderTandC";
 import clsx from "clsx";
+import { numberToWord } from "../../../../utils/number-to-word";
 
-const JoborderTemplate = ({ details, componentRef }) => {
+const JoborderTemplate = ({ details, componentRef, bgColor }) => {
   return (
     <>
       <TemplateComponent
@@ -17,12 +18,13 @@ const JoborderTemplate = ({ details, componentRef }) => {
         details={details}
         componentRef={componentRef}
         printable={true}
+        bgColor={bgColor}
       />
     </>
   );
 };
 
-const TemplateComponent = ({ componentRef, details, printable }) => {
+const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
   const defaultRef = useRef(null);
   const ref = componentRef || defaultRef;
 
@@ -314,7 +316,9 @@ const TemplateComponent = ({ componentRef, details, printable }) => {
               </div>
 
               <div className="flex items-baseline gap-x-1 w-full">
-                <div className="flex-1 border-b-2 border-dotted border-black px-1 w-full"></div>
+                <div className="flex-1 border-b-2 border-dotted border-black px-1 w-full text-base">
+                  {numberToWord(jobOrderData?.JOB_AMOUNT).naira} Naira only
+                </div>
                 <div>
                   <div className="flex items-center justify-end mt-2 space-x-2">
                     <span className="text-[13px]">N</span>
@@ -322,12 +326,12 @@ const TemplateComponent = ({ componentRef, details, printable }) => {
                       {formatNumberWithComma(jobOrderData?.JOB_AMOUNT)}
                     </div>
                     <span className="text-[13px]">K</span>
-                    <div className=" border-dotted border-black"></div>
+                    <div className="border-dotted border-black"></div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className=" border-b-2 border-black/60 w-3/5 mx-auto h-2"></div>
+            <div className="border-b-2 border-dotted border-black mx-auto h-6"></div>
             {/* Signature Section */}
             <div className="pt4 mb-3">
               <div className="flex justify-between">
@@ -432,6 +436,9 @@ const TemplateComponent = ({ componentRef, details, printable }) => {
               </span>
             </p>
           </div>
+          {printable ? (
+            <div className={`fixed w-full bottom-0 h-4 ${bgColor}`}></div>
+          ) : null}
         </div>
         {printable ? <JobOrderTandC /> : null}
       </main>

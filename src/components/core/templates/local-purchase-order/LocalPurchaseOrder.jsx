@@ -4,8 +4,9 @@ import { format } from "date-fns";
 import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 import { useRef } from "react";
 import LocalPurchaseTandC from "./LocalPurchaseTandC";
+import { numberToWord } from "../../../../utils/number-to-word";
 
-const LocalPurchaseOrder = ({ details, componentRef }) => {
+const LocalPurchaseOrder = ({ details, componentRef, bgColor }) => {
   return (
     <>
       <TemplateComponent
@@ -16,12 +17,13 @@ const LocalPurchaseOrder = ({ details, componentRef }) => {
       <TemplateComponent
         details={details}
         componentRef={componentRef}
+        bgColor={bgColor}
         printable={true}
       />
     </>
   );
 };
-const TemplateComponent = ({ details, componentRef, printable }) => {
+const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
   const defaultRef = useRef(null);
   const ref = componentRef || defaultRef;
 
@@ -33,7 +35,7 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
     return acc + Number(curr?.unit_price) * Number(curr?.quantity);
   }, 0);
 
-  const chunkSize = printable ? 15 : items?.length;
+  const chunkSize = printable ? 20 : items?.length;
 
   const dividedItems = [];
   for (let i = 0; i < items.length; i += chunkSize) {
@@ -43,12 +45,12 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
   return (
     <main className={clsx(printable ? "hidden" : "")}>
       <main ref={ref}>
-        {dividedItems?.map((dvdItems, index, arr) => {
+        {dividedItems?.map((dvdItems, dvdIdx, arr) => {
           return (
             <>
               <div
-                key={index}
-                className="p6 bg-white min-w-220 relative w-full h-full overflow-hidden font-serif! font-normal! text-black! print:break-before-page print:break-after-page"
+                key={dvdIdx}
+                className="relative bg-white min-w-220 w-full h-full overflow-hidden font-serif! font-normal! text-black! print:break-before-page print:break-after-page"
               >
                 <div>
                   <img
@@ -167,7 +169,7 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                     <table className="min-w-full divide-y-2 divide-black bgwhite text-[13px] border-collapse text-left">
                       <thead className="ltr:text-left rtl:text-right">
                         <tr>
-                          <th className="py-1 px-2 font-semibold text-gray-900 border-r-1.5 border-black text-center">
+                          <th className="py-1 px-2 font-semibold text-gray-900 border-r-1.5 border-black text-center w-10">
                             ITEM NO.
                           </th>
                           <th className="py-1 px-2 font-semibold text-gray-900 border-r-1.5 border-black text-center">
@@ -225,8 +227,9 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                         {/* Empty rows for manual entry */}
                         {dvdItems?.map((item, index) => (
                           <tr key={index + crypto.randomUUID()}>
-                            <td className="py-1 px-2 font-light text-gray-900 border-r-1.5 border-black text-center h-">
-                              {item?.product_name}
+                            <td className="py-1 px-2 font-light text-gray-900 border-r-1.5 border-black text-center">
+                              {/* {item?.product_name} */}
+                              {index + 1}
                             </td>
                             <td className="py-1 px-2 font-light text-gray-900 border-r-1.5 border-black">
                               {item?.date}
@@ -259,25 +262,25 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                         ))}
                         {[
                           ...Array(
-                            15 - dvdItems?.length > 0
-                              ? 15 - dvdItems?.length
+                            20 - dvdItems?.length > 0
+                              ? 20 - dvdItems?.length
                               : 0
                           ),
                         ].map((_, index) => (
                           <tr key={index}>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black text-center h-"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
-                            <td className="py-2.5 px-2 font-light text-gray-900"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black text-center h-"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                            <td className="py-3 px-2 font-light text-gray-900 border-r-1.5 border-black"></td>
+                            <td className="py-3 px-2 font-light text-gray-900"></td>
                           </tr>
                         ))}
                         {/* Grand Total row */}
-                        {arr?.length - 1 && index ? (
+                        {arr?.length - 1 === dvdIdx ? (
                           <tr>
                             <td
                               colSpan={7}
@@ -285,9 +288,14 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                                 "pe-4 text-gray-700 border-r-2 border-b-4 border-double border-black text-end py-"
                               )}
                             >
-                              <h2 className="text-lg font-medium">
-                                Grand Total
-                              </h2>
+                              <div className="flex gap-2 justify-between items-center ms-4">
+                                <p className="text-base">
+                                  {numberToWord(grand_total).naira} Naira only
+                                </p>
+                                <h2 className="text-lg font-medium">
+                                  Grand Total ₦
+                                </h2>
+                              </div>
                             </td>
                             <td
                               className={clsx(
@@ -308,7 +316,7 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                   </div>
                 </div>
 
-                <div className="mt- border-t-1.5 border-black pt-4">
+                <div className="mt- borde-1.5 border-black pt-4">
                   <div className="text-xs italic mb-4">
                     <p>
                       I certify delivery within 24 - 48 Hrs as per moment child
@@ -323,7 +331,7 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                     </div>
                   </div>
 
-                  <div className="border-t-1.5 border-black pt4">
+                  <div className="border--1.5 border-black pt4">
                     <div className="flex items-baseline gap-x-2 mb8 mt-2">
                       <h3 className="text-[13px]">Deliver to</h3>
                       <div className="border-b-1.5 border-black flex-1">
@@ -359,16 +367,22 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                       </div>
                     </div>
 
-                    <div className="flex justify-end mb-">
+                    {/* <div className="flex justify-end mb-">
                       <div className="text-center">
                         <div className="border-b-1.5 border-black w-64 mb-1"></div>
                         <p className="text-xs italic">Storekeeper / Receiver</p>
                       </div>
-                    </div>
+                    </div> */}
 
-                    <div className="flex items-baseline gap-x-2 mb4">
-                      <h3 className="text-[13px]">Date</h3>
-                      <div className="border-b-1.5 border-black flex1 min-w-56"></div>
+                    <div className="flex justify-between items-start mt-8">
+                      <div className="flex items-baseline gap-x-2">
+                        <h3 className="text-[13px]">Date</h3>
+                        <div className="border-b-1.5 border-black flex1 min-w-56"></div>
+                      </div>
+                      <div className="text-center">
+                        <div className="border-b-1.5 border-black w-64"></div>
+                        <p className="text-xs italic">Storekeeper / Receiver</p>
+                      </div>
                     </div>
 
                     <div className="text-xs mt-4 text-center">
@@ -381,6 +395,10 @@ const TemplateComponent = ({ details, componentRef, printable }) => {
                     </div>
                   </div>
                 </div>
+
+                {printable ? (
+                  <div className={`fixed w-full bottom-0 h-4 ${bgColor}`}></div>
+                ) : null}
               </div>
               {printable ? <LocalPurchaseTandC /> : null}
             </>
