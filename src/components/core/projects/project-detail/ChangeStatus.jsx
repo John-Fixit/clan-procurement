@@ -17,6 +17,7 @@ const ChangeStatus = (props) => {
       ) || []
     );
   }, [get_status, projectDetail?.STATUS]);
+
   return (
     <>
       <div className="bg-white rounded-xl border border-gray-200 w-full overflow-y-auto">
@@ -39,7 +40,7 @@ const ChangeStatus = (props) => {
             <p className="text-sm text-gray-600 mb-2">Current Status</p>
             <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-lg font-medium">
               <BiCheck size={18} />
-              {projectDetail?.STATUS_NAME}
+              {projectDetail?.STATUS_NAME || "Draft"}
             </div>
           </div>
 

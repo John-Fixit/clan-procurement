@@ -170,9 +170,7 @@ export default function JobOrderDetail({ details }) {
       }
     };
 
-    if (jobOrder?.IS_APPROVED) {
-      handleGenerateQrCode();
-    }
+    handleGenerateQrCode();
   }, [createQrCode, jobOrder?.ID, jobOrder?.IS_APPROVED]);
 
   return (
