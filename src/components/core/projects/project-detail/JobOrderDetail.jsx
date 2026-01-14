@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FiFileText,
   FiUser,
@@ -21,6 +21,7 @@ import { LuDownload } from "react-icons/lu";
 import { findProjectType } from "../../../../utils/findProjectType";
 import useDrawerStore from "../../../../hooks/useDrawerStore";
 import { useLocation } from "react-router-dom";
+import { useCreateQrCode } from "../../../../service/api/general";
 
 export default function JobOrderDetail({ details }) {
   const jobOrder = details?.data || {};
@@ -33,6 +34,8 @@ export default function JobOrderDetail({ details }) {
 
   const componentRef = useRef();
   const jobOrderRef = useRef();
+
+  const [templateQrCode, setTemplateQrCode] = useState("");
 
   const formatDate = (dateString) => {
     if (!dateString) return null;
@@ -139,6 +142,40 @@ export default function JobOrderDetail({ details }) {
     findProjectType(jobOrder.ORDER_TYPE)?.value === "2"
       ? ["", "bg-blue-500", "bg-green-400", "bg-pink-400"]
       : ["", "bg-blue-400", "bg-yellow-400"];
+
+  const { mutateAsync: createQrCode } = useCreateQrCode();
+
+  useEffect(() => {
+    const handleGenerateQrCode = async () => {
+      const baseUrl = `${window.location.protocol}//${window.location.host}`;
+      try {
+        const res = await createQrCode({
+          data: `${baseUrl}/template/document/${jobOrder?.ID}`,
+        });
+        console.log(res);
+        setTemplateQrCode(res?.data?.data);
+        // setQr_link(res?.data?.data);
+
+        // const file = base64ToFile(
+        //   res?.data?.data,
+        //   `doc_${memoDetail?.MEMO_ID}_QR.jpg`
+        // );
+
+        // const uploadRes = await uploadFileData(file);
+        // await updateQrCode({
+        //   memo_id: memoDetail?.MEMO_ID,
+        //   link: uploadRes?.file_url,
+        // });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (jobOrder?.IS_APPROVED) {
+      handleGenerateQrCode();
+    }
+  }, [createQrCode, jobOrder?.ID, jobOrder?.IS_APPROVED]);
+
   return (
     <>
       {viewTemplate ? (
@@ -186,14 +223,14 @@ export default function JobOrderDetail({ details }) {
           {findProjectType(jobOrder.ORDER_TYPE)?.value === "2" ? (
             <>
               <LocalPurchaseOrder
-                details={details}
+                details={{ ...details, qrCode: templateQrCode }}
                 componentRef={componentRef}
                 bgColor={templateDownloadColor}
               />
             </>
           ) : (
             <JoborderTemplate
-              details={details}
+              details={{ ...details, qrCode: templateQrCode }}
               componentRef={jobOrderRef}
               bgColor={templateDownloadColor}
             />

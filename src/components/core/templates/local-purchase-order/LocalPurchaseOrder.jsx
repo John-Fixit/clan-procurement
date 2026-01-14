@@ -28,8 +28,9 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
   const ref = componentRef || defaultRef;
 
   const purchaseOrder = details?.data || {};
-
-  const items = [...details.procurement_items];
+  const items = details.procurement_items?.length
+    ? [...details.procurement_items]
+    : [];
 
   const grand_total = items?.reduce((acc, curr) => {
     return acc + Number(curr?.unit_price) * Number(curr?.quantity);
@@ -71,7 +72,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                       </div>
                       <div className="flex flex-col items-center justify-center mb-1 mt-4">
                         <h2
-                          className="text-[32px] tracking-wide font-semibold font-serif text-[#281867] leading-8"
+                          className="text-[31px] tracking-wide font-semibold font-serif text-[#281867] leading-8"
                           style={{
                             transform: "scaleY(1.3)",
                             transformOrigin: "center",
@@ -99,6 +100,15 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                         P.M.B 21029, 21038, IKEJA, LAGOS.
                       </h5>
                     </div> */}
+                  </div>
+                  <div className={clsx("absolute top-0 -right-2")}>
+                    {details?.qrCode && (
+                      <img
+                        src={details?.qrCode}
+                        alt=""
+                        className="object-contain w-28 h-28"
+                      />
+                    )}
                   </div>
 
                   <div className="mt3 border-b-2 pb1 border-black pt-2">

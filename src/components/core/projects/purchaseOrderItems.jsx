@@ -178,6 +178,26 @@ const PurchaseOrderItems = (props) => {
                   placeholder="Select a tax"
                 />
               </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-1 font-outfit">
+                  Unit of measurement
+                </label>
+                <Input
+                  type="text"
+                  {...register(
+                    `purchase_order_items.${index}.unit_of_measurement`
+                  )}
+                  onChange={(e) =>
+                    setValue(
+                      `purchase_order_items.${index}.unit_of_measurement`,
+                      e.target.value
+                    )
+                  }
+                  value={watchFieldValues?.[index]?.unit_of_measurement}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                  placeholder="E.g litres, kilograms, etc"
+                />
+              </div>
               {/* <div>
                 <label className="block text-sm text-gray-700 mb-1 font-outfit">
                   Date

@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/protected-route";
 import AllProcurement from "./pages/AllProcurement";
 import ProcurementReport from "./pages/Report";
 import Statuses from "./pages/Statuses";
+import ViewTemplateDocument from "./pages/template-document";
 
 function App() {
   const RedirectToHome = () => {
@@ -67,6 +68,10 @@ function App() {
             element={<RolePermissionSetting />}
           />
         </Route>
+        <Route
+          path="template/document/:id"
+          element={<ViewTemplateDocument />}
+        />
         <Route path="*" element={<></>} />
       </Routes>
     </>

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { API_GET } from "../axiosInstance";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { API_GET, LENDNODE_API } from "../axiosInstance";
 
 export const useGetDepartment = ({ company_id = "" }) => {
   return useQuery({
@@ -21,5 +21,17 @@ export const useGetAllStaff = (company_id) => {
       return res?.data?.data;
     },
     queryKey: ["staff"],
+  });
+};
+
+export const useCreateQrCode = () => {
+  return useMutation({
+    mutationFn: async (payload) => {
+      const res = await LENDNODE_API.post(
+        "/memo/create/document_qrcode",
+        payload
+      );
+      return res?.data;
+    },
   });
 };

@@ -30,6 +30,8 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
 
   const jobOrderData = details?.data || {};
 
+  console.log(details);
+
   return (
     <main className={clsx(printable ? "hidden" : "")}>
       <main ref={ref}>
@@ -53,7 +55,7 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                 </div>
                 <div className="flex flex-col items-center justify-center gap-y-0.5 mb-1 mt-4">
                   <h2
-                    className="text-[32px] tracking-wide font-semibold font-serif text-[#281867] leading-8"
+                    className="text-[31px] tracking-wide font-semibold font-serif text-[#281867] leading-8"
                     style={{
                       transform: "scaleY(1.3)",
                       transformOrigin: "center",
@@ -84,6 +86,15 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                 JOB ORDER {`: No ${jobOrderData?.ORDER_NO}`}
               </div>
             </div> */}
+            </div>
+            <div className={clsx("absolute top-0 -right-2")}>
+              {details?.qrCode && (
+                <img
+                  src={details?.qrCode}
+                  alt=""
+                  className="object-contain w-28 h-28"
+                />
+              )}
             </div>
 
             {/* Form Fields */}

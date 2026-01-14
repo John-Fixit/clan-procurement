@@ -47,3 +47,17 @@ AUTH_API.interceptors.request.use((req) => {
   req.headers["Accept"] = "application/json";
   return req;
 });
+
+export const LENDNODE_API = axios.create({
+  baseURL: `https://lendnode.creditclan.com/memo/api/`,
+  // baseURL: `https://ca368d6d2513.ngrok-free.app/api/`,
+});
+LENDNODE_API.interceptors.request.use((req) => {
+  const token = JSON.parse(localStorage.getItem("memo-auth-session"))?.state
+    ?.userData?.token;
+
+  req.headers["Authorization"] = `Bearer ${token}`;
+  req.headers["Content-type"] = "application/json";
+  req.headers["Accept"] = "application/json";
+  return req;
+});

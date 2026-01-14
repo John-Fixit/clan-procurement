@@ -223,6 +223,7 @@ const CreateProject = () => {
           product_id: item?.product_id,
           tax_amount: tax_amount,
           tax_id: item?.tax?.value,
+          unit_of_measurement: item?.unit_of_measurement,
           unit_price: item?.unit_price,
           tax: Number(item?.tax?.PERCENTAGE || 0),
           quantity: item?.quantity,
