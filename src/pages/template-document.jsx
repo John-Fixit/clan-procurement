@@ -6,6 +6,14 @@ import { Button, Result } from "antd";
 import StarLoader from "../components/core/loaders/StarLoader";
 import LocalPurchaseOrder from "../components/core/templates/local-purchase-order/LocalPurchaseOrder";
 import JoborderTemplate from "../components/core/templates/job-order/JobOrderTemplate";
+import {
+  Popover,
+  PopoverTrigger,
+  Button as HeroButton,
+  PopoverContent,
+} from "@heroui/react";
+import { LuDownload } from "react-icons/lu";
+import { downloadTemplate } from "../utils/downloadTemplate";
 
 const ViewTemplateDocument = () => {
   const docId = useParams()?.id;
@@ -45,6 +53,15 @@ const ViewTemplateDocument = () => {
     };
   }, [projectDetail]);
 
+  const templateClrs =
+    order_type?.value === "2"
+      ? ["", "bg-blue-500", "bg-green-400", "bg-pink-400"]
+      : ["", "bg-blue-400", "bg-yellow-400"];
+
+  const handleDownload = () => {
+    downloadTemplate({ componentRef, jobOrderRef, order_type });
+  };
+
   return (
     <>
       <main className="bg-gray-100">
@@ -58,20 +75,53 @@ const ViewTemplateDocument = () => {
               <Result status={"error"} title={<p>An error occurred</p>} />
               <Button onClick={handleRefresh}>Retry</Button>
             </div>
-          ) : order_type?.value === "2" ? (
-            <>
-              <LocalPurchaseOrder
-                details={details}
-                componentRef={componentRef}
-                bgColor={templateDownloadColor}
-              />
-            </>
           ) : (
-            <JoborderTemplate
-              details={details}
-              componentRef={jobOrderRef}
-              bgColor={templateDownloadColor}
-            />
+            <>
+              <div className="flex justify-end">
+                <Popover placement="left-start" showArrow={true} radius="sm">
+                  <PopoverTrigger>
+                    <HeroButton radius="full" isIconOnly={true}>
+                      <LuDownload size={20} />
+                    </HeroButton>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div className="flex flex-col gap-2">
+                      {templateClrs.map((clr) => (
+                        <HeroButton
+                          radius="full"
+                          onPress={() => {
+                            setTemplateDownloadColor(clr);
+
+                            setTimeout(() => {
+                              handleDownload();
+                            }, 500);
+                          }}
+                          isIconOnly={true}
+                          className={`${clr} text-white`}
+                        >
+                          {!clr && <LuDownload size={20} />}
+                        </HeroButton>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              {order_type?.value === "2" ? (
+                <>
+                  <LocalPurchaseOrder
+                    details={details}
+                    componentRef={componentRef}
+                    bgColor={templateDownloadColor}
+                  />
+                </>
+              ) : (
+                <JoborderTemplate
+                  details={details}
+                  componentRef={jobOrderRef}
+                  bgColor={templateDownloadColor}
+                />
+              )}
+            </>
           )}
         </div>
       </main>
