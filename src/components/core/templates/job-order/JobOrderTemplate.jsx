@@ -57,7 +57,7 @@ const TemplateComponent = ({ componentRef, details, printable }) => {
                       transformOrigin: "center",
                     }}
                   >
-                    NIGERIAN CIVIL AVIATION AUTHORITY
+                    NIGERIA CIVIL AVIATION AUTHORITY
                   </h2>
                   <div className="ml-auto text-end">
                     <p>
