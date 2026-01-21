@@ -85,7 +85,12 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
               </div>
             </div> */}
             </div>
-            <div className={clsx("absolute top-0 -right-2")}>
+            {/* <div
+              className={clsx(
+                "absolute -right-2",
+                printable ? "bottom-0" : "top-0",
+              )}
+            >
               {details?.qrCode && (
                 <img
                   src={details?.qrCode}
@@ -93,7 +98,7 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                   className="object-contain w-28 h-28"
                 />
               )}
-            </div>
+            </div> */}
 
             {/* Form Fields */}
             <div className="space-y-1 text-[13px] my-2">
@@ -455,6 +460,20 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
               className={`fixed w-14 h-14 bottom-12 left-0 ${bgColor}`}
             ></div>
           ) : null}
+          <div
+            className={clsx(
+              "fixed bottom-8",
+              printable ? "right-2" : "right-8",
+            )}
+          >
+            {details?.qrCode && (
+              <img
+                src={details?.qrCode}
+                alt=""
+                className="object-contain w-28 h-28"
+              />
+            )}
+          </div>
         </div>
         {printable ? <JobOrderTandC /> : null}
       </main>
