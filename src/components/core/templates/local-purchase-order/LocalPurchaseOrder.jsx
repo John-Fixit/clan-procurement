@@ -147,7 +147,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                         <div className="border-b-1.5 border-black w-48">
                           {format(
                             purchaseOrder?.DATE_AWARDED,
-                            "do 'of' MMM. yyyy"
+                            "do 'of' MMM. yyyy",
                           )}
                         </div>
                       </div>
@@ -168,7 +168,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                       <div className="border-b-1.5 border-black flex-1">
                         {format(
                           purchaseOrder?.DATE_SUPPLIED,
-                          "do 'of' MMM. yyyy"
+                          "do 'of' MMM. yyyy",
                         )}
                       </div>
                     </div>
@@ -262,7 +262,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                             <td className="py-1 px-2 font-light text-gray-900 border-r-1.5 border-black">
                               {formatNumberWithComma(
                                 Number(item?.unit_price) *
-                                  Number(item?.quantity)
+                                  Number(item?.quantity),
                               )}
                             </td>
                             <td className="py-1 px-2 font-light text-gray-900 border-black">
@@ -274,7 +274,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                           ...Array(
                             20 - dvdItems?.length > 0
                               ? 20 - dvdItems?.length
-                              : 0
+                              : 0,
                           ),
                         ].map((_, index) => (
                           <tr key={index}>
@@ -295,7 +295,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                             <td
                               colSpan={7}
                               className={clsx(
-                                "pe-4 text-gray-700 border-r-2 border-b-4 border-double border-black text-end py-"
+                                "pe-4 text-gray-700 border-r-2 border-b-4 border-double border-black text-end py-",
                               )}
                             >
                               <div className="flex gap-2 justify-between items-center ms-4">
@@ -309,14 +309,14 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                             </td>
                             <td
                               className={clsx(
-                                "py-1 px-2 text-gray-700 border-r-1.5 border-b-4 border-double border-black text-center"
+                                "py-1 px-2 text-gray-700 border-r-1.5 border-b-4 border-double border-black text-center",
                               )}
                             >
                               {formatNumberWithComma(grand_total)}
                             </td>
                             <td
                               className={clsx(
-                                "py-1 px-2 text-gray-700 border-b-4 border-double border-black text-center"
+                                "py-1 px-2 text-gray-700 border-b-4 border-double border-black text-center",
                               )}
                             ></td>
                           </tr>
@@ -371,7 +371,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                         <div className="border-b-1.5 border-black flex-1">
                           {format(
                             purchaseOrder?.RECEIVED_NOTE_DATE,
-                            "do 'of' MMM. yyyy"
+                            "do 'of' MMM. yyyy",
                           )}
                         </div>
                       </div>
@@ -397,8 +397,8 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
 
                     <div
                       className={clsx(
-                        printable ? "fixed w-full bottom-12" : "",
-                        "text-xs mt-4 text-center"
+                        printable ? "fixed w-full bottom-0" : "",
+                        "text-xs mt-4 text-center",
                       )}
                     >
                       <p>
@@ -411,8 +411,13 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                   </div>
                 </div>
 
-                {printable ? (
+                {/* {printable ? (
                   <div className={`fixed w-full bottom-0 h-4 ${bgColor}`}></div>
+                ) : null} */}
+                {printable ? (
+                  <div
+                    className={`fixed w-14 h-14 bottom-4 left-0 ${bgColor}`}
+                  ></div>
                 ) : null}
               </div>
               {printable ? <LocalPurchaseTandC /> : null}

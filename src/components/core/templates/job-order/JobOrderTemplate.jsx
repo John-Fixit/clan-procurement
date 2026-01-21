@@ -438,8 +438,8 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
           {/* Footer */}
           <div
             className={clsx(
-              printable ? "fixed w-full bottom-14" : "",
-              "border-t-2 border-black mt6 mt-3"
+              printable ? "fixed w-full bottom-0" : "",
+              "border-t-2 border-black mt6 mt-3",
             )}
           >
             <p className="text-xs text-center ">
@@ -451,7 +451,9 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
             </p>
           </div>
           {printable ? (
-            <div className={`fixed w-full bottom-0 h-4 ${bgColor}`}></div>
+            <div
+              className={`fixed w-14 h-14 bottom-12 left-0 ${bgColor}`}
+            ></div>
           ) : null}
         </div>
         {printable ? <JobOrderTandC /> : null}
