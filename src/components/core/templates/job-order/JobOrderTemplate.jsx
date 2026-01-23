@@ -68,6 +68,9 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                     </p>
                     <p>Tel: +234 811 115 0990, +234 811 115 111</p>
                   </div>
+                  <div className="border-2 py-1 px-2 mt-1 bg-gray-200 text-[16px] uppercase font-serif text-black">
+                    JOB ORDER {`: No ${jobOrderData?.ORDER_NO}`}
+                  </div>
                 </div>
               </div>
               {/* <div className="flex flex-col justify-center items-center">
