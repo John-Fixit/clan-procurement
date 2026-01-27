@@ -94,6 +94,7 @@ const CreateProject = () => {
       file_reference: projectDetailData?.FILE_REFERENCE,
       order_number: projectDetailData?.ORDER_NO,
       tender_reference: projectDetailData?.TENDER_REFERENCE,
+      recipient_type: "department",
       recipient_department: projectDetailData?.DEPARTMENT_SUPPLIED,
       work_location: projectDetailData?.LOCATION_OF_WORK,
       vendor_statement: projectDetailData?.VENDOR_STATEMENT,
@@ -164,7 +165,7 @@ const CreateProject = () => {
         try {
           const uploadResult = await uploadFileData(
             doc?.originFileObj,
-            userData?.token
+            userData?.token,
           );
           result.push({
             ...doc,
@@ -182,7 +183,7 @@ const CreateProject = () => {
     const isValid = await trigger();
     if (!isValid) {
       const fieldErrors = Object.keys(hookErrors)?.map(
-        (fld) => `${fld?.replaceAll("_", " ")} is required`
+        (fld) => `${fld?.replaceAll("_", " ")} is required`,
       );
       const combinedMessage = fieldErrors?.join("\n");
       errorToast(combinedMessage);
@@ -200,7 +201,7 @@ const CreateProject = () => {
     try {
       setIsUploading(true);
       const uploadedDocuments = await uploadPendingFiles(
-        values.documents || []
+        values.documents || [],
       );
 
       const items = values?.purchase_order_items?.map((item) => {
@@ -215,10 +216,10 @@ const CreateProject = () => {
           return;
         }
 
-        const tax_amount =
-          (Number(item?.tax?.PERCENTAGE) / 100) *
-          Number(item?.unit_price) *
-          Number(item?.quantity);
+        const tax_amount = 0;
+        // (Number(item?.tax?.PERCENTAGE) / 100) *
+        // Number(item?.unit_price) *
+        // Number(item?.quantity);
         return {
           product_id: item?.product_id,
           tax_amount: tax_amount,

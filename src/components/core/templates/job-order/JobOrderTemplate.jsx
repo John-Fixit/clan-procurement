@@ -73,35 +73,7 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                   </div>
                 </div>
               </div>
-              {/* <div className="flex flex-col justify-center items-center">
-              <h3 className="font-medium text-3xl tracking-wider font-serif text-black">
-                (AVIATION HOUSE)
-              </h3>
-              <h4 className="text-xl font-medium font-serif text-black">
-                HEADQUARTERS
-              </h4>
-              <h5 className="font-medium text-sm text-center border-black font-serif text-black">
-                P.M.B 21029, 21038, IKEJA, LAGOS.
-              </h5>
-              <div className="border-2 py-1 px-2 mt-1 bg-gray-200 text-[16px] uppercase font-serif text-black">
-                JOB ORDER {`: No ${jobOrderData?.ORDER_NO}`}
-              </div>
-            </div> */}
             </div>
-            {/* <div
-              className={clsx(
-                "absolute -right-2",
-                printable ? "bottom-0" : "top-0",
-              )}
-            >
-              {details?.qrCode && (
-                <img
-                  src={details?.qrCode}
-                  alt=""
-                  className="object-contain w-28 h-28"
-                />
-              )}
-            </div> */}
 
             {/* Form Fields */}
             <div className="space-y-1 text-[13px] my-2">

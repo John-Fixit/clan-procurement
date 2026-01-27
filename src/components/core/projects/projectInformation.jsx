@@ -3,7 +3,7 @@ import { Controller } from "react-hook-form";
 import { Select, DatePicker, Drawer } from "antd";
 import dayjs from "dayjs";
 import { IoChevronForward } from "react-icons/io5";
-import { useGetAllStaff, useGetDepartment } from "../../../service/api/general";
+import { useGetAllStaff, useGetRecipient } from "../../../service/api/general";
 import useCurrentUser from "../../../hooks/useCurrentUser";
 import { filePrefix } from "../../../utils/file-prefix";
 import { FaUser } from "react-icons/fa";
@@ -18,11 +18,13 @@ const ProjectInformation = (props) => {
   const project_type = watch("project_type");
 
   const { userData } = useCurrentUser();
-  const { data: get_departments } = useGetDepartment({
-    company_id: userData?.data?.COMPANY_ID,
-  });
+  const { data: get_recipient, isPending: isLoadingRecipient } =
+    useGetRecipient({
+      company_id: userData?.data?.COMPANY_ID,
+      recipient_type: watch("recipient_type"),
+    });
   const { data: get_staff, isPending: isLoadingStaff } = useGetAllStaff(
-    userData?.data?.COMPANY_ID
+    userData?.data?.COMPANY_ID,
   );
 
   const { data: get_tax, isPending: isLoadingTx } = useGetTax();
@@ -45,7 +47,7 @@ const ProjectInformation = (props) => {
         value: vvd?.VENDOR_ID,
         label: vvd?.FULLNAME,
       })) || [],
-    [get_vendors]
+    [get_vendors],
   );
 
   const taxOptions = get_tax?.map((tax) => ({
@@ -53,10 +55,10 @@ const ProjectInformation = (props) => {
     value: tax?.ID,
     label: tax?.TAX_NAME + " (" + parseFloat(tax?.PERCENTAGE) + "%)",
   }));
-  const departments = get_departments?.map((department) => ({
-    value: department?.NAME,
-    label: department?.NAME,
-    ...department,
+  const departments = get_recipient?.map((recipient) => ({
+    value: recipient?.NAME,
+    label: recipient?.NAME,
+    ...recipient,
   }));
   const staffList = get_staff?.map((item) => {
     return {
@@ -141,7 +143,7 @@ const ProjectInformation = (props) => {
               )}
             />
           </div> */}
-          <div>
+          {/* <div>
             <label htmlFor="" className="font-outfit mb-2">
               Order Number
             </label>
@@ -162,7 +164,7 @@ const ProjectInformation = (props) => {
                 />
               )}
             />
-          </div>
+          </div> */}
           {findProjectType(project_type)?.value === "1" ? (
             <JobOrderForm
               control={control}
@@ -172,6 +174,8 @@ const ProjectInformation = (props) => {
               isLoadingVendors={isLoadingVendors}
               vendorsList={vendorsList}
               openOtherVendorDrawer={openOtherVendorDrawer}
+              watch={watch}
+              isLoadingRecipient={isLoadingRecipient}
             />
           ) : (
             findProjectType(project_type).value === "2" && (
@@ -185,6 +189,9 @@ const ProjectInformation = (props) => {
                 vendorsList={vendorsList}
                 setValue={setValue}
                 openOtherVendorDrawer={openOtherVendorDrawer}
+                isLoadingRecipient={isLoadingRecipient}
+                watch={watch}
+                isLoadingTx={isLoadingTx}
               />
             )
           )}
@@ -211,12 +218,14 @@ export default ProjectInformation;
 
 const JobOrderForm = ({
   control,
+  watch,
   departments,
   taxOptions,
   isLoadingTax,
   vendorsList,
   isLoadingVendors,
   openOtherVendorDrawer,
+  isLoadingRecipient,
 }) => {
   return (
     <>
@@ -275,6 +284,9 @@ const JobOrderForm = ({
           )}
         />
       </div>
+      {/* {
+        //OLD IMPLEMENTION
+      }
       <div>
         <label htmlFor="" className="font-outfit mb-2">
           Department
@@ -304,6 +316,88 @@ const JobOrderForm = ({
           )}
         />
       </div>
+      {
+        //==================
+      } */}
+
+      {
+        // ============ NEW IMPLEMENTATION ================
+        <>
+          <div>
+            <label htmlFor="" className="font-outfit mb-2">
+              Recipient Type
+            </label>
+            <Controller
+              name="recipient_type"
+              control={control}
+              rules={{
+                required: "This field is required",
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <Select
+                    options={[
+                      {
+                        label: "Department",
+                        value: "department",
+                      },
+                      {
+                        label: "Directorate",
+                        value: "directorate",
+                      },
+                      {
+                        label: "Unit",
+                        value: "unit",
+                      },
+                    ]}
+                    {...field}
+                    size="large"
+                    className="w-full"
+                    placeholder="Select a recipient"
+                  />
+
+                  {!!error?.message && (
+                    <span className="text-red-400 font-outfit text-sm px-1">
+                      {error?.message}
+                    </span>
+                  )}
+                </>
+              )}
+            />
+          </div>
+          <div>
+            <label htmlFor="" className="font-outfit mb-2 capitalize">
+              Recipient {watch("recipient_type")}
+            </label>
+            <Controller
+              name="recipient_department"
+              control={control}
+              rules={{
+                required: "This field is required",
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <>
+                  <Select
+                    options={departments}
+                    loading={isLoadingRecipient}
+                    {...field}
+                    size="large"
+                    className="w-full"
+                    placeholder={`Select a ${watch("recipient_type")}`}
+                  />
+
+                  {!!error?.message && (
+                    <span className="text-red-400 font-outfit text-sm px-1">
+                      {error?.message}
+                    </span>
+                  )}
+                </>
+              )}
+            />
+          </div>
+        </>
+        //===========================
+      }
       <div>
         <label htmlFor="" className="font-outfit mb-2">
           Completion Date
@@ -341,7 +435,7 @@ const JobOrderForm = ({
           name="file_reference"
           control={control}
           rules={{
-            required: "This field is required",
+            required: false,
           }}
           render={({ field, fieldState: { error } }) => (
             <Input
@@ -367,7 +461,7 @@ const JobOrderForm = ({
           name="tender_reference"
           control={control}
           rules={{
-            required: "This field is required",
+            required: false,
           }}
           render={({ field, fieldState: { error } }) => (
             <Input
@@ -431,7 +525,7 @@ const JobOrderForm = ({
         />
       </div>
 
-      <div>
+      {/* <div>
         <label htmlFor="" className="font-outfit mb-2">
           Tax
         </label>
@@ -464,7 +558,7 @@ const JobOrderForm = ({
             </>
           )}
         />
-      </div>
+      </div> */}
       <div>
         <label htmlFor="" className="font-outfit mb-2">
           Total Sum Amount
@@ -494,7 +588,7 @@ const JobOrderForm = ({
       </div>
       <div className="col-span-2">
         <label htmlFor="" className="font-outfit mb-2">
-          Vendor statement
+          Job Description
         </label>
         <Controller
           name="vendor_statement"
@@ -527,10 +621,87 @@ const PurchaseOrderForm = ({
   vendorsList,
   isLoadingVendors,
   openOtherVendorDrawer,
+  isLoadingRecipient,
+  watch,
+  taxOptions,
+  isLoadingTax,
 }) => {
   return (
     <>
       <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Recipient Type
+        </label>
+        <Controller
+          name="recipient_type"
+          control={control}
+          rules={{
+            required: "This field is required",
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={[
+                  {
+                    label: "Department",
+                    value: "department",
+                  },
+                  {
+                    label: "Directorate",
+                    value: "directorate",
+                  },
+                  {
+                    label: "Unit",
+                    value: "unit",
+                  },
+                ]}
+                {...field}
+                size="large"
+                className="w-full"
+                placeholder="Select a recipient"
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2 capitalize">
+          Recipient {watch("recipient_type")}
+        </label>
+        <Controller
+          name="recipient_department"
+          control={control}
+          rules={{
+            required: "This field is required",
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={departments}
+                loading={isLoadingRecipient}
+                {...field}
+                size="large"
+                className="w-full"
+                placeholder={`Select a ${watch("recipient_type")}`}
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+
+      {/* <div>
         <label htmlFor="" className="font-outfit mb-2">
           Recipient Department
         </label>
@@ -555,7 +726,7 @@ const PurchaseOrderForm = ({
             </>
           )}
         />
-      </div>
+      </div> */}
       <div>
         <label htmlFor="" className="font-outfit mb-2">
           Received note number
@@ -715,6 +886,40 @@ const PurchaseOrderForm = ({
                 size="large"
                 className="w-full"
                 placeholder="Select vendor"
+              />
+
+              {!!error?.message && (
+                <span className="text-red-400 font-outfit text-sm px-1">
+                  {error?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+      </div>
+      <div>
+        <label htmlFor="" className="font-outfit mb-2">
+          Tax
+        </label>
+        <Controller
+          name="tax"
+          control={control}
+          rules={{
+            required: "This field is required",
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <Select
+                options={taxOptions}
+                labelInValue
+                {...field}
+                onChange={(value, option) => {
+                  field.onChange(option);
+                }}
+                loading={isLoadingTax}
+                size="large"
+                className="w-full"
+                placeholder="Select a tax"
               />
 
               {!!error?.message && (

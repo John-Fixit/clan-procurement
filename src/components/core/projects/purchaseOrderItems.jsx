@@ -161,7 +161,7 @@ const PurchaseOrderItems = (props) => {
                   loading={isLoadingProducts}
                 />
               </div>
-              <div>
+              {/* <div>
                 <label className="block text-sm text-gray-700 mb-1 font-outfit">
                   Tax
                 </label>
@@ -177,7 +177,7 @@ const PurchaseOrderItems = (props) => {
                   className="w-full"
                   placeholder="Select a tax"
                 />
-              </div>
+              </div> */}
               <div>
                 <label className="block text-sm text-gray-700 mb-1 font-outfit">
                   Unit of measurement
@@ -185,12 +185,12 @@ const PurchaseOrderItems = (props) => {
                 <Input
                   type="text"
                   {...register(
-                    `purchase_order_items.${index}.unit_of_measurement`
+                    `purchase_order_items.${index}.unit_of_measurement`,
                   )}
                   onChange={(e) =>
                     setValue(
                       `purchase_order_items.${index}.unit_of_measurement`,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   value={watchFieldValues?.[index]?.unit_of_measurement}
@@ -278,7 +278,7 @@ const PurchaseOrderItems = (props) => {
                   onChange={(e) =>
                     setValue(
                       `purchase_order_items.${index}.unit_price`,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
@@ -297,7 +297,7 @@ const PurchaseOrderItems = (props) => {
                   onChange={(e) =>
                     setValue(
                       `purchase_order_items.${index}.vote_or_charge`,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   value={watchFieldValues?.[index]?.vote_or_charge}
@@ -316,7 +316,7 @@ const PurchaseOrderItems = (props) => {
                   onChange={(e) =>
                     setValue(
                       `purchase_order_items.${index}.description`,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   value={watchFieldValues?.[index]?.description}
@@ -384,7 +384,7 @@ const AddProductModal = ({
       if (res) {
         setValue(
           `purchase_order_items.${currentIndex}.product_id`,
-          Number(res?.data)
+          Number(res?.data),
         );
         await refetch();
         onClose();

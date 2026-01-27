@@ -1,13 +1,16 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { API_GET, LENDNODE_API } from "../axiosInstance";
 
-export const useGetDepartment = ({ company_id = "" }) => {
+export const useGetRecipient = ({
+  company_id = "",
+  recipient_type = "department",
+}) => {
   return useQuery({
-    queryKey: [`get_department_${company_id}`],
+    queryKey: [`get_department_${company_id}_${recipient_type}`],
     queryFn: async () => {
       const res = await API_GET.post("pms/get_recipient", {
         company_id,
-        recipient_type: "department",
+        recipient_type,
       });
       return res?.data?.data;
     },
@@ -29,7 +32,7 @@ export const useCreateQrCode = () => {
     mutationFn: async (payload) => {
       const res = await LENDNODE_API.post(
         "/memo/create/document_qrcode",
-        payload
+        payload,
       );
       return res?.data;
     },
