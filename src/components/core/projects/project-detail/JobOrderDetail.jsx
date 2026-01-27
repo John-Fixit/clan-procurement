@@ -211,8 +211,8 @@ export default function JobOrderDetail({ details }) {
                           jobOrder.IS_APPROVED
                             ? "success"
                             : jobOrder?.IS_APPROVED === -1
-                            ? "danger"
-                            : "warning"
+                              ? "danger"
+                              : "warning"
                         }
                         variant="solid"
                         className="text-white mt-1"
@@ -274,7 +274,7 @@ export default function JobOrderDetail({ details }) {
                 {jobOrder.VENDOR_STATEMENT && (
                   <div className="mt-4 p-4 bg-gray-100 rounded-lg border border-blue-100">
                     <p className="text-sm font-medium text-blue-900 mb-1">
-                      Vendor Statement
+                      Job Description
                     </p>
                     <p className="text-sm text-blue-800">
                       {jobOrder.VENDOR_STATEMENT}
@@ -294,20 +294,25 @@ export default function JobOrderDetail({ details }) {
                     label="Job Amount"
                     value={formatCurrency(jobOrder.JOB_AMOUNT || 0)}
                   />
-                  <DetailItem
-                    icon={PiMoneyWavyLight}
-                    label="Tax Rate"
-                    value={`${Number(jobOrder.TAX_VALUE) || 0}%`}
-                  />
-                  <DetailItem
-                    icon={PiMoneyWavyLight}
-                    label="Tax Amount"
-                    value={formatCurrency(
-                      (parseFloat(jobOrder.JOB_AMOUNT || 0) *
-                        parseFloat(Number(jobOrder.TAX_VALUE) || 0)) /
-                        100
-                    )}
-                  />
+                  {jobOrder.TAX_VALUE ? (
+                    <>
+                      <DetailItem
+                        icon={PiMoneyWavyLight}
+                        label="Tax Rate"
+                        value={`${Number(jobOrder.TAX_VALUE) || 0}%`}
+                      />
+
+                      <DetailItem
+                        icon={PiMoneyWavyLight}
+                        label="Tax Amount"
+                        value={formatCurrency(
+                          (parseFloat(jobOrder.JOB_AMOUNT || 0) *
+                            parseFloat(Number(jobOrder.TAX_VALUE) || 0)) /
+                            100,
+                        )}
+                      />
+                    </>
+                  ) : null}
                   <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-semibold text-gray-700">
@@ -318,7 +323,7 @@ export default function JobOrderDetail({ details }) {
                           parseFloat(jobOrder.JOB_AMOUNT || 0) +
                             (parseFloat(jobOrder.JOB_AMOUNT || 0) *
                               parseFloat(Number(jobOrder.TAX_VALUE) || 0)) /
-                              100
+                              100,
                         )}
                       </span>
                     </div>
@@ -348,6 +353,25 @@ export default function JobOrderDetail({ details }) {
                   label="Department"
                   value={`Department ${jobOrder.DEPARTMENT_SUPPLIED}`}
                 />
+                {jobOrder.TAX_VALUE ? (
+                  <>
+                    <DetailItem
+                      icon={PiMoneyWavyLight}
+                      label="Tax Rate"
+                      value={`${Number(jobOrder.TAX_VALUE) || 0}%`}
+                    />
+
+                    <DetailItem
+                      icon={PiMoneyWavyLight}
+                      label="Tax Amount"
+                      value={formatCurrency(
+                        (parseFloat(jobOrder.JOB_AMOUNT || 0) *
+                          parseFloat(Number(jobOrder.TAX_VALUE) || 0)) /
+                          100,
+                      )}
+                    />
+                  </>
+                ) : null}
               </Section>
               {/* Receiving Details */}
               {(jobOrder?.RECEIVED_BY || jobOrder?.RECEIVED_NOTE_NO) && (

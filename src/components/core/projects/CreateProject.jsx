@@ -48,7 +48,7 @@ const validateRequiredField = (values) => {
 
 const productItemRequiredField = {
   product_id: "Product must be picked for each item",
-  tax: "All item must have tax",
+  // tax: "All item must have tax",
   quantity: "All item must have quantity",
   unit_price: "All item must have unit price",
 };
@@ -94,7 +94,7 @@ const CreateProject = () => {
       file_reference: projectDetailData?.FILE_REFERENCE,
       order_number: projectDetailData?.ORDER_NO,
       tender_reference: projectDetailData?.TENDER_REFERENCE,
-      recipient_type: "department",
+      recipient_type: projectDetailData?.DEPARTMENT_TYPE || "department",
       recipient_department: projectDetailData?.DEPARTMENT_SUPPLIED,
       work_location: projectDetailData?.LOCATION_OF_WORK,
       vendor_statement: projectDetailData?.VENDOR_STATEMENT,

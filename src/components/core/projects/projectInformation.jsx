@@ -597,7 +597,7 @@ const JobOrderForm = ({
             <Textarea
               aria-label="vendor_statement"
               variant="bordered"
-              placeholder="vendor statment"
+              placeholder="Job description"
               className="rounded-sm"
               classNames={{
                 inputWrapper: "border shadow-none rounded-lg",
