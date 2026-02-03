@@ -14,6 +14,15 @@ import { CgMenuGridO } from "react-icons/cg";
 import { useValidateCompany } from "../../service/api/base-api";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { errorToast } from "../../utils/toastPopUps";
+import StarLoader from "../core/loaders/StarLoader";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@heroui/react";
 
 const argon_apps = [
   {
@@ -157,6 +166,8 @@ export default AppSwitcher;
 const AppButton = ({ app_ }) => {
   const { userData } = useCurrentUser();
 
+  const [errorData, setErrorData] = useState({});
+
   const [selectedApp, setSelectedApp] = useState(null);
 
   const { mutateAsync: validateCompany, isPending: isValidatingCompany } =
@@ -178,7 +189,32 @@ const AppButton = ({ app_ }) => {
   };
 
   const validateStaff = () => {
-    return true;
+    const normalizeName = app_?.name?.toLowerCase();
+    const {
+      IS_LEGAL,
+      IS_PROCUREMENT,
+      IS_STORE,
+      IS_HR,
+      IS_DOCUMENT_USER,
+      IS_SALARY,
+    } = userData.data;
+    const no_cond = ["licensing", "workflow"];
+    if (normalizeName === "procurement" && IS_PROCUREMENT) {
+      return true;
+    } else if (normalizeName === "legal" && IS_LEGAL) {
+      return true;
+    } else if (normalizeName === "store" && IS_STORE) {
+      return true;
+    } else if (normalizeName === "hr" && IS_HR) {
+      return true;
+    } else if (normalizeName === "e-approval" && IS_DOCUMENT_USER) {
+      return true;
+    } else if (normalizeName === "payroll" && IS_SALARY) {
+      return true;
+    } else if (no_cond.includes(normalizeName)) {
+      return true;
+    }
+    return false;
   };
 
   const handleNavigate = async (e) => {
@@ -191,7 +227,11 @@ const AppButton = ({ app_ }) => {
     const val_staff = validateStaff();
 
     if (!val_staff) {
-      errorToast("Sorry! you are not authorize to view this app");
+      setErrorData({
+        status: true,
+        message: "Sorry! You are not authorized to view this app.",
+        type: "unauthorized",
+      });
       return;
     }
     const comp_val = await validationFuntion(); // this checks company eligibility
@@ -202,11 +242,71 @@ const AppButton = ({ app_ }) => {
         "noopener,noreferrer",
       );
     } else {
-      errorToast("Sorry, your company has no subscription to this feature");
+      setErrorData({
+        status: true,
+        message: "Sorry, your company has no subscription to this feature.",
+        type: "subscription",
+      });
     }
   };
   return (
     <>
+      <Modal
+        isOpen={errorData?.status}
+        onOpenChange={() => setErrorData({ status: false })}
+        placement="top"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <svg
+                    className="h-6 w-6 text-red-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <span>Access Denied</span>
+                </div>
+              </ModalHeader>
+              <ModalBody>
+                <p className="text-gray-600">{errorData?.message}</p>
+
+                {errorData?.type === "subscription" && (
+                  <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-800">
+                      Contact your administrator to upgrade your subscription
+                      and unlock this feature.
+                    </p>
+                  </div>
+                )}
+
+                {errorData?.type === "unauthorized" && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm text-gray-700">
+                      If you believe this is an error, please contact your
+                      system administrator.
+                    </p>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" onPress={onClose}>
+                  Go Back
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <a
         href={``}
         onClick={handleNavigate}
@@ -217,15 +317,21 @@ const AppButton = ({ app_ }) => {
           isValidatingCompany && selectedApp === app_?.code && "bg-gray-200",
         )}
       >
+        {isValidatingCompany && selectedApp === app_?.code && (
+          <div className="absolute top-1/3 bottom-1/2 ">
+            <StarLoader />
+          </div>
+        )}
+
         {app_?.is_icon ? (
           <div
             className={clsx(
-              "rounded-full w-[50px] h-[50px] flex justify-center items-center",
+              "rounded-full w-[70px] h-[70px] flex justify-center items-center",
               app_?.icon_bg || `bg-[#322742] `,
             )}
           >
             <app_.icon
-              size={20}
+              size={25}
               className={clsx("!font-bold", app_?.icon_color)}
             />
           </div>
@@ -233,13 +339,13 @@ const AppButton = ({ app_ }) => {
           <img
             src={app_?.logo}
             alt={app_?.name + "__logo"}
-            className="w-[50px] h-[50px] rounded-full"
+            className="w-[70px] h-[70px] rounded-full"
           />
         )}
 
         <div
           className={clsx(
-            "w-[70px] text-center font-medium text-black text-xs font-Lato",
+            "w[70px] text-center fontmedium text-black text-[13px] font-Lato font-semibold",
           )}
         >
           {app_?.name}
