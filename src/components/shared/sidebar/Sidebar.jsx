@@ -24,7 +24,6 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import useSidebarStore from "../../../hooks/use-sidebar-store";
 import clsx from "clsx";
-import { RiSettings5Line } from "react-icons/ri";
 import {
   Popover,
   PopoverContent,
@@ -166,7 +165,7 @@ const Sidebar = () => {
       {/* Overlay for mobile/tablet when sidebar is open */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden transition-opacity duration-300"
           onClick={toggleSidebar}
           aria-hidden="true"
         />
@@ -177,19 +176,19 @@ const Sidebar = () => {
         className={clsx(
           "bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300 ease-in-out",
 
-          "fixed lg:relative inset-y-0 left-0 z-50",
+          "fixed lg:relative inset-y-0 left-0 z-40",
           sidebarOpen
             ? "translate-x-0 w-72"
             : "-translate-x-full lg:translate-x-0 lg:w-16",
           "lg:shadow-none",
-          sidebarOpen && "shadow-2xl lg:shadow-none"
+          sidebarOpen && "shadow-2xl lg:shadow-none",
         )}
       >
         {/* Logo/Header */}
         <div
           className={clsx(
             "border-b border-gray-200 transition-all duration-300",
-            sidebarOpen ? "p-6 py-4" : "lg:px-2 lg:py-5 p-6"
+            sidebarOpen ? "p-6 py-4" : "lg:px-2 lg:py-5 p-6",
           )}
         >
           <div className="flex items-center gap-2">
@@ -198,7 +197,7 @@ const Sidebar = () => {
             <h1
               className={clsx(
                 "text-xl font-bold text-gray-800 transition-opacity duration-300",
-                !sidebarOpen && "lg:hidden"
+                !sidebarOpen && "lg:hidden",
               )}
             >
               Procurement
@@ -210,7 +209,7 @@ const Sidebar = () => {
         <nav
           className={clsx(
             "flex-1 overflow-y-auto transition-all duration-300",
-            sidebarOpen ? "p-6" : "lg:px-2 lg:py-5 p-6"
+            sidebarOpen ? "p-6" : "lg:px-2 lg:py-5 p-6",
           )}
         >
           <ul className="space-y-1">
@@ -255,7 +254,7 @@ const Sidebar = () => {
                             <span
                               className={clsx(
                                 "text-sm transition-opacity duration-300",
-                                !sidebarOpen && "lg:hidden"
+                                !sidebarOpen && "lg:hidden",
                               )}
                             >
                               {item.label}
@@ -309,14 +308,14 @@ const Sidebar = () => {
                             : "text-gray-700 hover:bg-gray-50",
                           sidebarOpen
                             ? "px-4"
-                            : "lg:px-3 lg:justify-center px-4"
+                            : "lg:px-3 lg:justify-center px-4",
                         )}
                       >
                         <Icon size={20} className="shrink-0" />
                         <span
                           className={clsx(
                             "text-sm transition-opacity duration-300",
-                            !sidebarOpen && "lg:hidden"
+                            !sidebarOpen && "lg:hidden",
                           )}
                         >
                           {item.label}
@@ -334,7 +333,7 @@ const Sidebar = () => {
         <div
           className={clsx(
             "border-t border-gray-200 space-y-2 transition-all duration-300",
-            sidebarOpen ? "px-4 py-4" : "lg:px-2 lg:py-4 px-4 py-4"
+            sidebarOpen ? "px-4 py-4" : "lg:px-2 lg:py-4 px-4 py-4",
           )}
         >
           <Tooltip
@@ -347,14 +346,14 @@ const Sidebar = () => {
               <button
                 className={clsx(
                   "w-full flex items-center gap-3 py-2.5 rounded-lg text-left text-gray-700 hover:bg-gray-50 transition-all cursor-pointer",
-                  sidebarOpen ? "px-4" : "lg:px-3 lg:justify-center px-4"
+                  sidebarOpen ? "px-4" : "lg:px-3 lg:justify-center px-4",
                 )}
               >
                 <CiLogout className="text-lg shrink-0" />
                 <span
                   className={clsx(
                     "text-sm transition-opacity duration-300",
-                    !sidebarOpen && "lg:hidden"
+                    !sidebarOpen && "lg:hidden",
                   )}
                 >
                   Logout

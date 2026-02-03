@@ -8,10 +8,10 @@ import { Avatar, Button } from "@heroui/react";
 import { FaBars, FaBell } from "react-icons/fa";
 import useSidebarStore from "../../hooks/use-sidebar-store";
 import { preProfileLink } from "../../utils/pre-profile-link";
-import NotificationDropdown from "../../components/shared/NotificationDropdown";
 import { Dropdown } from "antd";
 import clsx from "clsx";
 import { CiLogout } from "react-icons/ci";
+import AppSwitcher from "../../components/shared/AppSwitcher";
 
 const HomeLayout = () => {
   const { userData } = useCurrentUser();
@@ -37,7 +37,7 @@ const HomeLayout = () => {
           <LogoutPopover>
             <button
               className={clsx(
-                "w-full flex items-center gap-3 rounded-lg text-left text-gray-700 transition-all cursor-pointer"
+                "w-full flex items-center gap-3 rounded-lg text-left text-gray-700 transition-all cursor-pointer",
               )}
             >
               <CiLogout className="text-lg shrink-0" />
@@ -82,11 +82,15 @@ const HomeLayout = () => {
               <span>👤</span>
             </button> */}
 
+            <div className="flex">
+              <AppSwitcher name="argon" title="Argon Apps" />
+            </div>
+
             <Dropdown menu={menuProps}>
               <Avatar
                 className="w-10 h-10 cursor-pointer"
                 src={preProfileLink(
-                  `${profileData?.FIRST_NAME} ${profileData?.LAST_NAME}`
+                  `${profileData?.FIRST_NAME} ${profileData?.LAST_NAME}`,
                 )}
               />
             </Dropdown>
