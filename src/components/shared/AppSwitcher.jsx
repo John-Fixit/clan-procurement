@@ -4,6 +4,7 @@ import {
   FaFileInvoiceDollar,
   FaShoppingCart,
   FaStream,
+  FaUsersCog,
   FaWallet,
 } from "react-icons/fa";
 import { FaBoxesPacking } from "react-icons/fa6";
@@ -27,8 +28,11 @@ import {
 const argon_apps = [
   {
     name: "HR",
-    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeN761icqfPL5y12CSf3Xljl_fTQJesnmqog&s",
-    is_icon: false,
+    // logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeN761icqfPL5y12CSf3Xljl_fTQJesnmqog&s",
+    is_icon: true,
+    icon: FaUsersCog,
+    icon_bg: "bg-[#0F172A]",
+    icon_color: "text-white",
     path: "https://argon-hr.netlify.app/engage/home",
     // path: "https://hr.ncaa.gov.ng/engage/home",
     code: "1612",
