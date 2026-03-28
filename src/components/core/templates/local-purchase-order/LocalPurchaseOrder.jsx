@@ -304,7 +304,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                                 <p className="text-base">
                                   {/* {numberToWord(grand_total).naira} Naira only */}
                                 </p>
-                                <h2 className="text-lg font-medium">
+                                <h2 className="text-base font-medium">
                                   Tax Amount ₦
                                 </h2>
                               </div>
