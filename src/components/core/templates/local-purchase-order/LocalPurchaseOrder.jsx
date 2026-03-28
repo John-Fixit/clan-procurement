@@ -32,9 +32,11 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
     ? [...details.procurement_items]
     : [];
 
-  const grand_total = items?.reduce((acc, curr) => {
+  const item_grand_total = items?.reduce((acc, curr) => {
     return acc + Number(curr?.unit_price) * Number(curr?.quantity);
   }, 0);
+
+  const grand_total = item_grand_total + Number(purchaseOrder?.TAX_AMOUNT);
 
   const chunkSize = printable ? 20 : items?.length;
 
