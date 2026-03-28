@@ -79,13 +79,13 @@ export default function Vendor() {
 
   const statistics = useMemo(() => {
     const noDoc = get_vendors?.filter(
-      (vendor) => vendor?.STATUS === "no_document"
+      (vendor) => vendor?.STATUS === "no_document",
     );
     const notCompleteDoc = get_vendors?.filter(
-      (vendor) => vendor?.STATUS === "not_completed"
+      (vendor) => vendor?.STATUS === "not_completed",
     );
     const completedDoc = get_vendors?.filter(
-      (vendor) => vendor?.STATUS === "completed"
+      (vendor) => vendor?.STATUS === "completed",
     );
     return {
       no_document: noDoc?.length,
@@ -101,7 +101,7 @@ export default function Vendor() {
 
     const support_documents = mapDocuments(
       get_documents,
-      vendorDetail?.VENDOR_DOCUMENTS
+      vendorDetail?.VENDOR_DOCUMENTS,
     );
 
     if (action === "EDIT") {
@@ -203,7 +203,7 @@ export default function Vendor() {
               <button
                 className={clsx(
                   "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
-                  selectedStatus === "all" && "bg-blue-100"
+                  selectedStatus === "all" && "bg-blue-100",
                 )}
                 onClick={() => setSelectedStatus("all")}
               >
@@ -212,7 +212,7 @@ export default function Vendor() {
               <button
                 className={clsx(
                   "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
-                  selectedStatus === "no_document" && "bg-blue-100"
+                  selectedStatus === "no_document" && "bg-blue-100",
                 )}
                 onClick={() => setSelectedStatus("no_document")}
               >
@@ -224,7 +224,7 @@ export default function Vendor() {
               <button
                 className={clsx(
                   "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
-                  selectedStatus === "not_completed" && "bg-blue-100"
+                  selectedStatus === "not_completed" && "bg-blue-100",
                 )}
                 onClick={() => setSelectedStatus("not_completed")}
               >
@@ -236,7 +236,7 @@ export default function Vendor() {
               <button
                 className={clsx(
                   "px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-gray-700 flex items-center whitespace-nowrap cursor-pointer",
-                  selectedStatus === "completed" && "bg-blue-100"
+                  selectedStatus === "completed" && "bg-blue-100",
                 )}
                 onClick={() => setSelectedStatus("completed")}
               >
@@ -272,7 +272,7 @@ export default function Vendor() {
                   <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <th className="px-6 py-3 text-left">
                       <div className="flex items-center space-x-2">
-                        <div className="flex items-center">Name</div>
+                        <div className="flex items-center">Business Name</div>
                         <button className="text-gray-400 hover:text-gray-600">
                           <svg
                             className="w-4 h-4"
@@ -309,9 +309,9 @@ export default function Vendor() {
                     <th className="px-6 py-3 text-left">
                       <div className="flex items-center">Email</div>
                     </th>
-                    <th className="px-6 py-3 text-left">
+                    {/* <th className="px-6 py-3 text-left">
                       <div className="flex items-center">Business</div>
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-left">
                       <div className="flex items-center">Contact</div>
                     </th>
@@ -327,7 +327,7 @@ export default function Vendor() {
                 <tbody>
                   {vendorsList?.length === 0 || tableData?.length === 0 ? (
                     <tr>
-                      <td colSpan={6}>
+                      <td colSpan={5}>
                         <div className="flex items-center justify-center h-44">
                           <div className="w-full h-full flex flex-col items-center justify-center">
                             {isLoadingVendor ? (
@@ -367,7 +367,7 @@ export default function Vendor() {
                               src={preProfileLink(vendor?.FULLNAME)}
                             />
                             <p className="text-sm font-outfit text-gray-500 whitespace-nowrap">
-                              {vendor?.FULLNAME}
+                              {vendor?.BUSINESS}
                             </p>
                           </div>
                         </td>
@@ -376,11 +376,11 @@ export default function Vendor() {
                             {vendor?.EMAIL}
                           </h3>
                         </td>
-                        <td className="px-6 py-4">
+                        {/* <td className="px-6 py-4">
                           <span className="font-outfit text-gray-500 text-sm">
                             {vendor?.BUSINESS}
                           </span>
-                        </td>
+                        </td> */}
                         <td className="px-6 py-4">
                           <div className="font-outfit text-gray-500 text-sm">
                             {vendor?.PHONE}
