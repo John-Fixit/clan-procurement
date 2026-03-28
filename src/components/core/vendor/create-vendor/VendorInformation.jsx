@@ -167,7 +167,7 @@ const VenderInformation = (props) => {
                 )}
               />
             </div> */}
-            <Controller
+            {/* <Controller
               control={control}
               name="name"
               rules={{
@@ -188,7 +188,7 @@ const VenderInformation = (props) => {
                   />
                 </>
               )}
-            />
+            /> */}
             <Controller
               control={control}
               name="business"

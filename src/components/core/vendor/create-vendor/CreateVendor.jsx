@@ -108,7 +108,7 @@ const CreateVendor = ({ closeExternalDrawer, setExternalValue }) => {
     const isValid = await trigger();
     if (!isValid) {
       const fieldErrors = Object.keys(hookErrors)?.map(
-        (fld) => `${fld?.replaceAll("_", " ")} is required`
+        (fld) => `${fld?.replaceAll("_", " ")} is required`,
       );
 
       const combinedMessage = fieldErrors?.join("\n");
@@ -123,7 +123,7 @@ const CreateVendor = ({ closeExternalDrawer, setExternalValue }) => {
 
       // Upload all pending files first
       const uploadedDocuments = await uploadPendingFiles(
-        values.support_documents || []
+        values.support_documents || [],
       );
 
       // Map the uploaded documents to the attachments format
@@ -138,7 +138,7 @@ const CreateVendor = ({ closeExternalDrawer, setExternalValue }) => {
 
       // Prepare the JSON payload
       const json = {
-        vendor_name: values?.name,
+        vendor_name: values?.business, //values?.name,
         phone: values?.phone,
         email: values?.email,
         address: values?.address,
