@@ -300,6 +300,37 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                             >
                               <div className="flex gap-2 justify-between items-center ms-4">
                                 <p className="text-base">
+                                  {/* {numberToWord(grand_total).naira} Naira only */}
+                                </p>
+                                <h2 className="text-lg font-medium">
+                                  Tax Amount ₦
+                                </h2>
+                              </div>
+                            </td>
+                            <td
+                              className={clsx(
+                                "py-1 px-2 text-gray-700 border-r-1.5 border-b-4 border-double border-black text-center",
+                              )}
+                            >
+                              {formatNumberWithComma(purchaseOrder?.TAX_AMOUNT)}
+                            </td>
+                            <td
+                              className={clsx(
+                                "py-1 px-2 text-gray-700 border-b-4 border-double border-black text-center",
+                              )}
+                            ></td>
+                          </tr>
+                        ) : null}
+                        {arr?.length - 1 === dvdIdx ? (
+                          <tr>
+                            <td
+                              colSpan={7}
+                              className={clsx(
+                                "pe-4 text-gray-700 border-r-2 border-b-4 border-double border-black text-end py-",
+                              )}
+                            >
+                              <div className="flex gap-2 justify-between items-center ms-4">
+                                <p className="text-base">
                                   {numberToWord(grand_total).naira} Naira only
                                 </p>
                                 <h2 className="text-lg font-medium">

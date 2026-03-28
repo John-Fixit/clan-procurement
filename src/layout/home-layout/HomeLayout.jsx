@@ -82,9 +82,9 @@ const HomeLayout = () => {
               <span>👤</span>
             </button> */}
 
-            <div className="flex">
+            {/* <div className="flex">
               <AppSwitcher name="argon" title="Argon Apps" />
-            </div>
+            </div> */}
 
             <Dropdown menu={menuProps}>
               <Avatar
