@@ -381,6 +381,7 @@ const JobOrderForm = ({
                     options={departments}
                     loading={isLoadingRecipient}
                     {...field}
+                    showSearch
                     size="large"
                     className="w-full"
                     placeholder={`Select a ${watch("recipient_type")}`}

@@ -10,16 +10,16 @@ const VenderInformation = (props) => {
     <>
       <main>
         <h2 className="font-outfit  text-2xl font-semibold text-primary">
-          Vendor Information
+          contractor Information
         </h2>
         <p className="font-outfit text-gray-500 text-sm">
-          Fill in the details below to add a new vendor to the system
+          Fill in the details below to add a new contractor to the system
         </p>
         <div>
           <div className="mt-6 grid grid-cols-2 gap-y-4 gap-x-6">
             {/* <div>
               <label htmlFor="" className="font-outfit">
-                Vendor Name
+                contractor Name
               </label>
               <Controller
                 name="name"
@@ -28,7 +28,7 @@ const VenderInformation = (props) => {
                   <>
                     <Input
                       variant="bordered"
-                      placeholder="Enter vendor name"
+                      placeholder="Enter contractor name"
                       className="rounded-sm"
                       classNames={{
                         inputWrapper: "border shadow-none rounded-lg",
@@ -49,7 +49,7 @@ const VenderInformation = (props) => {
             </div>
             <div>
               <label htmlFor="" className="font-outfit">
-                Vendor Business
+                contractor Business
               </label>
               <Controller
                 name="business"
@@ -193,13 +193,13 @@ const VenderInformation = (props) => {
               control={control}
               name="business"
               rules={{
-                required: "Vendor Business name is required",
+                required: "contractor Business name is required",
               }}
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Input
                     radius="sm"
-                    label="Vendor's Business Name"
+                    label="contractor's Business Name"
                     {...field}
                     errorMessage={error?.message}
                     isInvalid={!!error?.message}
@@ -218,7 +218,7 @@ const VenderInformation = (props) => {
                 <>
                   <Input
                     type="email"
-                    label="Vendor Email"
+                    label="contractor Email"
                     {...field}
                     errorMessage={error?.message}
                     isInvalid={!!error?.message}
@@ -239,7 +239,7 @@ const VenderInformation = (props) => {
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Input
-                    label="Vendor Contact"
+                    label="contractor Contact"
                     {...field}
                     errorMessage={error?.message}
                     isInvalid={!!error?.message}
