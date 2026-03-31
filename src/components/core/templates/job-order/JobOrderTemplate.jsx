@@ -29,10 +29,10 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
   const ref = componentRef || defaultRef;
 
   const jobOrderData = details?.data || {};
-// const jobOrderData = {
-//   ...details?.data || {},
-//   VENDOR_STATEMENT: `CONSTRUCTION OF CUBICLE\nhereby agreed to execute/perform the works specified below as per conditions overleaf.\nSecond line of description here.\nThird line of description here.\nFourth line of description here`,
-// };
+  // const jobOrderData = {
+  //   ...details?.data || {},
+  //   VENDOR_STATEMENT: `CONSTRUCTION OF CUBICLE\nhereby agreed to execute/perform the works specified below as per conditions overleaf.\nSecond line of description here.\nThird line of description here.\nFourth line of description here`,
+  // };
   return (
     <main className={clsx(printable ? "hidden" : "")}>
       <main ref={ref}>
@@ -253,39 +253,39 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                 </span>
               </div>
               {/* Job Description — title line + description lines */}
-          {(() => {
-  const statement = jobOrderData?.VENDOR_STATEMENT || "";
+              {(() => {
+                const statement = jobOrderData?.VENDOR_STATEMENT || "";
 
-  const allLines = statement
-    .split(/\r?\n|\r/)
-    .map((l) => l.trim());
+                const allLines = statement
+                  .split(/\r?\n|\r/)
+                  .map((l) => l.trim());
 
-  const bodyLines = allLines.slice(0);
+                const bodyLines = allLines.slice(0);
 
-  // Always show exactly 7 dotted lines, max 7
-  const MIN_LINES = 7;
-  const paddedLines = bodyLines.slice(0, 7);
-  const finalLines =
-    paddedLines.length < MIN_LINES
-      ? [
-          ...paddedLines,
-          ...Array(MIN_LINES - paddedLines.length).fill(""),
-        ]
-      : paddedLines;
+                // Always show exactly 7 dotted lines, max 7
+                const MIN_LINES = 7;
+                const paddedLines = bodyLines.slice(0, 7);
+                const finalLines =
+                  paddedLines.length < MIN_LINES
+                    ? [
+                        ...paddedLines,
+                        ...Array(MIN_LINES - paddedLines.length).fill(""),
+                      ]
+                    : paddedLines;
 
-  return (
-    <>
-      {finalLines.map((line, index) => (
-        <div
-          key={index}
-          className="border-b-2 border-dotted border-black min-h-[1.4rem] py-0.5 text-black font-light"
-        >
-          {line || "\u00A0"}
-        </div>
-      ))}
-    </>
-  );
-})()}
+                return (
+                  <>
+                    {finalLines.map((line, index) => (
+                      <div
+                        key={index}
+                        className="border-b-2 border-dotted border-black min-h-[1.4rem] py-0.5 text-black font-light"
+                      >
+                        {line || "\u00A0"}
+                      </div>
+                    ))}
+                  </>
+                );
+              })()}
             </div>
 
             {/* Payment Section */}

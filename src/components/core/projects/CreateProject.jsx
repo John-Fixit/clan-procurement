@@ -265,7 +265,7 @@ const CreateProject = () => {
         order_no: values?.order_number,
         vendor_id: values?.vendor?.value,
         date_supplied: values?.date_supplied,
-        department_supplied: values?.recipient_department,
+        department_supplied: values?.recipient_department?.value,
         department_type: values?.recipient_type,
         date_awarded: values?.date_issued,
         received_by: values?.received_by?.value ?? null,
