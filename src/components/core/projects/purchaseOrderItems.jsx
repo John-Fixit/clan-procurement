@@ -233,13 +233,13 @@ const PurchaseOrderItems = (props) => {
                     <FaMinus size={14} />
                   </Button>
                   <Input
-                    min="1"
+                    // min="1"
                     type={"number"}
                     value={watch(`purchase_order_items.${index}.quantity`)}
                     onChange={(e) => {
                       const val = e.target.value;
                       if (!Number(val)) return;
-                      const value = Math.max(1, Number(val) || 1);
+                      const value = (1, Number(val));
                       setValue(`purchase_order_items.${index}.quantity`, value);
                     }}
                     onKeyDown={(e) => {
@@ -247,7 +247,7 @@ const PurchaseOrderItems = (props) => {
                         e.preventDefault();
                       }
                     }}
-                    placeholder="1"
+                    placeholder="0"
                     className="w-20"
                   />
                   <Button

@@ -28,6 +28,8 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
   const ref = componentRef || defaultRef;
 
   const purchaseOrder = details?.data || {};
+  // const purchaseOrder = { ...details?.data, TAX_AMOUNT: 5000 };
+
   const items = details.procurement_items?.length
     ? [...details.procurement_items]
     : [];
@@ -36,7 +38,9 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
     return acc + Number(curr?.unit_price) * Number(curr?.quantity);
   }, 0);
 
-  const grand_total = item_grand_total + Number(purchaseOrder?.TAX_AMOUNT);
+  // const grand_total = item_grand_total + Number(purchaseOrder?.TAX_AMOUNT);
+const taxAmount = Number(purchaseOrder?.TAX_AMOUNT) || 0;
+const grand_total = item_grand_total + taxAmount;
 
   const chunkSize = printable ? 20 : items?.length;
 
@@ -138,7 +142,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                     <div className="flex items-baseline gap-x-2 mb-1">
                       <h3 className="text-[13px]">To</h3>
                       <div className="border-b-1.5 border-black flex-1">
-                        {purchaseOrder?.DEPARTMENT_SUPPLIED}
+                        {purchaseOrder?.VENDOR_NAME}
                       </div>
                     </div>
 
@@ -292,7 +296,8 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                           </tr>
                         ))}
                         {/* Grand Total row */}
-                        {arr?.length - 1 === dvdIdx ? (
+                        {arr?.length - 1 === dvdIdx &&
+                        Number(purchaseOrder?.TAX_AMOUNT) > 0 ? (
                           <tr>
                             <td
                               colSpan={7}
@@ -301,9 +306,7 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                               )}
                             >
                               <div className="flex gap-2 justify-between items-center ms-4">
-                                <p className="text-base">
-                                  {/* {numberToWord(grand_total).naira} Naira only */}
-                                </p>
+                                <p className="text-base"></p>
                                 <h2 className="text-base font-medium">
                                   Tax Amount ₦
                                 </h2>
@@ -402,10 +405,10 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
                       <div className="flex items-baseline gap-x-2">
                         <h3 className="text-[13px]">Date</h3>
                         <div className="border-b-1.5 border-black flex-1">
-                          {format(
+                          {/* {format(
                             purchaseOrder?.RECEIVED_NOTE_DATE,
                             "do 'of' MMM. yyyy",
-                          )}
+                          )} */}
                         </div>
                       </div>
                     </div>

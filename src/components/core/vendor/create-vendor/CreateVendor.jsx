@@ -139,8 +139,8 @@ const CreateVendor = ({ closeExternalDrawer, setExternalValue }) => {
       // Prepare the JSON payload
       const json = {
         vendor_name: values?.business, //values?.name,
-        phone: values?.phone,
-        email: values?.email,
+        phone: values?.phone ?? null,
+        email: values?.email ?? null,
         address: values?.address,
         business: values?.business,
         vendor_document: attachments,

@@ -174,7 +174,7 @@ export default function Vendor() {
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto px-6 md:px-9 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-gray-800">Vendor</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">Contractor</h2>
             <div className="flex items-center space-x-3">
               <Button
                 radius="sm"
@@ -187,7 +187,7 @@ export default function Vendor() {
                 }
               >
                 <LuPlus className="w-4 h-4 mr-1" />
-                Create Vendor
+                Create Contractor 
               </Button>
             </div>
           </div>

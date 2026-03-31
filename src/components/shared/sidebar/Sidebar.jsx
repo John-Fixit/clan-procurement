@@ -70,7 +70,7 @@ const Sidebar = () => {
     //   icon: FaRegUser,
     //   activeIcon: FaUserAlt,
     // },
-    { path: "/vendor", label: "Vendors", icon: MdStore, activeIcon: MdStore },
+    { path: "/vendor", label: "Contractors", icon: MdStore, activeIcon: MdStore },
     {
       path: "/project",
       label: "Projects",

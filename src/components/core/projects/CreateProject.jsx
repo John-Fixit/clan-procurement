@@ -258,9 +258,9 @@ const CreateProject = () => {
 
       const jobOrderTaxAmount = 0;
       // (Number(values?.tax?.PERCENTAGE) / 100) * Number(values?.sum_amount);
-      const localPurchaseTaxAmoun = items?.reduce((acc, item) => {
-        return acc + Number(item?.tax_amount);
-      }, 0);
+      // const localPurchaseTaxAmoun = items?.reduce((acc, item) => {
+      //   return acc + Number(item?.tax_amount);
+      // }, 0);
 
       const localPurchaseTaxAmount =
         (Number(values?.tax?.PERCENTAGE) / 100) * totalItemAmount;
@@ -276,10 +276,10 @@ const CreateProject = () => {
             : values?.recipient_department,
         department_type: values?.recipient_type,
         date_awarded: values?.date_issued,
-        received_by: values?.received_by?.value,
+        received_by: values?.received_by?.value ?? null,
         received_date: values?.completion_date,
-        received_note_no: values?.received_note_no,
-        received_note_date: values?.received_note_date,
+        received_note_no: values?.received_note_no ?? null,
+        received_note_date: values?.received_note_date ?? null,
         location_of_work: values?.work_location,
         file_reference: values?.file_reference,
         tender_reference: values?.tender_reference,

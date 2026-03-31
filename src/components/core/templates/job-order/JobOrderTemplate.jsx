@@ -29,7 +29,10 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
   const ref = componentRef || defaultRef;
 
   const jobOrderData = details?.data || {};
-
+  // const jobOrderData = {
+  //   ...details?.data || {},
+  //   VENDOR_STATEMENT: `CONSTRUCTION OF CUBICLE\nhereby agreed to execute/perform the works specified below as per conditions overleaf.\nSecond line of description here.\nThird line of description here.\nFourth line of description here`,
+  // };
   return (
     <main className={clsx(printable ? "hidden" : "")}>
       <main ref={ref}>
@@ -69,7 +72,7 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                     <p>Tel: +234 811 115 0990, +234 811 115 111</p>
                   </div>
                   <div className="border-2 py-1 px-2 mt-1 bg-gray-200 text-[16px] uppercase font-serif text-black">
-                    JOB ORDER {`: No ${jobOrderData?.ORDER_NO}`}
+                    JOB ORDER {`: ${jobOrderData?.ORDER_NO}`}
                   </div>
                 </div>
               </div>
@@ -222,7 +225,7 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
             </div>
 
             {/* Main Content */}
-            <div className="space-y-2 text-[13px] mb-3">
+            <div className="space-y-3 text-[13px] mb-3">
               <div className="flex">
                 <span className="mr-2">I</span>
                 <div className="flex-1 border-b-2 border-dotted border-black text-black font-light">
@@ -249,39 +252,39 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                   per conditions overleaf.
                 </span>
               </div>
-              {/* Auto-wrap vendor statement */}
+              {/* Job Description — title line + description lines */}
               {(() => {
                 const statement = jobOrderData?.VENDOR_STATEMENT || "";
-                const words = statement.split(" ");
-                const lines = [];
-                let currentLine = "";
 
-                // Simple word wrapping algorithm
-                words.forEach((word) => {
-                  if ((currentLine + word).length <= 130) {
-                    // Adjust character limit as needed
-                    currentLine += (currentLine ? " " : "") + word;
-                  } else {
-                    lines.push(currentLine);
-                    currentLine = word;
-                  }
-                });
+                const allLines = statement
+                  .split(/\r?\n|\r/)
+                  .map((l) => l.trim());
 
-                if (currentLine) lines.push(currentLine);
+                const bodyLines = allLines.slice(0);
 
-                // Fill remaining lines
-                while (lines.length < 6) {
-                  lines.push("");
-                }
+                // Always show exactly 7 dotted lines, max 7
+                const MIN_LINES = 7;
+                const paddedLines = bodyLines.slice(0, 7);
+                const finalLines =
+                  paddedLines.length < MIN_LINES
+                    ? [
+                        ...paddedLines,
+                        ...Array(MIN_LINES - paddedLines.length).fill(""),
+                      ]
+                    : paddedLines;
 
-                return lines?.map((line, index) => (
-                  <div
-                    key={index}
-                    className="border-b-2 border-dotted border-black min-h3 py1 text-black font-light"
-                  >
-                    {line || "\u00A0"}
-                  </div>
-                ));
+                return (
+                  <>
+                    {finalLines.map((line, index) => (
+                      <div
+                        key={index}
+                        className="border-b-2 border-dotted border-black min-h-[1.4rem] py-0.5 text-black font-light"
+                      >
+                        {line || "\u00A0"}
+                      </div>
+                    ))}
+                  </>
+                );
               })()}
             </div>
 
@@ -289,19 +292,19 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
             <div className="mb-">
               <div className="flex items-en">
                 <span className="text-[13px] mr-2 font-light text-black letter-space me-7!">
-                  For which the NCAA
+                  For which the NCAA, Agreed to pay the sum of :
                 </span>
-                <div className="flex-1 text-center">
+                {/* <div className="flex-1 text-center">
                   <div className="flex-1 border-b-2 border-dotted border-black min-h-6 font-light text-black text-start letter-space">
                     {jobOrderData?.DEPARTMENT_SUPPLIED}
                   </div>
                   <span className="text-xs font-light text-black letter-space">
                     (Department/Unit)
                   </span>
-                </div>
-                <span className="text-[13px] ml-2 font-light text-black letter-space">
+                </div> */}
+                {/* <span className="text-[13px] ml-2 font-light text-black letter-space">
                   Agreed to pay the sum of
-                </span>
+                </span> */}
               </div>
 
               <div className="flex items-baseline gap-x-1 w-full">

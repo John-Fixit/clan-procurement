@@ -233,13 +233,10 @@ const VenderInformation = (props) => {
             <Controller
               control={control}
               name="phone"
-              rules={{
-                required: "Phone is required",
-              }}
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Input
-                    label="contractor Contact"
+                    label="contractor Phone"
                     {...field}
                     errorMessage={error?.message}
                     isInvalid={!!error?.message}
