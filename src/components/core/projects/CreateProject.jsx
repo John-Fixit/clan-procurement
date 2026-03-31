@@ -271,7 +271,7 @@ const CreateProject = () => {
         vendor_id: values?.vendor?.value,
         date_supplied: values?.date_supplied,
         department_supplied:
-          values?.recipient_type === "other"
+          values?.recipient_department === "other"
             ? values?.custom_recipient
             : values?.recipient_department,
         department_type: values?.recipient_type,
@@ -315,11 +315,9 @@ const CreateProject = () => {
       };
       // validate required fields before proceeding
 
-      console.log(json);
-
-      // const res = await mutateAddProject(json);
-      // successToast(res?.data?.message);
-      // closeDrawer();
+      const res = await mutateAddProject(json);
+      successToast(res?.data?.message);
+      closeDrawer();
     } catch (err) {
       console.log(err);
       catchErrFunc(err);
