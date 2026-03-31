@@ -1,6 +1,6 @@
 import { Button, Input, Textarea, User } from "@heroui/react";
 import { Controller } from "react-hook-form";
-import { Select, DatePicker, Drawer } from "antd";
+import { Select, DatePicker, Drawer, Tooltip } from "antd";
 import dayjs from "dayjs";
 import { IoChevronForward } from "react-icons/io5";
 import { useGetAllStaff, useGetRecipient } from "../../../service/api/general";
@@ -45,7 +45,8 @@ const ProjectInformation = (props) => {
       get_vendors?.map((vvd) => ({
         ...vvd,
         value: vvd?.VENDOR_ID,
-        label: vvd?.FULLNAME,
+        // label: vvd?.FULLNAME,
+        label: `${vvd?.BUSINESS || vvd?.FULLNAME || ""} (${vvd?.ADDRESS || ""})`,
       })) || [],
     [get_vendors],
   );
@@ -57,8 +58,9 @@ const ProjectInformation = (props) => {
   }));
   const departments = get_recipient?.map((recipient) => ({
     value: recipient?.NAME,
-    label: recipient?.NAME,
+    label: recipient?.NAME.trim(),
     ...recipient,
+    searchValue: `${recipient?.NAME?.trim()} ${recipient?.ID}`.toLowerCase(),
   }));
   const staffList = get_staff?.map((item) => {
     return {
@@ -325,7 +327,7 @@ const JobOrderForm = ({
         <>
           <div>
             <label htmlFor="" className="font-outfit mb-2">
-              Recipient Type
+              User Department/ Directorates's / Unit
             </label>
             <Controller
               name="recipient_type"
@@ -367,26 +369,29 @@ const JobOrderForm = ({
           </div>
           <div>
             <label htmlFor="" className="font-outfit mb-2 capitalize">
-              Recipient {watch("recipient_type")}
+              User
             </label>
             <Controller
               name="recipient_department"
               control={control}
-              rules={{
-                required: "This field is required",
-              }}
+              rules={{ required: "This field is required" }}
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Select
                     options={departments}
                     loading={isLoadingRecipient}
-                    {...field}
                     showSearch
+                    labelInValue
+                    {...field}
+                    value={field.value?.value ? field.value : undefined}
+                    placeholder="Select a User"
                     size="large"
                     className="w-full"
-                    placeholder={`Select a ${watch("recipient_type")}`}
+                    filterOption={(input, option) =>
+                      option?.searchValue?.includes(input.toLowerCase())
+                    }
+                    onChange={(val) => field.onChange(val)}
                   />
-
                   {!!error?.message && (
                     <span className="text-red-400 font-outfit text-sm px-1">
                       {error?.message}
@@ -483,7 +488,7 @@ const JobOrderForm = ({
 
       <div>
         <label htmlFor="" className="font-outfit mb-2">
-          Select Vendor
+          Contractor
         </label>
         <Controller
           name="vendor"
@@ -502,6 +507,12 @@ const JobOrderForm = ({
                   },
                 ]}
                 loading={isLoadingVendors}
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 labelInValue
                 {...field}
                 onChange={(val) => {
@@ -511,9 +522,41 @@ const JobOrderForm = ({
                     field.onChange(val);
                   }
                 }}
+                value={field.value?.value ? field.value : undefined}
                 size="large"
                 className="w-full"
-                placeholder="Select vendor"
+                placeholder="Select Contractor"
+                optionRender={(option) => {
+                
+                  const v = option?.data;
+                  if (v?.value === "other") return <span>{v?.label}</span>;
+                  const tooltipContent = (
+                    <div className="text-xs space-y-1 min-w-[180px]">
+                      {v?.BUSINESS && (
+                        <div>
+                          <span className="font-semibold">Business:</span>{" "}
+                          {v.BUSINESS}
+                        </div>
+                      )}
+                      {v?.ADDRESS && (
+                        <div>
+                          <span className="font-semibold">Address:</span>{" "}
+                          {v.ADDRESS}
+                        </div>
+                      )}
+                    </div>
+                  );
+                  return (
+                    <Tooltip
+                      title={tooltipContent}
+                      placement="right"
+                      overlayStyle={{ maxWidth: 280 }}
+                      mouseEnterDelay={0.1}
+                    >
+                      <div className="truncate">{v?.label}</div>
+                    </Tooltip>
+                  );
+                }}
               />
 
               {!!error?.message && (
@@ -562,7 +605,7 @@ const JobOrderForm = ({
       </div> */}
       <div>
         <label htmlFor="" className="font-outfit mb-2">
-          Total Sum Amount
+          Total Amount
         </label>
         <Controller
           name="sum_amount"
@@ -631,7 +674,7 @@ const PurchaseOrderForm = ({
     <>
       <div>
         <label htmlFor="" className="font-outfit mb-2">
-          Recipient Type
+          User department/ Directorates's / Unit
         </label>
         <Controller
           name="recipient_type"
@@ -673,7 +716,7 @@ const PurchaseOrderForm = ({
       </div>
       <div>
         <label htmlFor="" className="font-outfit mb-2 capitalize">
-          Recipient {watch("recipient_type")}
+          User
         </label>
         <Controller
           name="recipient_department"
@@ -686,10 +729,20 @@ const PurchaseOrderForm = ({
               <Select
                 options={departments}
                 loading={isLoadingRecipient}
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                labelInValue
                 {...field}
+                onChange={(val) => {
+                  field.onChange(val);
+                }}
                 size="large"
                 className="w-full"
-                placeholder={`Select a ${watch("recipient_type")}`}
+                placeholder={`Select a User`}
               />
 
               {!!error?.message && (
@@ -728,7 +781,7 @@ const PurchaseOrderForm = ({
           )}
         />
       </div> */}
-      <div>
+      {/* <div>
         <label htmlFor="" className="font-outfit mb-2">
           Received note number
         </label>
@@ -750,8 +803,8 @@ const PurchaseOrderForm = ({
             />
           )}
         />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <label htmlFor="" className="font-outfit mb-2">
           Received note Date
         </label>
@@ -776,8 +829,8 @@ const PurchaseOrderForm = ({
             </>
           )}
         />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <label htmlFor="" className="font-outfit mb-2">
           Received by
         </label>
@@ -804,7 +857,7 @@ const PurchaseOrderForm = ({
             </>
           )}
         />
-      </div>
+      </div> */}
       <div>
         <label htmlFor="" className="font-outfit mb-2">
           Date Issued
@@ -857,9 +910,10 @@ const PurchaseOrderForm = ({
           )}
         />
       </div>
+
       <div>
         <label htmlFor="" className="font-outfit mb-2">
-          Select Vendor
+          Contractor
         </label>
         <Controller
           name="vendor"
@@ -875,6 +929,12 @@ const PurchaseOrderForm = ({
                   },
                 ]}
                 loading={isLoadingVendors}
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 labelInValue
                 {...field}
                 onChange={(val) => {
@@ -884,9 +944,10 @@ const PurchaseOrderForm = ({
                     field.onChange(val);
                   }
                 }}
+                value={field.value?.value ? field.value : undefined}
                 size="large"
                 className="w-full"
-                placeholder="Select vendor"
+                placeholder="Select Contractor"
               />
 
               {!!error?.message && (
