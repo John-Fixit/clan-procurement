@@ -31,7 +31,6 @@ export default function Projects() {
     isPending: isLoadingProject,
   } = useGetStaffProject(selectedStatus, userData?.data?.STAFF_ID, projectType);
 
-  console.log("project", get_projects, isError, isLoadingProject, selectedStatus, projectType);
   const projects = useMemo(() => get_projects || [], [get_projects]);
 
   return (

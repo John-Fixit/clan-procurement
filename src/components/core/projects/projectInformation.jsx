@@ -313,16 +313,16 @@ const JobOrderForm = ({
                     ]}
                     loading={isLoadingRecipient}
                     showSearch
-                    labelInValue
+                    // labelInValue
                     {...field}
                     value={field.value?.value ? field.value : undefined}
                     placeholder="Select a User"
                     size="large"
                     className="w-full"
-                    filterOption={(input, option) =>
-                      option?.searchValue?.includes(input.toLowerCase())
-                    }
-                    onChange={(val) => field.onChange(val)}
+                    // filterOption={(input, option) =>
+                    //   option?.searchValue?.includes(input.toLowerCase())
+                    // }
+                    // onChange={(val) => field.onChange(val)}
                   />
                   {!!error?.message && (
                     <span className="text-red-400 font-outfit text-sm px-1">
@@ -657,12 +657,12 @@ const PurchaseOrderForm = ({
                 ]}
                 loading={isLoadingRecipient}
                 showSearch
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                labelInValue
+                // filterOption={(input, option) =>
+                //   (option?.label ?? "")
+                //     .toLowerCase()
+                //     .includes(input.toLowerCase())
+                // }
+                // labelInValue
                 {...field}
                 onChange={(val) => {
                   field.onChange(val);
@@ -888,11 +888,11 @@ const PurchaseOrderForm = ({
                 ]}
                 loading={isLoadingVendors}
                 showSearch
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
+                // filterOption={(input, option) =>
+                //   (option?.label ?? "")
+                //     .toLowerCase()
+                //     .includes(input.toLowerCase())
+                // }
                 labelInValue
                 {...field}
                 onChange={(val) => {
