@@ -181,6 +181,7 @@ const CreateProject = () => {
 
   const handleSubmit = async () => {
     const isValid = await trigger();
+    console.log(isValid);
     if (!isValid) {
       const fieldErrors = Object.keys(hookErrors)?.map(
         (fld) => `${fld?.replaceAll("_", " ")} is required`,
@@ -196,6 +197,10 @@ const CreateProject = () => {
     if (Object.keys(errors).length) {
       const combinedMessage = Object.values(errors).join("\n");
       errorToast(combinedMessage);
+      return;
+    }
+    if (!values?.vendor?.value) {
+      errorToast("Contractor is required");
       return;
     }
     try {
@@ -265,7 +270,10 @@ const CreateProject = () => {
         order_no: values?.order_number,
         vendor_id: values?.vendor?.value,
         date_supplied: values?.date_supplied,
-        department_supplied: values?.recipient_department,
+        department_supplied:
+          values?.recipient_type === "other"
+            ? values?.custom_recipient
+            : values?.recipient_department,
         department_type: values?.recipient_type,
         date_awarded: values?.date_issued,
         received_by: values?.received_by?.value,
@@ -307,10 +315,13 @@ const CreateProject = () => {
       };
       // validate required fields before proceeding
 
-      const res = await mutateAddProject(json);
-      successToast(res?.data?.message);
-      closeDrawer();
+      console.log(json);
+
+      // const res = await mutateAddProject(json);
+      // successToast(res?.data?.message);
+      // closeDrawer();
     } catch (err) {
+      console.log(err);
       catchErrFunc(err);
     }
   };

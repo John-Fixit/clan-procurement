@@ -55,11 +55,24 @@ const ProjectInformation = (props) => {
     value: tax?.ID,
     label: tax?.TAX_NAME + " (" + parseFloat(tax?.PERCENTAGE) + "%)",
   }));
-  const departments = get_recipient?.map((recipient) => ({
-    value: recipient?.NAME,
-    label: recipient?.NAME,
-    ...recipient,
-  }));
+  const departments = (() => {
+    const seen = new Set();
+    return (
+      get_recipient
+        ?.filter((recipient) => {
+          const name = recipient?.NAME;
+          if (!name || seen.has(name)) return false;
+          seen.add(name);
+          return true;
+        })
+        ?.map((recipient) => ({
+          value: recipient?.NAME,
+          label: recipient?.NAME,
+          ...recipient,
+        })) || []
+    );
+  })();
+
   const staffList = get_staff?.map((item) => {
     return {
       ...item,
@@ -219,7 +232,7 @@ export default ProjectInformation;
 const JobOrderForm = ({
   control,
   watch,
-  departments,
+  departments = [],
   taxOptions,
   isLoadingTax,
   vendorsList,
@@ -284,41 +297,6 @@ const JobOrderForm = ({
           )}
         />
       </div>
-      {/* {
-        //OLD IMPLEMENTION
-      }
-      <div>
-        <label htmlFor="" className="font-outfit mb-2">
-          Department
-        </label>
-        <Controller
-          name="recipient_department"
-          control={control}
-          rules={{
-            required: "This field is required",
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <>
-              <Select
-                options={departments}
-                {...field}
-                size="large"
-                className="w-full"
-                placeholder="Select a department"
-              />
-
-              {!!error?.message && (
-                <span className="text-red-400 font-outfit text-sm px-1">
-                  {error?.message}
-                </span>
-              )}
-            </>
-          )}
-        />
-      </div>
-      {
-        //==================
-      } */}
 
       {
         // ============ NEW IMPLEMENTATION ================
@@ -378,7 +356,13 @@ const JobOrderForm = ({
               render={({ field, fieldState: { error } }) => (
                 <>
                   <Select
-                    options={departments}
+                    options={[
+                      ...departments,
+                      {
+                        label: "Other",
+                        value: "other",
+                      },
+                    ]}
                     loading={isLoadingRecipient}
                     {...field}
                     showSearch
@@ -396,6 +380,37 @@ const JobOrderForm = ({
               )}
             />
           </div>
+          {watch("recipient_department") === "other" && (
+            <div>
+              <label htmlFor="" className="font-outfit mb-2 uppercase text-xs">
+                Custom Recipient {watch("recipient_type")}
+              </label>
+              <Controller
+                name="custom_recipient"
+                control={control}
+                rules={{
+                  required:
+                    watch("recipient_department") === "other"
+                      ? "This field is required"
+                      : false,
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <Input
+                    aria-label="custom_recipient"
+                    variant="bordered"
+                    placeholder={`Enter a custom ${watch("recipient_type")}`}
+                    className="rounded-sm"
+                    classNames={{
+                      inputWrapper: "border shadow-none rounded-lg",
+                    }}
+                    {...field}
+                    errorMessage={error?.message}
+                    isInvalid={!!error?.message}
+                  />
+                )}
+              />
+            </div>
+          )}
         </>
         //===========================
       }
@@ -483,7 +498,7 @@ const JobOrderForm = ({
 
       <div>
         <label htmlFor="" className="font-outfit mb-2">
-          Select Vendor
+          Select Contractor
         </label>
         <Controller
           name="vendor"
@@ -494,6 +509,7 @@ const JobOrderForm = ({
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
+                showSearch
                 options={[
                   ...vendorsList,
                   {
@@ -526,40 +542,6 @@ const JobOrderForm = ({
         />
       </div>
 
-      {/* <div>
-        <label htmlFor="" className="font-outfit mb-2">
-          Tax
-        </label>
-        <Controller
-          name="tax"
-          control={control}
-          rules={{
-            required: "This field is required",
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <>
-              <Select
-                options={taxOptions}
-                labelInValue
-                {...field}
-                onChange={(value, option) => {
-                  field.onChange(option);
-                }}
-                loading={isLoadingTax}
-                size="large"
-                className="w-full"
-                placeholder="Select a tax"
-              />
-
-              {!!error?.message && (
-                <span className="text-red-400 font-outfit text-sm px-1">
-                  {error?.message}
-                </span>
-              )}
-            </>
-          )}
-        />
-      </div> */}
       <div>
         <label htmlFor="" className="font-outfit mb-2">
           Total Sum Amount
@@ -616,7 +598,7 @@ const JobOrderForm = ({
 };
 const PurchaseOrderForm = ({
   control,
-  departments,
+  departments = [],
   isLoadingStaff,
   staffList,
   vendorsList,
@@ -684,7 +666,13 @@ const PurchaseOrderForm = ({
           render={({ field, fieldState: { error } }) => (
             <>
               <Select
-                options={departments}
+                options={[
+                  ...departments,
+                  {
+                    label: "Other",
+                    value: "other",
+                  },
+                ]}
                 loading={isLoadingRecipient}
                 {...field}
                 size="large"
@@ -701,6 +689,37 @@ const PurchaseOrderForm = ({
           )}
         />
       </div>
+      {watch("recipient_department") === "other" && (
+        <div>
+          <label htmlFor="" className="font-outfit mb-2">
+            Custom Recipient {watch("recipient_type")}
+          </label>
+          <Controller
+            name="custom_recipient"
+            control={control}
+            rules={{
+              required:
+                watch("recipient_department") === "other"
+                  ? "Custom recipient is required"
+                  : false,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                aria-label="custom_recipient"
+                variant="bordered"
+                placeholder={`Enter a custom ${watch("recipient_type")}`}
+                className="rounded-sm"
+                classNames={{
+                  inputWrapper: "border shadow-none rounded-lg",
+                }}
+                {...field}
+                errorMessage={error?.message}
+                isInvalid={!!error?.message}
+              />
+            )}
+          />
+        </div>
+      )}
 
       {/* <div>
         <label htmlFor="" className="font-outfit mb-2">
