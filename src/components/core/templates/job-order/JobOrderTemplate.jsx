@@ -253,48 +253,39 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
                 </span>
               </div>
               {/* Job Description — title line + description lines */}
-              {(() => {
-                const statement = jobOrderData?.VENDOR_STATEMENT || "";
+          {(() => {
+  const statement = jobOrderData?.VENDOR_STATEMENT || "";
 
-                // Split on newlines (handles \n, \r\n, \r), drop empty-only lines at edges
-                const allLines = statement
-                  .split(/\r?\n|\r/)
-                  .map((l) => l.trim());
+  const allLines = statement
+    .split(/\r?\n|\r/)
+    .map((l) => l.trim());
 
-                // First non-empty line = job title (e.g. "CONSTRUCTION OF CUBICLE")
-                const titleLine = allLines[0] || "";
-                // Remaining lines = description body, fills the dotted lines
-                const bodyLines = allLines.slice(0);
+  const bodyLines = allLines.slice(0);
 
-                // Always show at least 6 dotted lines
-                const MIN_LINES = 6;
-                const paddedLines =
-                  bodyLines.length < MIN_LINES
-                    ? [
-                        ...bodyLines,
-                        ...Array(MIN_LINES - bodyLines.length).fill(""),
-                      ]
-                    : bodyLines;
+  // Always show exactly 7 dotted lines, max 7
+  const MIN_LINES = 7;
+  const paddedLines = bodyLines.slice(0, 7);
+  const finalLines =
+    paddedLines.length < MIN_LINES
+      ? [
+          ...paddedLines,
+          ...Array(MIN_LINES - paddedLines.length).fill(""),
+        ]
+      : paddedLines;
 
-                return (
-                  <>
-                    {/* Title heading */}
-                    {/* <div className="text-[13px] uppercase text-black tracking-wide mt-1 mb-0.5">
-                      {titleLine || "\u00A0"}
-                    </div> */}
-
-                    {/* Description lines — one dotted line per paragraph break */}
-                    {paddedLines.map((line, index) => (
-                      <div
-                        key={index}
-                        className="border-b-2 border-dotted border-black min-h-[1.4rem] py-0.5 text-black font-light"
-                      >
-                        {line || "\u00A0"}
-                      </div>
-                    ))}
-                  </>
-                );
-              })()}
+  return (
+    <>
+      {finalLines.map((line, index) => (
+        <div
+          key={index}
+          className="border-b-2 border-dotted border-black min-h-[1.4rem] py-0.5 text-black font-light"
+        >
+          {line || "\u00A0"}
+        </div>
+      ))}
+    </>
+  );
+})()}
             </div>
 
             {/* Payment Section */}
