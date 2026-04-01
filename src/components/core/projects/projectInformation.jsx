@@ -9,19 +9,20 @@ import { filePrefix } from "../../../utils/file-prefix";
 import { FaUser } from "react-icons/fa";
 import { useGetTax } from "../../../service/api/setting";
 import { useGetVendor } from "../../../service/api/vendor";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { findProjectType } from "../../../utils/findProjectType";
 import CreateVendor from "../vendor/create-vendor/CreateVendor";
 
 const ProjectInformation = (props) => {
   const { control, watch, setValue, handleNext } = props;
   const project_type = watch("project_type");
+  const recipientType = watch("recipient_type");
 
   const { userData } = useCurrentUser();
   const { data: get_recipient, isPending: isLoadingRecipient } =
     useGetRecipient({
       company_id: userData?.data?.COMPANY_ID,
-      recipient_type: watch("recipient_type"),
+      recipient_type: recipientType,
     });
   const { data: get_staff, isPending: isLoadingStaff } = useGetAllStaff(
     userData?.data?.COMPANY_ID,
@@ -51,28 +52,77 @@ const ProjectInformation = (props) => {
     [get_vendors],
   );
 
+  const [customRecipientsByType, setCustomRecipientsByType] = useState({});
+
   const taxOptions = get_tax?.map((tax) => ({
     ...tax,
     value: tax?.ID,
     label: tax?.TAX_NAME + " (" + parseFloat(tax?.PERCENTAGE) + "%)",
   }));
-  const departments = (() => {
+
+  const fetchedDepartment = useMemo(() => {
     const seen = new Set();
     return (
       get_recipient
         ?.filter((recipient) => {
-          const name = recipient?.NAME;
+          const name = recipient?.NAME?.trim?.() || recipient?.NAME;
           if (!name || seen.has(name)) return false;
           seen.add(name);
           return true;
         })
-        ?.map((recipient) => ({
-          value: recipient?.NAME,
-          label: recipient?.NAME,
-          ...recipient,
-        })) || []
+        ?.map((recipient) => {
+          const name = recipient?.NAME?.trim?.() || recipient?.NAME;
+          return {
+            value: name,
+            label: name,
+            ...recipient,
+          };
+        }) || []
     );
-  })();
+  }, [get_recipient]);
+
+  const addCustomRecipientForType = (rawValue) => {
+    const typeKey = recipientType;
+    const value = rawValue?.trim?.() || "";
+    if (!typeKey || !value) return;
+
+    setCustomRecipientsByType((prev) => {
+      const existing = prev?.[typeKey] || [];
+      const alreadyExists = existing?.some((opt) => opt?.value === value);
+      if (alreadyExists) return prev;
+      return {
+        ...prev,
+        [typeKey]: [
+          ...existing,
+          {
+            value,
+            label: value,
+            isCustom: true,
+          },
+        ],
+      };
+    });
+  };
+
+  const departments = useMemo(() => {
+    const typeKey = recipientType;
+    const customForType = (typeKey && customRecipientsByType?.[typeKey]) || [];
+    const merged = [...fetchedDepartment, ...customForType].filter(
+      (opt) => opt?.value && opt?.label,
+    );
+
+    const seen = new Set();
+    return merged.filter((opt) => {
+      if (seen.has(opt.value)) return false;
+      seen.add(opt.value);
+      return true;
+    });
+  }, [fetchedDepartment, customRecipientsByType, recipientType]);
+
+  useEffect(() => {
+    setValue("recipient_department", undefined);
+    setValue("custom_recipient", "");
+  }, [recipientType, setValue]);
 
   const staffList = get_staff?.map((item) => {
     return {
@@ -141,6 +191,8 @@ const ProjectInformation = (props) => {
               openOtherVendorDrawer={openOtherVendorDrawer}
               watch={watch}
               isLoadingRecipient={isLoadingRecipient}
+              setValue={setValue}
+              addCustomRecipientForType={addCustomRecipientForType}
             />
           ) : (
             findProjectType(project_type).value === "2" && (
@@ -157,6 +209,7 @@ const ProjectInformation = (props) => {
                 isLoadingRecipient={isLoadingRecipient}
                 watch={watch}
                 isLoadingTx={isLoadingTx}
+                addCustomRecipientForType={addCustomRecipientForType}
               />
             )
           )}
@@ -184,12 +237,15 @@ export default ProjectInformation;
 const JobOrderForm = ({
   control,
   watch,
+  setValue,
+  addCustomRecipientForType,
   departments = [],
   vendorsList,
   isLoadingVendors,
   openOtherVendorDrawer,
   isLoadingRecipient,
 }) => {
+  const customRecipient = watch("custom_recipient");
   return (
     <>
       <div>
@@ -313,9 +369,11 @@ const JobOrderForm = ({
                     ]}
                     loading={isLoadingRecipient}
                     showSearch
-                    // labelInValue
-                    {...field}
-                    value={field.value?.value ? field.value : undefined}
+                    value={field.value || undefined}
+                    onChange={(val) => {
+                      field.onChange(val);
+                      if (val !== "other") setValue("custom_recipient", "");
+                    }}
                     placeholder="Select a User"
                     size="large"
                     className="w-full"
@@ -348,18 +406,39 @@ const JobOrderForm = ({
                       : false,
                 }}
                 render={({ field, fieldState: { error } }) => (
-                  <Input
-                    aria-label="custom_recipient"
-                    variant="bordered"
-                    placeholder={`Enter a custom ${watch("recipient_type")}`}
-                    className="rounded-sm"
-                    classNames={{
-                      inputWrapper: "border shadow-none rounded-lg",
-                    }}
-                    {...field}
-                    errorMessage={error?.message}
-                    isInvalid={!!error?.message}
-                  />
+                  <>
+                    <Input
+                      aria-label="custom_recipient"
+                      variant="bordered"
+                      placeholder={`Enter a custom ${watch("recipient_type")}`}
+                      className="rounded-sm"
+                      classNames={{
+                        inputWrapper: "border shadow-none rounded-lg",
+                      }}
+                      {...field}
+                      errorMessage={error?.message}
+                      isInvalid={!!error?.message}
+                    />
+                    <div className="mt-2 flex justify-end">
+                      <Button
+                        radius="sm"
+                        color="primary"
+                        isDisabled={!customRecipient?.trim?.()}
+                        onPress={() => {
+                          const value = customRecipient?.trim?.();
+                          if (!value) return;
+                          addCustomRecipientForType(value);
+                          setValue("recipient_department", value, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          setValue("custom_recipient", "");
+                        }}
+                      >
+                        Add to list
+                      </Button>
+                    </div>
+                  </>
                 )}
               />
             </div>
@@ -590,7 +669,10 @@ const PurchaseOrderForm = ({
   watch,
   taxOptions,
   isLoadingTax,
+  setValue,
+  addCustomRecipientForType,
 }) => {
+  const customRecipient = watch("custom_recipient");
   return (
     <>
       <div>
@@ -663,10 +745,11 @@ const PurchaseOrderForm = ({
                 //     .includes(input.toLowerCase())
                 // }
                 // labelInValue
-                {...field}
                 onChange={(val) => {
                   field.onChange(val);
+                  if (val !== "other") setValue("custom_recipient", "");
                 }}
+                value={field.value || undefined}
                 size="large"
                 className="w-full"
                 placeholder={`Select a User`}
@@ -696,18 +779,39 @@ const PurchaseOrderForm = ({
                   : false,
             }}
             render={({ field, fieldState: { error } }) => (
-              <Input
-                aria-label="custom_recipient"
-                variant="bordered"
-                placeholder={`Enter a custom ${watch("recipient_type")}`}
-                className="rounded-sm"
-                classNames={{
-                  inputWrapper: "border shadow-none rounded-lg",
-                }}
-                {...field}
-                errorMessage={error?.message}
-                isInvalid={!!error?.message}
-              />
+              <>
+                <Input
+                  aria-label="custom_recipient"
+                  variant="bordered"
+                  placeholder={`Enter a custom ${watch("recipient_type")}`}
+                  className="rounded-sm"
+                  classNames={{
+                    inputWrapper: "border shadow-none rounded-lg",
+                  }}
+                  {...field}
+                  errorMessage={error?.message}
+                  isInvalid={!!error?.message}
+                />
+                <div className="mt-2 flex justify-end">
+                  <Button
+                    radius="sm"
+                    color="primary"
+                    isDisabled={!customRecipient?.trim?.()}
+                    onPress={() => {
+                      const value = customRecipient?.trim?.();
+                      if (!value) return;
+                      addCustomRecipientForType(value);
+                      setValue("recipient_department", value, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                      setValue("custom_recipient", "");
+                    }}
+                  >
+                    Add to list
+                  </Button>
+                </div>
+              </>
             )}
           />
         </div>
