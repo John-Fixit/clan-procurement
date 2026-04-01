@@ -315,11 +315,11 @@ const CreateProject = () => {
       };
       // validate required fields before proceeding
 
-      console.log(json);
+      // console.log(json);
 
-      // const res = await mutateAddProject(json);
-      // successToast(res?.data?.message);
-      // closeDrawer();
+      const res = await mutateAddProject(json);
+      successToast(res?.data?.message);
+      closeDrawer();
     } catch (err) {
       catchErrFunc(err);
     }
