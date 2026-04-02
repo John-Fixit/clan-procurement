@@ -39,8 +39,8 @@ const TemplateComponent = ({ details, componentRef, printable, bgColor }) => {
   }, 0);
 
   // const grand_total = item_grand_total + Number(purchaseOrder?.TAX_AMOUNT);
-const taxAmount = Number(purchaseOrder?.TAX_AMOUNT) || 0;
-const grand_total = item_grand_total + taxAmount;
+  const taxAmount = Number(purchaseOrder?.TAX_AMOUNT) || 0;
+  const grand_total = item_grand_total + taxAmount;
 
   const chunkSize = printable ? 20 : items?.length;
 
@@ -146,11 +146,19 @@ const grand_total = item_grand_total + taxAmount;
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-[1fr_auto_1fr] gap-x-4 mb-4">
-                      <div className="border-b-1.5 border-black"></div>
-                      <div className="flex items-baseline gap-x-2">
-                        <h3 className="text-[13px]">Date:</h3>
-                        <div className="border-b-1.5 border-black w-48">
+                    <div className="flex flex-wrap items-end gap-x-4 gap-y-2 mb-4">
+                      <div className="flex items-end gap-x-2 flex-1 min-w-0">
+                        <h3 className="text-[13px] shrink-0">Address</h3>
+
+                        <div className="border-b-[1.5px] border-black flex-1 break-words">
+                          {purchaseOrder?.VENDOR_ADDRESS}
+                        </div>
+                      </div>
+
+                      <div className="flex items-end gap-x-2 ml-auto">
+                        <h3 className="text-[13px] shrink-0">Date:</h3>
+
+                        <div className="border-b-[1.5px] border-black w-48 whitespace-nowrap">
                           {format(
                             purchaseOrder?.DATE_AWARDED,
                             "do 'of' MMM. yyyy",
