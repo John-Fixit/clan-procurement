@@ -107,10 +107,12 @@ const CreateProject = () => {
       received_note_date: projectDetailData?.RECEIVED_NOTE_DATE,
       received_note_no: projectDetailData?.RECEIVED_NOTE_NO,
 
-      vendor: {
-        label: projectDetailData?.VENDOR_NAME,
-        value: projectDetailData?.VENDOR_ID,
-      },
+      vendor: projectDetailData?.VENDOR_ID
+        ? {
+            label: projectDetailData?.VENDOR_NAME,
+            value: projectDetailData?.VENDOR_ID,
+          }
+        : null,
       tax: {
         label:
           projectDetailData?.TAX_VALUE && Number(projectDetailData?.TAX_VALUE),
@@ -315,11 +317,9 @@ const CreateProject = () => {
       };
       // validate required fields before proceeding
 
-      console.log(json);
-
-      // const res = await mutateAddProject(json);
-      // successToast(res?.data?.message);
-      // closeDrawer();
+      const res = await mutateAddProject(json);
+      successToast(res?.data?.message);
+      closeDrawer();
     } catch (err) {
       catchErrFunc(err);
     }
