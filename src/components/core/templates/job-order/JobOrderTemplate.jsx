@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
+import argonLogo from "../../../../assets/images/argon-logo.png";
 import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 import JobOrderTandC from "./JobOrderTandC";
 import clsx from "clsx";
@@ -39,8 +39,8 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
         <div className="bg-white min-w-220 relative w-full h-full overflow-hidden flex flex-col gap-4 font-serif! font-normal! text-black!">
           <div>
             <img
-              src={ncaaLogo}
-              alt="NCAA Logo"
+              src={argonLogo}
+              alt="Argon"
               className="absolute inset-0 m-auto w-[600px] h-[600px] object-contain opacity-15 z-0 pointer-events-none"
             />
             {/* Header Section */}
@@ -48,8 +48,8 @@ const TemplateComponent = ({ componentRef, details, printable, bgColor }) => {
               <div className="flex justify-center gap-x-6 w-full ml-6">
                 <div className="absolute top-0 left-4">
                   <img
-                    src={ncaaLogo}
-                    alt="NCAA Logo"
+                    src={argonLogo}
+                    alt="Argon"
                     width={110}
                     height={110}
                   />
