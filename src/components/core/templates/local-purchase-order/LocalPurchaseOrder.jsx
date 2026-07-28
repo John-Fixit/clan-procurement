@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import ncaaLogo from "../../../../assets/images/ncaa_logo.png";
+import argonLogo from "../../../../assets/images/argon-logo.png";
 import { format } from "date-fns";
 import { formatNumberWithComma } from "../../../../utils/formatCurrencyNumber";
 import { useRef } from "react";
@@ -61,8 +61,8 @@ const grand_total = item_grand_total + taxAmount;
               >
                 <div>
                   <img
-                    src={ncaaLogo}
-                    alt="NCAA Logo"
+                    src={argonLogo}
+                    alt="Argon"
                     className="absolute inset-0 m-auto w-[600px] h-[600px] object-contain opacity-15 z-0 pointer-events-none"
                   />
 
@@ -70,8 +70,8 @@ const grand_total = item_grand_total + taxAmount;
                     <div className="flex justify-center gap-x-6 w-full ml-6">
                       <div className="absolute top-0 left-4">
                         <img
-                          src={ncaaLogo}
-                          alt="NCAA Logo"
+                          src={argonLogo}
+                          alt="Argon"
                           width={110}
                           height={110}
                         />
